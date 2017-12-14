@@ -1,0 +1,47 @@
+.flex{display: -webkit-box;}
+.flexv{display: -webkit-box; -webkit-box-orient: vertical;}
+.flexitem{display: -webkit-box; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;}
+.flexitemv{display: -webkit-box; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; -webkit-box-orient: vertical;}
+.center{-webkit-box-align: center; -webkit-box-pack: center;}
+.centerv{-webkit-box-align: center;}
+.centerh{-webkit-box-pack: center;}
+.end{-webkit-box-align: end; -webkit-box-pack: end;}
+.endh{-webkit-box-pack: end;}
+.endv{-webkit-box-align: end;}
+label.checkbox,label.radio{cursor: pointer; line-height: 30px;}
+label.disabled{cursor: not-allowed;}
+label.checkbox input,label.radio input{width: 22px; height: 22px; border: 1px solid #ccc; background: #fff; cursor: pointer; position: relative; box-shadow: 1px 2px 3px #eee inset; vertical-align: -5px; padding: 0;}
+label.radio input{border-radius: 50%;}
+label.disabled input{cursor: not-allowed; background: #f0f0f0; box-shadow: 1px 2px 3px #dadada inset;}
+label.checkbox input:checked{border-color: #27e;}
+label.checkbox input:checked:after{content: '\e60c'; font-family: 'rd' !important; position: absolute; top: 0; left: 0; right: 0; bottom: 0; text-align: center; line-height: 16px; font-size: 1.2em; color: #27e;}
+label.checkbox span,label.radio span{padding: 0 14px 0 8px; display: inline-block; line-height: 22px;}
+label.radio input:checked{border-color: #27e; position: relative;}
+label.radio input:checked:after{content: ''; position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; margin-left: -3px; margin-top: -3px; border-radius: 50%; background: #27e;}
+/****************************************************************************************/
+.upload-list{float: left;}
+.upload-list .old{display: inline-block; width: 100px; height: 100px; position: relative; background: #eee; margin-right: 10px; border: 1px solid #fff;}
+.upload-list .old span{position: absolute; left: 0; right: 0; bottom: 0; background: rgba(255,0,0,0.4); color: #fff; text-align: center; padding: 5px 0; font-size: 0.9em; cursor: pointer;}
+.upload-list .old img{position: absolute; max-width: 100%;}
+.upload-plus{position: relative; width: 100px; height: 100px; float: left; border: 1px dashed #ccc; background: #fafafa; visibility: hidden;}
+.upload-plus.show{visibility: visible;}
+.webuploader-pick{position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
+.upload-plus span{position: absolute; top: 50%; left: 0; width: 90%; padding: 0 5%; text-align: center; font-size: 1.6em; color: #666; height: 50px; line-height: 50px; margin-top: -25px;}
+.upload-plus input{position: absolute; top: 0; left: 0; height: 100%; width: 100%; opacity: 0; cursor: pointer; padding: 0;}
+/****************************************************************************************/
+#none{text-align: center; color: #666;}
+#none .icon{width: 50px; height: 50px; line-height: 50px; margin: 10px auto 0;}
+#none .icon i{font-size: 2.4em; color: #999;}
+/****************************************************************************************/
+.alerts{ padding: 15px; margin: 20px 0; border: 1px solid transparent;}
+.alerts-success{background: #dff0d8; border-color: #d6e9c6; color: #3c763d;}
+/****************************************************************************************/
+#page{padding: 10px; text-align: center;}
+#page em{display: inline-block; margin: 0 2px; height: 38px; line-height: 38px; padding: 0 6px; background: #eee; border: 1px solid #eee;}
+#page a,#page span{display: inline-block; width: 38px; height: 38px; line-height: 38px; overflow: hidden; text-overflow: ellipsis; border: 1px solid #eee; border-radius: 2px; margin: 0 2px; vertical-align: top;}
+#page span{background: #eee;}
+/****************************************************************************************/
+input.es-input {padding-right: 20px; background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAICAYAAADJEc7MAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAG2YAABzjgAA4DIAAIM2AAB5CAAAxgwAADT6AAAgbL5TJ5gAAABGSURBVHjaYvz//z8DOYCJgUzA0tnZidPK8vJyRpw24pLEpwnuVHRFhDQxMDAwMPz//x+OOzo6/iPz8WFGuocqAAAA//8DAD/sORHYg7kaAAAAAElFTkSuQmCC") 100% 50% no-repeat;}
+.es-list{position: absolute; display: none; z-index: 1000; max-height: 160px; overflow-y: auto; box-shadow: rgb(204, 204, 204) 0px 2px 3px; padding: 0px; margin: 0px; border: 1px solid rgb(209, 209, 209); background: rgb(255, 255, 255);}
+.es-list li {display: block; padding: 5px 10px; margin: 0px;}
+.es-list li.selected {background: rgb(243, 243, 243);}

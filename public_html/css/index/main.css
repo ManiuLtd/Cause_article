@@ -1,0 +1,118 @@
+html,body{height: 100%; background: #fafafa; overflow: hidden;}
+.flex{display: -webkit-box;}
+.flexv{display: -webkit-box; -webkit-box-orient: vertical;}
+.flexitem{display: -webkit-box; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;}
+.flexitemv{display: -webkit-box; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; -webkit-box-orient: vertical;}
+.center{-webkit-box-align: center; -webkit-box-pack: center;}
+.centerv{-webkit-box-align: center;}
+.centerh{-webkit-box-pack: center;}
+.end{-webkit-box-align: end; -webkit-box-pack: end;}
+.endh{-webkit-box-pack: end;}
+.endv{-webkit-box-align: end;}
+body.home{background: #27e;}
+/***************************************************************************************/
+#wrap{height: 100%; overflow-x: hidden;}
+#main{position: relative; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch;}
+/***************************************************************************************/
+.header{position: relative; height: 52px; background: #fff; padding: 0 4px; box-shadow: 0 2px 2px rgba(0,0,0,0.05),0 1px 0 rgba(0,0,0,0.05); z-index: 9;}
+#header .logo{width: 40px; height: 40px; background: #fafafa;}
+#header .title{font-size: 1.05em; -webkit-line-clamp: 1;}
+#header .brand{width: 40px; line-height: 20px; padding: 10px 0;}
+#header .icon{font-size: 1.5em; color: #999; padding: 0 5px;}
+#header .txt{height: 100%; color: #27e; margin: 0; width: 50px;}
+/***************************************************************************************/
+#cardlist{position: relative;}
+#cardlist .lists{padding: 2px; margin: 10px 5px; background: #fff; border: 1px solid #e4e4e4; box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.05);}
+#cardlist .lists .pics{width: 50%; position: relative; padding-top: 30%;}
+#cardlist .lists .pics span{position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px;}
+#cardlist .lists .pics img{width: 100%; height: 100%;}
+#cardlist .lists h2{font-size: 1em; font-weight: normal; padding: 10px;}
+#cardlist .lists h2 em{color: #f00;}
+#cardlist .lists .buyit{width: 80%; margin: 5px auto; border: 1px solid #eee; border-radius: 30px; height: 40px;}
+/***************************************************************************************/
+#order .pics{padding: 0 10px;}
+#order .pics .tabs a{position: relative; width: 80px; height: 36px; margin: 5px 10px;}
+#order .pics .tabs a:after{content: ''; position: absolute; left: 20px; bottom: 0; height: 2px; width: 40px; background: #eee;}
+#order .pics .tabs a.current{color: #f00;}
+#order .pics .tabs a.current:after{background: #f00;}
+#order .pics .outerbox{position: relative; padding-top: 60%; overflow: hidden;}
+#order .pics .roll{position: absolute; top: 0; left: 0; width: 100%; transition: transform 0.2s linear; -webkit-transition: transform 0.2s linear;}
+#order .pics .pic{position: relative; padding-top: 60%; background: #eee;}
+#order .pics .pic a{position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
+#order .pics .pic img{width: 100%; height: 100%;}
+#order .block{margin-top: 10px; background: #fff; border-top: 1px solid #f2f2f2;}
+#order .block .row{border-bottom: 1px solid #f2f2f2; padding: 0 10px; height: 50px;}
+#order .block .numbers a{position: relative; width: 60px; height: 36px; border: 1px solid #eee; font-size: 0.9em; color: #999; margin-left: 10px; overflow: hidden;}
+#order .block .numbers a:after{content: ''; position: absolute; bottom: -10px; right: -10px; width: 20px; height: 20px; background: #eee; transform: rotate(45deg); -webkit-transform: rotate(45deg);}
+#order .block .numbers a.current{border-color: #f40; color: #f40;}
+#order .block .numbers a.current:after{background: #f40;}
+#order .block .row span{color: #888; padding-right: 10px;}
+#order .block .row em{color: #333;}
+#order .block .row em.notice{color: #f00;}
+#order .block .row input.text{border: none; height: 20px; padding: 0; text-align: right;}
+#order .block .row .select{position: relative;}
+#order .block .row .select select{border: none; color: #999; direction: rtl;}
+#order .tips{padding: 10px; font-size: 0.9em; color: #f00;}
+/***************************************************************************************/
+.footer{position: relative; height: 52px; background: #fff; z-index: 9; box-shadow: 0 -2px 4px rgba(0,0,0,0.05),0 -1px 0 rgba(0,0,0,0.05);}
+#tabbar .counter{padding: 5px 10px;}
+#tabbar .counter p{font-size: 0.9em; color: #999; height: 16px;}
+#tabbar .counter h2{font-weight: normal; font-size: 1em; height: 24px;}
+#tabbar .counter h2 i{color: #f00;}
+#tabbar .counter h2 span{color: #f00; font-size: 1.05em;}
+#tabbar .submit{width: 120px; background: #f40; color: #fff;}
+/***************************************************************************************/
+#done .tips{height: 120px; background: #27e; color: #fff;}
+#done .tips i{font-size: 1.4em; border: 2px solid #fff; border-radius: 50%; width: 40px; height: 40px;}
+#done .tips span{font-size: 0.9em; padding: 10px 10px 0;}
+#done .order{padding: 5px 10px; background: #fff; border-bottom: 1px solid #f5f5f5;}
+#done .order .list{min-height: 20px; padding: 14px 10px; border-bottom: 1px solid #f5f5f5;}
+#done .order .list:last-child{border-bottom: none;}
+#done .order .list div{padding-left: 20px; color: #666;}
+#done .order .list div em{padding-right: 6px;}
+#done .order .list div em:last-child{padding: 0;}
+#done .title{height: 50px; padding: 0 10px; background: #f9f9f9;}
+#done .block{background: #fff; border-top: 1px solid #eee;}
+#done .block .row{position: relative; padding: 10px; border-bottom: 1px solid #f5f5f5;}
+#done .block .row i{height: 40px; width: 40px; border-radius: 4px; background: #eee; font-size: 1.6em; color: #fff;}
+#done .block .row div{padding: 0 10px; height: 40px;}
+#done .block .row div h4{font-weight: normal; font-size: 1em; line-height: 20px;}
+#done .block .row div p{font-size: 0.8em; color: #888; height: 16px;}
+#done .block .row em{font-size: 1.4em; color: #ccc;}
+#done .block .row a{position: absolute; top: 0; left: 0; width: 100%; height: 100%;}
+#done .tip{position: relative; height: 50px;}
+#done .tip:after{content: ''; width: 80%; position: absolute; top: 50%; left: 10%; height: 1px; background: #eee;}
+#done .tip span{padding: 0 10px; background: #f8f9f9; position: relative; z-index: 8;}
+#done .progress{padding: 10px;}
+#done .progress .txt{padding: 10px 0; font-size: 0.9em; color: #666;}
+#done .progress .tel{width: 80%; margin: 0 auto; border: 1px solid #eee; border-radius: 40px; height: 40px; background: #fff; margin-top: 20px;}
+/***************************************************************************************/
+#main .brands .search{position: relative; border: 1px solid #ddd; background: #fff; margin: 5px 20px 0 10px; padding-left: 10px; border-radius: 20px; overflow: hidden;}
+#main .brands .search input.text{border: none; background: none; height: 40px; padding: 0; outline: none; position: relative; z-index: 3;}
+#main .brands .search span{height: 40px; width: 40px; color: #27e; font-size: 1.2em;}
+#main .brands .search input.submit{position: absolute; top: 0; right: 0; width: 40px; height: 40px; padding: 0; opacity: 0;}
+#main .brands.sidenav{padding-right: 30px;}
+#main .brands dl dt,#main .brands .brand-title{font-size: 1.1em; font-weight: normal; height: 44px; line-height: 44px; padding: 0 12px; border-bottom: 1px solid #eee; color: #dd0010; clear: both;}
+#main .brands .brand-title{border-bottom: none;}
+#main .brands .hot-box{overflow: hidden;}
+#main .brands .hot-box li{width: 20%; padding-top: 20%; position: relative; background: #eee; float: left;}
+#main .brands .hot-box li a{position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-box-pack: center; -webkit-box-align: center; color: #fff;}
+#main .brands .hot-box li a span{display: -webkit-box; padding: 4px 0; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; -webkit-box-pack: center;}
+#main .brands .hot-box li a em{display: -webkit-box; font-size: 0.75em;}
+#main .brands dl dd{display: -webkit-box; padding: 0 12px; height: 50px; border-bottom: 1px solid #eee; background: #fff;}
+#main .brands dl dd a{position: relative; display: -webkit-box; -webkit-box-orient: vertical; width: 100%; height: 100%;}
+#main .brands dl dd a span{display: -webkit-box; color: #000; font-size: 1.05em; height: 30px; -webkit-box-align: center;}
+#main .brands dl dd a em{display: -webkit-box; font-size: 0.8em; color: #666;}
+#main .brands dl dd a i{position: absolute; top: 0; right: 15px; bottom: 0; display: -webkit-box; -webkit-box-align: center; color: #ccc; font-size: 1.2em;}
+#main .brands dl dd a s{color: #272; text-decoration: none; font-style: normal;}
+#main .brand-chars{position: fixed; top: 50px; right: 0; bottom: 0; width: 28px; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;}
+#main .brand-chars a{display: -webkit-box; -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; -webkit-box-pack: center; -webkit-box-align: center; font-size: 0.9em;}
+#onchar{position: fixed; top: 50%; left: 50%; background: rgba(0,0,0,0.5); color: #fff; display: -webkit-box; width: 80px; height: 80px; -webkit-box-pack: center; -webkit-box-align: center; margin-top: -40px; margin-left: -40px; border-radius: 6px; font-size: 1.8em; opacity: 0; transition: opacity 0.5s; -webkit-transition: opacity 0.5s;}
+#onchar.show{opacity: 1;}
+/**********************************************************************************/
+#more{position: absolute; bottom: 0; left: 0; right: 0; height: 50px;}
+#more i{width: 16px; height: 16px; display: inline-block; border-width: 1px; border-style: solid; border-color: #ccc #ccc #222 #222; border-radius: 50%; -webkit-animation: imageLoad 1s infinite linear; animation: imageLoad 1s infinite linear; vertical-align: -3px;}
+#more span{font-size: 0.9em; padding-left: 8px; color: #999;}
+#empty{padding: 10px;}
+#empty .icon{color: #ccc; font-size: 2.4em;}
+#empty p{font-size: 0.9em; padding: 6px 0; font-size: 0.9em; color: #999;}

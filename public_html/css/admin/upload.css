@@ -1,0 +1,192 @@
+.upload-list .old span{
+    position: absolute;
+    left: 0;
+    /*right: 0;*/
+    bottom: 0;
+    background: rgba(255,0,0,0.4);
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.9em;
+    cursor: pointer;
+    width:100px;
+    margin-left: 12px;
+}
+.upload-plus{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    float: left;
+    border: 1px dashed #ccc;
+    background: #fafafa;
+    visibility: hidden;
+}
+.upload-plus.show{
+    visibility: visible;
+}
+.upload-list{
+    float: left;
+}
+.upload-plus i{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    padding: 0 5%;
+    text-align: center;
+    font-size: 1.6em;
+    color: #666;
+    height: 50px;
+    line-height: 50px;
+    margin-top: -25px;
+}
+.upload-plus input{
+    opacity:0;
+}
+.webuploader-pick{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.upload-plus input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+/****************1111********************/
+
+.upload-list1 .old span{
+    position: absolute;
+    left: 0;
+    /*right: 0;*/
+    bottom: 0;
+    background: rgba(255,0,0,0.4);
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.9em;
+    cursor: pointer;
+    width:100px;
+    margin-left: 12px;
+}
+.upload-plus1{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    float: left;
+    border: 1px dashed #ccc;
+    background: #fafafa;
+    visibility: hidden;
+}
+.upload-plus1.show{
+    visibility: visible;
+}
+.upload-list1{
+    float: left;
+}
+.upload-plus1 i{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    padding: 0 5%;
+    text-align: center;
+    font-size: 1.6em;
+    color: #666;
+    height: 50px;
+    line-height: 50px;
+    margin-top: -25px;
+}
+.upload-plus1 input{
+    opacity:0;
+}
+.webuploader-pick1{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.upload-plus1 input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+/******************22222******************/
+
+.upload-list2 .old span{
+    position: absolute;
+    left: 0;
+    /*right: 0;*/
+    bottom: 0;
+    background: rgba(255,0,0,0.4);
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 0.9em;
+    cursor: pointer;
+    width:100px;
+    margin-left: 12px;
+}
+.upload-plus2{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    float: left;
+    border: 1px dashed #ccc;
+    background: #fafafa;
+    visibility: hidden;
+}
+.upload-plus2.show{
+    visibility: visible;
+}
+.upload-list2{
+    float: left;
+}
+.upload-plus2 i{
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    padding: 0 5%;
+    text-align: center;
+    font-size: 1.6em;
+    color: #666;
+    height: 50px;
+    line-height: 50px;
+    margin-top: -25px;
+}
+.upload-plus2 input{
+    opacity:0;
+}
+.webuploader-pick2{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.upload-plus2 input{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+    padding: 0;
+}

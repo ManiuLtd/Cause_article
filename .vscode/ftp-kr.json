@@ -1,0 +1,27 @@
+{
+    "host": "183.131.217.204",
+    "username": "xzftp1122",
+    "password": "xzftp@3174",
+    "remotePath": "/",
+    "protocol": "ftp",
+    "port": 21,
+    "fileNameEncoding": "utf8",
+    "ignoreWrongFileEncoding": false,
+    "createSyncCache": true,
+    "autoUpload": true,
+    "autoDelete": false,
+    "autoDownload": false,
+    "disableFtp": false,
+    "ignore": [
+        ".git",
+        "/.vscode/chrome",
+        "/.vscode/.key",
+        "/.vscode/ftp-kr.task.json",
+        "/.vscode/ftp-kr.error.log",
+        "/.vscode/ftp-kr.sync.*.json"
+    ],
+    "closure": {
+        "create_source_map": "%js_output_file%.map",
+        "output_wrapper": "%output%\n//# sourceMappingURL=%js_output_file_filename%.map"
+    }
+}

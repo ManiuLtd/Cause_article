@@ -1,0 +1,181 @@
+#login{position: absolute; top: 20%; left: 50%; width: 320px; margin-left: -160px;}
+#login .logo{margin: 20px auto; width: 80px; height: 80px; border-radius: 4px; border: 1px solid #eee;}
+#login form{position: relative;}
+#login form div.row{position: relative; border: 1px solid #eee; height: 38px; padding: 4px; margin-bottom: -1px;}
+#login form div.row span{display: inline-block; width: 38px; height: 38px; background: #eee; vertical-align: middle; line-height: 38px; text-align: center; color: #666; font-size: 1.4em;}
+#login form div.row input{display: inline-block; vertical-align: middle; margin-left: 4px; border: none; width: 250px;}
+#login form div.row input.code{width: 160px;}
+#login form div.row img{display: inline-block; vertical-align: middle; width: 90px; height: 38px; cursor: pointer;}
+#login form input.btn{display: block; width: 100%; height: 50px; padding: 0; margin: 20px 0; cursor: pointer; border: none; background: #28a7e1; color: #fff; border-radius: 2px;}
+/*************************************************************************/
+#header{position: fixed; top: 0; left: 0; right: 0; height: 50px; border-bottom: 1px solid #ddd; background: #fafafa; padding: 10px; z-index: 99;}
+#header .menu{display: none;}
+#header .logo{float: left;}
+#header .logo h1{font-weight: normal; font-size: 1.3em;}
+#header .logo p{color: #666;}
+#header .user{float: right; position: relative; cursor: pointer;}
+#header .user img{position: absolute; top: 0; left: 0; width: 50px; height: 50px; border-radius: 50%;}
+#header .user .info{padding: 0 30px 0 60px;}
+#header .user .info h3{font-weight: normal; font-size: 1.2em; color: #27e; padding-bottom: 4px;}
+#header .user .down{position: absolute; top: 0; right: 0; height: 50px; line-height: 50px; font-size: 1.4em; color: #666;}
+#header .user .drop{position: absolute; top: 60px; right: 0; background: #fff; width: 100%; border: 1px solid #ddd; z-index: -1; visibility: hidden;}
+#header .user .showit{visibility: visible; z-index: 3;}
+#header .user .drop:after{content: ''; position: absolute; top: -8px; left: 50%; width: 14px; height: 14px; margin-left: -8px; background: #fff; transform: rotate(45deg); border-left: 1px solid #ddd; border-top: 1px solid #ddd;}
+#header .user .drop a{display: block; height: 40px; line-height: 40px; border-bottom: 1px solid #ddd; padding: 5px 10px;}
+#header .user .drop a i{display: inline-block; font-size: 1.3em; color: #666; width: 30px;}
+/*************************************************************************/
+#position{padding-bottom: 10px; border-bottom: 1px dotted #ddd; margin-bottom: 10px;}
+#position a{color: #27e;}
+#position i{font-size: 1.3em; color: #999; padding-right: 4px;}
+#position em{color: #999; padding: 0 4px;}
+#position span{color: #666;}
+/*************************************************************************/
+#left{position: fixed; top: 71px; left: 0; width: 200px; bottom: 0; overflow: auto; border-right: 1px solid #ddd; background: #fafafa;}
+#left .menus .title{position: relative; height: 44px; line-height: 44px; border-bottom: 1px solid #ddd; background: #fff;}
+#left .menus .title a,#left .menus ul li a{display: block;}
+#left .menus .title i{display: inline-block; width: 40px; text-align: center; font-size: 1.4em; vertical-align: top;}
+#left .menus .title span{display: inline-block; vertical-align: top; font-size: 1.05em;}
+#left .menus .title em{position: absolute; top: 0; right: 0; width: 30px; text-align: center;}
+#left .menus .title a:hover span{color: #27e;}
+#left .menus ul li{margin-left: 40px; border-left: 1px dotted #ccc; border-bottom: 1px dotted #ccc; height: 40px; line-height: 40px;}
+#left .menus ul li i{display: inline-block; width: 40px; text-align: center; font-size: 1.2em; vertical-align: top;}
+#left .menus ul li span{display: inline-block; vertical-align: top; font-size: 0.95em;}
+#left .menus ul li a:hover span{color: #dd0010;}
+/*************************************************************************/
+/*#right{margin-left: 201px; margin-top: 71px; padding: 10px;}*/
+/*************************************************************************/
+.lay-input{margin: 20px;}
+.lay-input label{width: 22%; text-align: right; display: inline-block;}
+.lay-input input{box-sizing: border-box; width: 70%; height: 40px; padding-left: 10px; border: 1px solid #ddd;}
+/*************************************************************************/
+.table-header .links{float: left;}
+.table-header .links a{display: inline-block; height: 40px; line-height: 40px; border: 3px solid #27e; color: #fff; background: #27e; padding: 0 10px; margin: 10px 10px 10px 0;}
+.table-header .links a:hover{border-color: #1056B3;}
+.table-header form{float: right;}
+.table-header form input.text{float: left; margin: 10px 0; height: 20px; padding: 12px 8px; border: 1px solid #ddd;}
+.table-header form select.text{float: left; margin: 10px 0; height: 46px; padding: 0 8px; border-radius: 0; border: 1px solid #ddd;}
+.table-header form input.submit{float: left; margin: 10px 0; height: 46px; border: none; cursor: pointer; padding: 0 14px; background: #dd0010; color: #fff;}
+.table-header form input.submit:hover{opacity: 0.5;}
+table.list{border-collapse: inherit; background: #ccc; width: 100%; border-spacing: 1px;}
+table.list thead tr th{background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eae7e7), color-stop(1, #fafafa)); background: -moz-linear-gradient(top, #fafafa 0%, #eae7e7 100%); font-weight: normal; height: 36px; padding: 6px 8px; text-align: left; font-size: 1.05em; color: #000;}
+table.list tbody tr td{background: #fff; height: 30px; padding: 8px; color: #333;}
+table.list tbody tr:nth-child(odd) td{background: #fafafa;}
+table.list tbody tr:hover td{background: #eee;}
+table.data{border-collapse: inherit; min-width: 100%; border-spacing: 0px; position: relative;}
+table.data thead tr th{height: 36px; padding: 6px 10px; text-align: left; font-size: 1.05em; color: #000; white-space: nowrap; border-bottom: 2px solid #ddd; font-weight: normal;}
+table.data tbody tr td{border-bottom: 1px dotted #ddd; white-space: nowrap; height: 30px; padding: 8px 10px; color: #333;}
+table.data tbody tr:nth-child(odd) td{background: #fafafa;}
+table.data tbody tr:hover td{background: #eee;}
+table.responsive{border-collapse: inherit; background: #ccc; width: 100%; border-spacing: 1px;}
+table.responsive thead tr th{background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eae7e7), color-stop(1, #fafafa)); background: -moz-linear-gradient(top, #fafafa 0%, #eae7e7 100%); font-weight: normal; height: 36px; padding: 6px 8px; text-align: left; font-size: 1.05em; color: #000;}
+table.responsive tbody tr td{background: #fff; height: 30px; padding: 8px; color: #333;}
+table.responsive tbody tr:nth-child(odd) td{background: #fafafa;}
+table.responsive tbody tr:hover td{background: #eee;}
+/*************************************************************************/
+.forms{width: 70%; margin: 10px auto;}
+.forms .rows{margin-bottom: 10px;}
+.forms .cols .rows{display: inline-block; margin-right: 20px;}
+.forms .rows .title{height: 34px; line-height: 34px; color: #28a7e1;}
+.forms .rows input.text{border: 1px solid #ddd; box-shadow: 1px 2px 3px #eee inset; padding: 12px 10px; width: 460px;}
+.forms .rows input.small{width: 100px;}
+.forms .rows input.medium{width: 200px;}
+.forms .rows textarea.text{width: 460px; border: 1px solid #ddd; box-shadow: 1px 2px 3px #eee inset; padding: 12px 10px; height: 120px; resize: none;}
+.forms .rows textarea.ueditor{resize: none; padding: 0; height: 500px; width: 99%; border: 1px solid #eee;}
+.forms .rows input.text:focus,.forms .rows textarea.text:focus{border-color: #27e;}
+.forms .rows select.text{height: 44px; border: 1px solid #ddd; min-width: 200px; cursor: pointer;}
+.forms .rows .param{padding-top: 10px;}
+.forms .rows .param:first-child{padding-top: 0;}
+.forms .rows .param input{float: left; border: 1px solid #ddd; box-shadow: 1px 2px 3px #eee inset; padding: 12px 10px; margin-right: 10px;}
+.forms .rows .param a{float: left; height: 48px; line-height: 48px; width: 86px; text-align: center; background: #eee; vertical-align: top; margin-right: 10px; border-radius: 2px;}
+.forms .sub{margin-top: 20px;}
+.forms .sub input.submit{border: 3px solid #dd0010; background: #dd0010; height: 44px; color: #fff; padding: 0 14px; cursor: pointer; min-width: 100px;}
+.forms .sub input.submit:hover{border-color: #c70000;}
+.groups .field{float: left;}
+.groups .head{padding: 10px 10px 10px 0;}
+.groups .head .input{margin-bottom: 10px;}
+.groups .head input.text{width: 92px; border: 1px solid #ddd; box-shadow: 1px 2px 3px #eee inset; padding: 10px 4px;}
+.groups .head input.submit{border: 3px solid #dd0010; background: #dd0010; height: 44px; color: #fff; padding: 0 14px; cursor: pointer; width: 100px;}
+.groups .head input.submit:hover{border-color: #c70000;}
+/*************************************************************************/
+#rbac dl{border: 1px solid #eee; margin-top: 10px;}
+#rbac dl dt{display: block; background: #fafafa; padding: 10px 8px; border-bottom: 1px solid #eee;}
+#rbac dl dd{display: inline-block; padding: 10px 8px; background: #fafafa; border-left: 4px solid #eee; margin: 10px 10px 5px; cursor: pointer;}
+#rbac dl label{display: inline-block; width: 160px;}
+#rbac dl em{color: #999; display: inline-block; width: 40px;}
+#rbac dl a{display: inline-block; width: 30px; height: 30px; line-height: 30px; text-align: center; font-size: 1.1em; margin-left: 8px; background: #28a7e1; color: #fff;}
+#rbac dl a.trash{background: #dd0010;}
+/*************************************************************************/
+.op a{display: inline-block; height: 30px; line-height: 30px; padding: 0 10px; background: #27e; color: #fff; font-size: 0.9em; margin: 2px 0;}
+.op a.trash{background: #f00;}
+.op a:hover{opacity: 0.8;}
+/*************************************************************************/
+#card{width: 1000px; margin: 0 auto; overflow: hidden;}
+#card .tabs{background: #eee;}
+#card .tabs a{display: inline-block; width: 50%; height: 50px; line-height: 50px; text-align: center; font-size: 1.1em;}
+#card .upload {padding: 10px 0; width: 1020px;}
+#card .upload .card{position: relative; float: left; width: 495px; height: 300px; margin-right: 10px; background: #fafafa;}
+#card .upload .card img{position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 8;}
+#card .upload .card input{position: absolute; top: 0; left: 0; right: 0; width: 100%; height: 100%; padding: 0; z-index: 9; opacity: 0; cursor: pointer;}
+#card .upload .card span{position: absolute; top: 50%; left: 20px; right: 20px; text-align: center; color: #999; height: 40px; line-height: 40px; margin-top: -20px;}
+#card .upload .card em{position: absolute; top: 50%; left: 50%; margin-top: -30px; margin-left: -30px; width: 60px; line-height: 60px; height: 60px;  text-align: center; color: #fff; background: rgba(0,0,0,0.5); border-radius: 4px;}
+#card .param .title a{display: inline-block; height: 46px; line-height: 46px; background: #eee; border-radius: 2px; padding: 0 10px; margin-right: 10px;}
+#card .param .field .rows{padding-top: 10px; border-bottom: 1px solid #f00;}
+#card .param .field .rows .titles{padding-bottom: 10px;}
+#card .param .field .rows .titles a{display: inline-block; width: 42px; height: 42px; line-height: 42px; text-align: center; border-radius: 2px; background: #f00; color: #fff; font-size: 1.6em;}
+#card .param .field .rows .text{border: 1px solid #f5f5f5; background: none; padding: 10px 8px; margin-bottom: 10px; height: 20px; width: 220px; vertical-align: middle; margin-right: 10px;}
+#card .param .field .rows select.text{height: 42px; width: 238px;}
+#card  .sub{margin-top: 20px;}
+#card  .sub input.submit{border: 3px solid #dd0010; background: #dd0010; height: 44px; color: #fff; padding: 0 14px; cursor: pointer; min-width: 100px;}
+#card .sub input.submit:hover{border-color: #c70000;}
+#imageloading{position: relative; width: 500px; height: 300px; margin: 10px auto; background: #eee;}
+#imageloading span{position: absolute; top: 50%; left: 50%; border-width: 3px; border-style: solid; border-color: #fff #fff transparent transparent; width: 20px; height: 20px; border-radius: 50%; -webkit-animation: imageLoad 1s infinite linear; animation: imageLoad 1s infinite linear;}
+/*************************************************************************/
+#right .boxes{margin: 10px; background: #fff;}
+#right .option input.text{height: 20px; padding: 10px; box-shadow: 1px 2px 3px #fafafa inset;}
+#right .option select.text{color: #555; cursor: pointer; padding: 0 10px;}
+#right .option .text{border: 1px solid #eee; margin-left: 10px;}
+#right .option .text{margin-left: 0; margin-right: 10px;}
+#right .option .text:focus{border-color: #28a7e1;}
+#right .option input.btn{height: 42px; border: 1px solid #eee; margin-left: 10px; border-radius: 2px; background: #fff; cursor: pointer; padding: 0 10px;}
+#right .option input.btn{margin-left: 0; margin-right: 10px;}
+#right .option input.btn:active{background: #edf1f2; box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);}
+#right .tfoot .links a{padding: 0 12px; border: 1px solid #ddd;}
+#right .tfoot .links a:hover{background-color: #edf1f2; border-color: #dee5e7;}
+/*************************************************************************/
+#right .rtitle{position: relative; height: 40px; margin: 0 10px;}
+#right .rtitle i{height: 2px; background: #eee;}
+#right .rtitle span{position: absolute; top: 0; left: 10px; height: 40px; background: #fff; padding: 0 10px; font-size: 1.05em; color: #cc3333;}
+#right .infotable{padding: 10px 20px;}
+#right .infotable table{width: 100%; border-spacing: 1px; margin-bottom: 10px;}
+#right .infotable table thead tr th{font-weight: normal; font-size: 1.05em; color: #27e; border-bottom: 2px solid #eee; text-align: left; padding: 10px;}
+#right .infotable table tbody tr td{padding: 10px; border-bottom: 1px dotted #ddd; color: #666; font-size: 0.95em;}
+#right .infotable .goods img{width: 50px; height: 50px; margin-right: 10px;}
+#right .listrows div{padding: 5px 10px; margin: 0 10px;}
+#right .listrows div span{color: #666; padding-left: 10px;}
+/*************************************************************************/
+#empty{min-height: 120px;}
+#empty .icon{font-size: 3em; color: #ccc;}
+#empty p{font-size: 0.9em; color: #999;}
+.clearfix input{
+    border: 1px solid #ddd;
+    box-shadow: 1px 2px 3px #eee inset;
+    padding: 12px 10px;
+    width: 150px;
+    margin-bottom: 20px;
+}
+#sub{
+    display: inline-block;
+    height: 37px;
+    line-height: 37px;
+    border: 3px solid #27e;
+    color: #fff;
+    background: #27e;
+    padding: 0 10px;
+    margin: 10px 10px 10px 0;
+}
+.clearfix select{
+    border: 1px solid #ddd;
+    box-shadow: 1px 2px 3px #eee inset;
+    padding: 11px 10px;
+    margin-bottom: 20px;
+}

@@ -1,0 +1,23 @@
+*{margin: 0;padding: 0;}
+html,body{width:100%;background: #E5E5E5;font-size: 16px;}
+.container{min-height: 100%;}
+.container .clear {padding-top: 8px;}
+.clear:after{display: block;content: "";clear: both;visibility: hidden;height: 0;}
+.container dl{float: left;position: relative;clear: both;display: block;padding: 0 40px 0 15px;margin:0 0 15px 0;}
+.container dl dt{display: inline-block;float: left;}
+.container dl dt div.avatar{width: 3rem;height: 3rem;border-radius: 3px;overflow: hidden;}
+.container dl dt div.avatar img{width: 100%;}
+.container dl dd .content{position: relative;}
+.container dl dd{box-shadow: 0 0 3px rgba(0,0,0,.05);border: 1px solid #D5D5D5;margin-left: 4rem;background: #fff;font-size: 14px;padding: 0.8rem 1rem;border-radius: 5px;}
+.container dl dd .content p{line-height: 16px;}
+.container dl dd .content p button{display: block;clear: both;border: 1px solid #639838;border-radius: 5px;padding: 8px 12px;background: #fff;outline: none;margin: 0.8rem 0 0 0;width: 100%;font-size: 13px;}
+.container dl dd .content p button.active{color: #ccc;border-color: #fff;}
+.container dl dd div.button{padding-bottom: 5px;}
+.container dl dd .content p textarea{border: 1px solid #ccc;border-radius: 2px;color: #aaa;padding: 10px;outline: none;margin: 0.6rem 0 0 0;}
+.container dl dd .content .arrow{position: absolute;left: -21px;top: 2px;width: 8px;height: 8px;background: #fff;transform: rotate(45deg);border-left: 1px solid #d5d5d5;border-bottom: 1px solid #d5d5d5;}
+.container dl.right{float: right;padding: 0 15px 0 40px;}
+.container dl.right dt{position: absolute;right: 15px;}
+.container dl.right dd{border: 1px solid #79B746;margin:0 4rem 0 0;background: #C0E278;padding-top: 4px;}
+.container dl.right dd .content .arrow{border-left: 0;border-bottom: 0;border-right: 1px solid #79B746;border-top: 1px solid #79B746;left: auto;right: -21px;background: #C0E278;}
+.hide{display: none;}
+#hint{width: 12rem; height: 3rem; background: rgba(0,0,0,.5);padding: 0 10px; position: fixed;top:50%;left: 22%;border-radius: 10px;text-align: center;line-height: 3rem;color: #fff; display: none;}
