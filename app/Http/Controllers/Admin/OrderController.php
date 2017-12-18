@@ -32,6 +32,7 @@ class OrderController extends CommonController
                 }
                 break;
         }
+        if($request->state) $where['state'] = $request->state;
         $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
@@ -39,6 +40,39 @@ class OrderController extends CommonController
         return view('admin.order.index',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
     }
 
+    /**
+     * 退款列表
+     * @param Order $order
+     */
+    public function refundList( Request $request, Order $order )
+    {
+        $where = [];
+        switch ($request->key) {
+            case 'wc_nickname':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+            case 'phone':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+        }
+        $where['refund_state'] = 1;
+        $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($list as $key => $value) {
+            $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
+        }
+        return view('admin.order.refund',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
+    }
+
+    /**
+     * 订单备注
+     * @param Request $request
+     * @param Order $order
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function remark(Request $request, Order $order )
     {
         $order->remark = $request->remark;
@@ -46,6 +80,18 @@ class OrderController extends CommonController
             return response()->json(['state' => 200]);
         }
          return response()->json(['state' => 500]);
+    }
+
+    /**
+     * 删除订单
+     * @param Order $order
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception
+     */
+    public function delete( Order $order )
+    {
+        $order->delete();
+        return redirect()->route('order_list.index');
     }
 
     /**

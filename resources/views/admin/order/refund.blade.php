@@ -2,12 +2,9 @@
 @section('content')
 <div class="col-xs-12">
     <div class="page-header">
-        <h1> {{v('headtitle') ?? '订单总列表'}}  </h1>
+        <h1> {{v('headtitle') ?? '订单退款列表'}} </h1>
     </div>
     <form class="form-inline" style="margin-bottom: 15px" action="" method="get">
-        <select class="form-control" name="state" style="width: 140px">
-            <option value="1" @if(request()->state == '1') selected @endif>已支付</option>
-        </select>
         <select class="form-control" name="key" style="width: 140px">
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
             <option value="phone" @if(request()->key == 'phone') selected @endif>手机号</option>
@@ -30,7 +27,6 @@
                 <th>退款状态</th>
                 <td>备注</td>
                 <th>创建时间</th>
-                <th>操作</th>
             </tr>
             </thead>
 
@@ -65,18 +61,7 @@
                     </a>
                 </td>
                 <td>{{ $value->created_at }}</td>
-                <td>
-                    @if($value->state == 1 && $value->refund_state != 1)
-                        <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
-                    @endif
-                    @if($value->state != 1)
-                        <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
-                            {{ csrf_field() }}
-                            <a class="btn btn-xs btn-danger delete-order">删除订单</a>
-                        </form>
-{{--                        <a class="btn btn-xs btn-info" data-url="{{ route('admin.refund', $value->id) }}">删除订单</a>--}}
-                    @endif
-                </td>
+                <td>{{ $value->created_at }}</td>
             </tr>
             @endforeach
             </tbody>
