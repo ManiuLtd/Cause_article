@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Model\Brand;
 use App\Model\Order;
 use App\Model\User;
 use Carbon\Carbon;
@@ -10,6 +11,12 @@ use Illuminate\Http\Request;
 
 class OrderController extends CommonController
 {
+    /**
+     * 订单列表
+     * @param Request $request
+     * @param Order $order
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index( Request $request, Order $order )
     {
         $where = [];
@@ -25,10 +32,28 @@ class OrderController extends CommonController
                 }
                 break;
         }
-        $list = $order->with('user')->where($where)->paginate(15);
+        $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($list as $key => $value) {
+            $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
+        }
         return view('admin.order.index',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
     }
 
+    public function remark(Request $request, Order $order )
+    {
+        $order->remark = $request->remark;
+        if($order->save()) {
+            return response()->json(['state' => 200]);
+        }
+         return response()->json(['state' => 500]);
+    }
+
+    /**
+     * 订单退款
+     * @param Request $request
+     * @param Order $order
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function refund( Request $request, Order $order )
     {
         $orderNo = $order->order_id;
@@ -59,6 +84,10 @@ class OrderController extends CommonController
         }
     }
 
+    /**
+     * 订单报表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function report()
     {
         //今天凌晨时间

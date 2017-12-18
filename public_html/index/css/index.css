@@ -201,7 +201,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 /***************************************** 文章 ***************************************/
 #article{background: #fff;}
 #article .contents{padding: 1.5rem;}
-#article .title.max{max-height: 20rem;overflow: hidden;}
+#article .title.max{max-height: 48rem;overflow: hidden;}
 #article .title h2{font-size: 1.8rem;color:#333;}
 #article .title .subhead{padding: 1rem 0;font-size: 1.2rem;color:#6d6d6d;}
 #article .title .subhead .name{padding: 0 1rem;}
@@ -360,5 +360,9 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #basic #conWrap #button>div.active{background-color:#FE8B2E}
 #basic #conWrap #canvasWrap{text-align:center;margin-bottom:20px;display:none;}
 #basic #conWrap #canvasWrap canvas{display:block;margin:0 auto 20px}
+
+#article .unfold .unfoldbox{margin:1rem;padding:0.5rem 1rem;font-size: 1.4rem;border-radius:0.5rem;border:1.5px solid #eb6060;color:#eb6060;}
+
+#article .user .userimg{width:4rem;height:4rem;border: 1px solid #f83c39; border-radius: 50%;overflow: hidden;position: absolute;top: -2rem;left: 50%;transform: translateX(-50%);z-index: 5;}
 
 

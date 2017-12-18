@@ -111,6 +111,8 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('report', 'ReportController@index')->name('admin.report');
         //订单列表
         Route::resource('order_list', 'OrderController', ['only'=>'index']);
+        //订单备注
+        Route::post('order_remark/{order}', 'OrderController@remark')->name('admin.order_remark');
         //订单退款
         Route::post('order_refund/{order}', 'OrderController@refund')->name('admin.refund');
         //订单报表

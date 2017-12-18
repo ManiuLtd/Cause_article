@@ -19,9 +19,13 @@
                 <th>ID</th>
                 <th>用户昵称</th>
                 <th>手机号</th>
-                <th>订单金额</th>
+                <th>品牌</th>
+                <th>到期时间</th>
+                <th>订单金额(元)</th>
                 <th>会员类型</th>
-                <th>是否支付</th>
+                <th>订单状态</th>
+                <th>退款状态</th>
+                <td>备注</td>
                 <th>创建时间</th>
                 <th>操作</th>
             </tr>
@@ -33,9 +37,30 @@
                 <td>{{ $value->id }}</td>
                 <td>{{ $value->user->wc_nickname }}</td>
                 <td>{{ $value->user->phone }}</td>
-                <td>{{ $value->price }}</td>
+                <td>{{ $value->brand_name }}</td>
+                <td>{{ $value->user->membership_time }}</td>
+                <td>{{ number_format($value->price, 2) }}</td>
                 <td>@if($value->type == 1)一个月@else一年@endif</td>
-                <td>@if($value->state == 1)已支付@elseif($value->state == 2)支付失败@else未支付@endif</td>
+                <td>
+                    @if($value->state == 1)
+                        <color style="color: green;font-weight: bold;">已支付</color>
+                    @elseif($value->state == 2)
+                        <color style="color: red;font-weight: bold;">支付失败</color>
+                    @else<color style="color: red;font-weight: bold;">未支付@endif</color></td>
+                <td>
+                    @if($value->refund_state != '' && $value->refund_time != '')
+                        <color style="color: red;font-weight: bold;">退款成功</color>
+                    @endif
+                </td>
+                <td>
+                    <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">
+                        @if($value->remark)
+                            {{ subtext($value->remark, 5) }}
+                        @else
+                            <i class="icon-edit bigger-120"></i>
+                        @endif
+                    </a>
+                </td>
                 <td>{{ $value->created_at }}</td>
                 <td>
                     @if($value->state == 1 && $value->refund_state != 1)
@@ -87,6 +112,33 @@
                                     window.location.reload();
                                 }, 2000);
                             }
+                        })
+                    }
+                },
+                "close" : {
+                    "label" : "取消",
+                    "className" : "btn"
+                }
+            }
+        });
+    });
+
+    //添加订单备注
+    $('.remark').click(function () {
+        var remark = $(this).attr('data'),
+            url  = $(this).attr('data-url');
+        var content = '备注内容<input class="bootbox-input form-control newremark" type="text" value="' + remark + '"></form>';
+        bootbox.dialog({
+            title: '填写备注信息：',
+            message: content,
+            buttons: {
+                "success" : {
+                    "label" : "备注",
+                    "className" : "btn-success",
+                    "callback": function() {
+                        var newremark = $('.newremark').val();
+                        $.post(url, {remark:newremark,_token:"{{ csrf_token() }}"}, function (ret) {
+                            window.location.reload();
                         })
                     }
                 },
