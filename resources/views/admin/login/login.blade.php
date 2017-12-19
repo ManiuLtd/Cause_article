@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="login">
-    <div class="logo" style="background:url(http://image.wmpian.cn/default/logo.png) center no-repeat;"></div>
+    <div style="text-align: center;padding-bottom: 20px"><h1>事业爆文</h1></div>
     <form method="post" id="signin" action="{{route('admin.login')}}">
         {{csrf_field()}}
 

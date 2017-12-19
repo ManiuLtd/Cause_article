@@ -2,12 +2,11 @@
 @section('content')
 <link rel="stylesheet" href="/css/admin/upload.css">
 <!-- 百度编辑器引用 -->
-<link href="{{ asset('umeditor/themes/default/_css/umeditor.css') }}" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="{{ asset('umeditor/third-party/jquery.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('umeditor/third-party/template.min.js') }}"></script>
-<script type="text/javascript" charset="utf-8" src="{{ asset('umeditor/umeditor.config.js') }}"></script>
-<script type="text/javascript" src="{{ asset('umeditor/editor_api.js') }}"></script>
-<script type="text/javascript" src="{{ asset('umeditor/lang/zh-cn/zh-cn.js') }}"></script>
+<script type="text/javascript" charset="utf-8" src="{{ asset('ueditor/ueditor.config.js') }}"></script>
+<script type="text/javascript" charset="utf-8" src="{{ asset('ueditor/ueditor.all.min.js') }}"> </script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="{{ asset('ueditor/lang/zh-cn/zh-cn.js') }}"></script>
 <!-- 百度编辑器引用 -->
 <style>
     label, .lbl{
@@ -78,8 +77,8 @@
             <div class="col-sm-9">
                 {{--<textarea name="details" id="detail" style="width: 450px;height: 100px;"></textarea>--}}
                 <!--style给定宽度可以影响编辑器的最终宽度-->
-                <script type="text/plain" id="myEditor" style="width:800px;height:240px;">
-                    <p>这里我可以写一些输入提示</p>
+                <script type="text/plain" id="editor" style="width:1024px;height:500px;">
+
                 </script>
             </div>
         </div>
@@ -113,13 +112,7 @@
         {{--allowedContent:true,--}}
     {{--});--}}
 
-    //实例化编辑器
-    var um = UM.getEditor('myEditor');
-    um.addListener('blur',function(){
-        $('#focush2').html('编辑器失去焦点了')
-    });
-    um.addListener('focus',function(){
-        $('#focush2').html('')
-    });
+            //实例化编辑器
+            var ue = UE.getEditor('editor');
 </script>
 @endsection

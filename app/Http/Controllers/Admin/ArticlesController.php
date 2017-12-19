@@ -20,8 +20,8 @@ class ArticlesController extends CommonController
         switch ($request->key) {
             case 'title':
                 if($request->value) $where['title'] = $request->value;
-                $where['type'] = $request->type;
-                $where['brand_id'] = $request->brand;
+                if($request->type != 4) $where['type'] = $request->type;
+                if($request->brand) $where['brand_id'] = $request->brand;
                 break;
         }
         $list = Article::with('brand')->where($where)->orderBy('created_at', 'desc')->paginate(12);

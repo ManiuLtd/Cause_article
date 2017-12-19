@@ -61,7 +61,6 @@
                     </a>
                 </td>
                 <td>{{ $value->created_at }}</td>
-                <td>{{ $value->created_at }}</td>
             </tr>
             @endforeach
             </tbody>
