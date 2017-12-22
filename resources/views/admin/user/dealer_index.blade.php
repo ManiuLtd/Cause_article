@@ -19,13 +19,13 @@
                 <th>id</th>
                 <th>微信昵称</th>
                 <th>手机号</th>
-                <th>品牌</th>
+                <th>从事品牌</th>
                 <th>从业地区</th>
                 <th>用户类型</th>
-                <th>推广人/id</th>
-                <th>经销商/id</th>
-                <th>会员到期时间</th>
-                <th>推广人数</th>
+                <th>上级经销商/id</th>
+                <th>所属部门员工</th>
+                <th>员工推广链接</th>
+                <th>推广分成</th>
                 <th>创建时间</th>
                 <th>操作</th>
             </tr>
@@ -39,19 +39,20 @@
                 <td>{{$value->phone}}</td>
                 <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
                 <td>{{$value->employed_area}}</td>
-                <td>@if($value->type == 1) 普通用户 @endif</td>
-                <td> {{$value->extension['wc_nickname'].' / '.$value->extension['id']}} </td>
+                <td>@if($value->type == 2) 经销商 @endif</td>
                 <td> {{$value->dealer['wc_nickname'].' / '.$value->dealer['id']}} </td>
-                <td>{{$value->membership_time}}</td>
-                <td>{{$value->extension_num}}</td>
+                <td>@if($value->admin)<color style="color:green">{{ $value->admin->account }}</color>@endif</td>
+                <td>
+                    @if($value->admin)
+                        <a class="btn btn-xs btn-info" onclick="dealer_url({{ $value->admin_id }});">查看</a>
+                    @endif
+                </td>
+                <td>{{ $value->cmmission }} 元</td>
                 <td>{{$value->created_at}}</td>
                 <td>
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                        @if(has_menu($menu,'/admin/user') && !$value['is_dealer'])
-                            <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
-                        @else
-                            <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为二级经销商</a>
-                        @endif
+                        <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral',['id'=>$value->id]) }}');">查看推广金</a>
+                        {{--<a class="btn btn-xs btn-info" onclick="set_integral('{{ route('set_integral') }}',{{$value->id}},'{{csrf_token()}}');">佣金比例设置</a>--}}
                     </div>
                 </td>
             </tr>
@@ -82,6 +83,19 @@
                 area: ['340px', '370px'], //宽高
                 content: content
             });
+        });
+    }
+
+    function dealer_url(id) {
+        var url = "{{ config('app.url') }}?become_dealer/"+id;
+        var content = '<div class="form-group"><label class="col-sm-2 control-label no-padding-right"> 推广链接： </label>' +
+            '<input type="text" class="col-xs-10 col-sm-8" value="' + url + '"/>' +
+            '</div>';
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            area: ['540px', '150px'], //宽高
+            content: content
         });
     }
 

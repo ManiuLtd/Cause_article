@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Model\Admin;
+use App\Model\AdminDistribution;
 use App\Model\Brand;
 use App\Model\Order;
 use App\Model\User;
@@ -17,7 +19,7 @@ class OrderController extends CommonController
      * @param Order $order
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index( Request $request, Order $order )
+    public function index( Request $request )
     {
         $where = [];
         switch ($request->key) {
@@ -33,11 +35,69 @@ class OrderController extends CommonController
                 break;
         }
         if($request->state) $where['state'] = $request->state;
-        $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        $list = Order::with('user')->distinct()->where($where)->orderBy('created_at', 'desc')->paginate(15);
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
         }
         return view('admin.order.index',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
+    }
+
+    public function unPay( Request $request )
+    {
+        $where = [];
+        switch ($request->key) {
+            case 'wc_nickname':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+            case 'phone':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+        }
+        $where['state'] = 0;
+        $list = Order::with('user','dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($list as $key => $value) {
+            $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
+            if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
+        }
+
+        $admin = Admin::where('gid', 12)->get();
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.order.unpay', compact('list', 'admin', 'menu', 'active'));
+    }
+
+    public function pay( Request $request )
+    {
+        $where = [];
+        switch ($request->key) {
+            case 'wc_nickname':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+            case 'phone':
+                if($request->value) {
+                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                }
+                break;
+        }
+        $where['state'] = 1;
+        $list = Order::with('user','dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        foreach ($list as $key => $value) {
+            $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
+            if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
+        }
+
+        $admin = Admin::where('gid', 13)->get();
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.order.pay', compact('list', 'admin', 'menu', 'active'));
     }
 
     /**
@@ -65,6 +125,31 @@ class OrderController extends CommonController
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
         }
         return view('admin.order.refund',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
+    }
+
+    /**
+     * 分配订单
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function distribution( Request $request )
+    {
+        foreach ($request->order_id as $value) {
+            $data = [
+                'order_id' => $value,
+                'admin_id' => $request->admin_id,
+                'type' => $request->type,
+                'created_at' => date('Y-m-d H:i:s', time())
+            ];
+            $add = AdminDistribution::create($data);
+            Order::where('id', $value)->update(['distribution' => $add->id]);
+        }
+        if($request->type == 1){
+            $route = 'order.unpaylist';
+        } else {
+            $route = 'order.paylist';
+        }
+        return redirect()->route($route);
     }
 
     /**

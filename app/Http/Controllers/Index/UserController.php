@@ -19,12 +19,15 @@ class UserController extends CommonController
 {
     /**
      * @title  个人中心
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View become_dealer
      */
-    public function index()
+    public function index($type = '',$dealer = '')
     {
-        $uid = session()->get('user_id');
+        $uid = \Session::get('user_id');;
         if ( $uid ) {
+            //该用户成为经销商(部门推广链接会带两个参数)
+            if($type == 'become_dealer') User::where('id', $uid)->update(['admin_id' => $dealer]);
+
             //查看是否有新访客
             if ( Footprint::where([ 'uid' => $uid, 'new' => 1 ])->first() ) {
                 session()->put('newkf', 1);
@@ -38,72 +41,19 @@ class UserController extends CommonController
             $pic = '';
             $head = '';
             if ( $res[ 'extension_image' ] == '' ) {
-                //创建永久二维码
-                $options = config('wechat.wechat_config');
-                $app = new Application($options);
-                $qrcode = $app->qrcode;
-                $result = $qrcode->forever($uid);// 或者 $qrcode->forever("foo");
-                $ticket = $result->ticket; // 或者 $result['ticket']
-                $url = $qrcode->url($ticket);
+                $url = app(User::class)->createQrcode($uid);
                 //二维码转base64位
                 $arr = getimagesize($url);
                 $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
                 //头像转base64
-                $head = $this->curl_url(session()->get('head_pic'),2);
+                if(strpos(\Session::get('head_pic'),"https")) {
+                    $head = app(User::class)->curl_url(\Session::get('head_pic'), 2);
+                } else {
+                    $head = app(User::class)->curl_url(config('app.url').\Session::get('head_pic'), 2);
+                }
             }
-
             return view('index.user_center', compact('res', 'pic', 'head'));
         }
-    }
-
-    //微信头像转base64
-    public function curl_url($url,$type=0,$timeout=30){
-
-        $msg = ['code'=>2100,'status'=>'error','msg'=>'未知错误！'];
-        $imgs= ['image/jpeg'=>'jpeg', 'image/jpg'=>'jpg', 'image/gif'=>'gif', 'image/png'=>'png', 'text/html'=>'html', 'text/plain'=>'txt', 'image/pjpeg'=>'jpg', 'image/x-png'=>'png', 'image/x-icon'=>'ico' ];
-        if(!stristr($url,'http')){
-            $msg['code']= 2101;
-            $msg['msg'] = 'url地址不正确!';
-            return $msg;
-        }
-        $dir= pathinfo($url);
-        $host = $dir['dirname'];
-        $refer= $host.'/';
-        $ch = curl_init($url);
-        curl_setopt ($ch, CURLOPT_REFERER, $refer); //伪造来源地址
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);//返回变量内容还是直接输出字符串,0输出,1返回内容
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);//在启用CURLOPT_RETURNTRANSFER的时候，返回原生的（Raw）输出
-        curl_setopt($ch, CURLOPT_HEADER, 0); //是否输出HEADER头信息 0否1是
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout); //超时时间
-        $data = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-        $httpCode = intval($info['http_code']);
-        $httpContentType = $info['content_type'];
-        $httpSizeDownload= intval($info['size_download']);
-
-        if($httpCode!='200'){
-            $msg['code']= 2102;
-            $msg['msg'] = 'url返回内容不正确！';
-            return $msg;
-        }
-        if($type>0 && !isset($imgs[$httpContentType])){
-            $msg['code']= 2103;
-            $msg['msg'] = 'url资源类型未知！';
-            return $msg;
-        }
-        if($httpSizeDownload<1){
-            $msg['code']= 2104;
-            $msg['msg'] = '内容大小不正确！';
-            return $msg;
-        }
-        if($type==0 or $httpContentType=='text/html') $msg['data'] = $data;
-        $base_64 = base64_encode($data);
-        if($type==1) $msg['data'] = $base_64;
-        elseif($type==2) $msg['data'] = "data:{$httpContentType};base64,{$base_64}";
-        unset($info,$data,$base_64);
-        return $msg['data'];
-
     }
 
     /**

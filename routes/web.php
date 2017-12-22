@@ -37,7 +37,7 @@ Route::group(['namespace' => 'Index'], function () {
     //微信配置
     Route::any('bw_wechat', 'WechatController@index')->name('wechat');
     //用户中心
-    Route::get('user', 'UserController@index')->name('index.user');
+    Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息
     Route::match(['get','post'], 'user_basic', 'UserController@userBasic')->name('user_basic');
     //查看获取个人二维码帮助页面
@@ -95,6 +95,8 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::resource('articles', 'ArticlesController');
         //前台用户管理资源路由
         Route::get('user', 'UserController@index')->name('admin.user');
+        //经销商列表
+        Route::get('user_dealer', 'UserController@dealerList')->name('admin.dealerlist');
         //成为经销商
         Route::get('be_dealer/{id}', 'UserController@be_dealer')->name('admin.be_dealer');
         //品牌管理资源路由
@@ -109,10 +111,16 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::post('set_integral', 'UserController@setIntegral')->name('set_integral');
         //举报文章列表
         Route::get('report', 'ReportController@index')->name('admin.report');
-        //订单列表
-        Route::resource('order_list', 'OrderController', ['only'=>'index']);
+        //总订单列表
+        Route::get('order_list', 'OrderController@index');
+        //未支付订单列表
+        Route::get('order_unpay', 'OrderController@unPay')->name('order.unpaylist');
+        //已支付订单列表
+        Route::get('order_pay', 'OrderController@Pay')->name('order.paylist');
         //退款列表
         Route::get('order_refund_list', 'OrderController@refundList');
+        //分配订单
+        Route::post('order_distribution', 'OrderController@distribution')->name('order.distribution');
         //订单备注
         Route::post('order_remark/{order}', 'OrderController@remark')->name('admin.order_remark');
         //订单退款

@@ -49,7 +49,8 @@
                         <color style="color: green;font-weight: bold;">已支付</color>
                     @elseif($value->state == 2)
                         <color style="color: red;font-weight: bold;">支付失败</color>
-                    @else<color style="color: red;font-weight: bold;">未支付@endif</color></td>
+                    @else<color style="color: red;font-weight: bold;">未支付@endif</color>
+                </td>
                 <td>
                     @if($value->refund_state != '' && $value->refund_time != '')
                         <color style="color: red;font-weight: bold;">退款成功</color>

@@ -11,7 +11,7 @@ class UserController extends CommonController
     /********前台用户管理********/
     /**
      * Display a listing of the resource.
-     * @用户列表
+     * @普通用户列表
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -27,13 +27,55 @@ class UserController extends CommonController
                 array_push($where, ['phone', 'like', "%$value%"]);
                 break;
         }
-        if(!empty($request->type))  array_push($where, ['type', $request->type]);
+        array_push($where, ['type', 1]);
         $list = User::with(['extension'=>function($query){
             $query->select('id','wc_nickname');
         },'dealer'=>function($query){
             $query->select('id','wc_nickname');
+        },'brand'])->where($where)->paginate(15);
+
+        foreach ($list as $key => $value) {
+            $list[$key]['is_dealer'] = '';
+            if($value['dealer_id'] != '') {
+                $list[$key]['is_dealer'] = User::where('id', $value[ 'dealer_id' ])->value('id');
+            }
+        }
+        $menu = $this->menu; $active = $this->active;
+
+        return view('admin.user.index',compact('list','menu','active'));
+    }
+
+    /**
+     * 经销商列表
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function dealerList(Request $request)
+    {
+        $key = $request->key;
+        $value = $request->value;
+        $where = [];
+        switch($key){
+            case 'wc_nickname':
+                array_push($where, ['wc_nickname', 'like', "%$value%"]);
+                break;
+            case 'phone':
+                array_push($where, ['phone', 'like', "%$value%"]);
+                break;
+        }
+        array_push($where, ['type', 2]);
+        $list = User::with(['dealer'=>function($query){
+            $query->select('id','wc_nickname');
+        },'brand','admin'=>function($query){
+            $query->select('id','account');
         }])->where($where)->paginate(15);
-        return view('admin.user.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+
+        foreach ($list as $key =>$value) {
+            $list[$key]['cmmission'] = app(Integral::class)->commission($value->id);
+        }
+        $menu = $this->menu; $active = $this->active;
+
+        return view('admin.user.dealer_index',compact('list','menu','active'));
     }
 
     /**
@@ -43,7 +85,7 @@ class UserController extends CommonController
      */
     public function be_dealer($id)
     {
-        $update = User::where('id',$id)->update(['type'=>2]);
+        $update = User::where('id', $id)->update(['type' => 2]);
         if($update){
             return redirect(route('admin.user'));
         }

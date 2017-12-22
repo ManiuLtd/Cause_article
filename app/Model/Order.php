@@ -18,4 +18,10 @@ class Order extends Model
     {
         return $this->hasOne(User::class, 'id', 'uid');
     }
+
+    //关联分配表
+    public function dis()
+    {
+        return $this->belongsTo(AdminDistribution::class, 'distribution');
+    }
 }
