@@ -37,7 +37,7 @@ Route::group(['namespace' => 'Index'], function () {
     //微信配置
     Route::any('bw_wechat', 'WechatController@index')->name('wechat');
     //用户中心
-    Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
+    Route::get('user/{type?}/{dealer?}/{admintype?}', 'UserController@index')->name('index.user');
     //查看用户基础信息
     Route::match(['get','post'], 'user_basic', 'UserController@userBasic')->name('user_basic');
     //查看获取个人二维码帮助页面
@@ -128,7 +128,9 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         //删除订单
         Route::post('order_del/{order}', 'OrderController@delete')->name('admin.order_del');
         //订单报表
-        Route::get('order_report', 'OrderController@report');
+        Route::get('order_report', 'ReportController@report');
+        //推广报表（显示招商所有员工的所有业绩）
+        Route::get('extension_report', 'ReportController@extensionReport');
     });
 
     //上传图片

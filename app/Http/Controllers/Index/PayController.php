@@ -101,6 +101,13 @@ class PayController extends Controller
                     $pay_user->membership_time = $time->addMonth(12);
                 }
                 $pay_user->save();
+
+                //所属员工和员工部门
+                if($pay_user->admin_id && $pay_user->admin_type) {
+                    $order->admin_id = $pay_user->admin_id;
+                    $order->admin_type = $pay_user->admin_type;
+                }
+
                 //经销商获得佣金
                 if($pay_user->dealer_id){
                     $data = [
@@ -110,6 +117,11 @@ class PayController extends Controller
                     ];
                     DB::table('integral')->insert($data);
                     $pdealer = User::where('id',$pay_user->dealer_id)->first();
+                    //所属员工和员工部门
+                    if($pdealer->admin_id && $pdealer->admin_type) {
+                        $order->admin_id = $pdealer->admin_id;
+                        $order->admin_type = $pdealer->admin_type;
+                    }
                     if($pdealer->dealer_id){
                         $dealer_data = [
                             'uid'   =>  $pdealer->dealer_id,
@@ -117,6 +129,12 @@ class PayController extends Controller
                             'created_at'  => date('Y-m-d H:i:s',time())
                         ];
                         DB::table('integral')->insert($dealer_data);
+                        $ppdealer = User::where('id',$pdealer->dealer_id)->first();
+                        //所属员工和员工部门
+                        if($ppdealer->admin_id && $ppdealer->admin_type) {
+                            $order->admin_id = $ppdealer->admin_id;
+                            $order->admin_type = $ppdealer->admin_type;
+                        }
                     }
                     //推送【推荐成交通知】模板消息
                     $app = new Application(config('wechat.wechat_config'));

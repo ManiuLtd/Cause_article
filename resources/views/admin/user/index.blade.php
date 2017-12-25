@@ -49,7 +49,7 @@
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                         @if(has_menu($menu,'/admin/user') && !$value['is_dealer'])
                             <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
-                        @else
+                        @elseif(has_menu($menu,'/admin/user') && $value['is_dealer'] == 1)
                             <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为二级经销商</a>
                         @endif
                     </div>

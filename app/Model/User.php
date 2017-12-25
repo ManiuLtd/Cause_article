@@ -7,7 +7,7 @@ use EasyWeChat\Foundation\Application;
 
 class User extends Model
 {
-    protected $guarded = ['_token', '_method'];
+    protected $guarded = ['membership_time', 'extension_num', 'extension_type', '_token', '_method'];
 
     /**
      * @title  所属品牌

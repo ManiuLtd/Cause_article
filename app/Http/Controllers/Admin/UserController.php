@@ -36,10 +36,16 @@ class UserController extends CommonController
 
         foreach ($list as $key => $value) {
             $list[$key]['is_dealer'] = '';
-            if($value['dealer_id'] != '') {
-                $list[$key]['is_dealer'] = User::where('id', $value[ 'dealer_id' ])->value('id');
+            if($value['dealer_id'] != 0) {
+                $dealer = User::with('dealer')->select('id', 'dealer_id')->where('id', $value[ 'dealer_id' ])->first();
+                if(!empty($dealer->dealer)) {
+                    $list[ $key ][ 'is_dealer' ] = 2;
+                } else {
+                    $list[ $key ][ 'is_dealer' ] = 1;
+                }
             }
         }
+//        dd($list->toarray());
         $menu = $this->menu; $active = $this->active;
 
         return view('admin.user.index',compact('list','menu','active'));

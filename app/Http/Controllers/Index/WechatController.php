@@ -125,7 +125,7 @@ class WechatController extends Controller
             //用户已存在 -> 关联关系
             //会员时间过期或没有
             if(Carbon::parse('now')->gt(Carbon::parse($fuser->membership_time))){
-                if($fuser->extension_id == 0 && $fuser->dealer_id == 0) {
+                if($fuser->extension_id == 0 && $fuser->dealer_id == 0 && $fuser->admin_id == 0) {
                     //当用户本来没有推广用户和经销商的时候
                     $pinfo = User::find($eventkey);
                     if ($pinfo->type == 2) {

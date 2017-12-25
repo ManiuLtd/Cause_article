@@ -87,7 +87,7 @@
     }
 
     function dealer_url(id) {
-        var url = "{{ config('app.url') }}?become_dealer/"+id;
+        var url = "{{ config('app.url') }}user/become_dealer/"+id+"/1";
         var content = '<div class="form-group"><label class="col-sm-2 control-label no-padding-right"> 推广链接： </label>' +
             '<input type="text" class="col-xs-10 col-sm-8" value="' + url + '"/>' +
             '</div>';

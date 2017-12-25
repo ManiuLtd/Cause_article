@@ -21,13 +21,10 @@ class UserController extends CommonController
      * @title  个人中心
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View become_dealer
      */
-    public function index($type = '',$dealer = '')
+    public function index($type = '', $dealer = '', $admintype = '')
     {
         $uid = \Session::get('user_id');;
         if ( $uid ) {
-            //该用户成为经销商(部门推广链接会带两个参数)
-            if($type == 'become_dealer') User::where('id', $uid)->update(['admin_id' => $dealer]);
-
             //查看是否有新访客
             if ( Footprint::where([ 'uid' => $uid, 'new' => 1 ])->first() ) {
                 session()->put('newkf', 1);
@@ -36,6 +33,14 @@ class UserController extends CommonController
             }
 
             $res = User::where('id', $uid)->first()->toArray();
+            //未被员工推广的用户才可以关联
+            if($res['admin_id'] == 0) {
+                //通过招商链接进入（成为经销商）
+                if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => $admintype]);
+                //该用户成为经销商(部门推广链接会带三个参数)
+                if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => $admintype]);
+            }
+
             $res[ 'user_article' ] = UserArticles::where('uid', $res[ 'id' ])->count();
             $res[ 'read_share' ] = Footprint::where('uid', $res[ 'id' ])->count();
             $pic = '';

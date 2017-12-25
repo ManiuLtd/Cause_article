@@ -82,8 +82,6 @@
                     <td>
                         @if($value->state == 1 && $value->refund_state != 1)
                             <a class="btn btn-xs btn-danger wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
-                        @else
-                            <a class="btn btn-xs btn-info">已退款</a>
                         @endif
                     </td>
                 </tr>

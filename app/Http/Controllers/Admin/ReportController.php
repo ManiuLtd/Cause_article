@@ -9,9 +9,12 @@
 namespace App\Http\Controllers\Admin;
 
 
+use App\Model\Admin;
 use App\Model\Article;
+use App\Model\Order;
 use App\Model\Report;
 use App\Model\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReportController extends CommonController
@@ -36,5 +39,240 @@ class ReportController extends CommonController
         }
         $list = Report::with('article','user')->where($where)->orderBy('created_at','desc')->paginate(15);
         return view('admin.report.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+    }
+
+
+    public function extensionReport()
+    {
+        $tomorrow = Carbon::parse('tomorrow');
+        $extension = Admin::where('gid', 14)->get();
+        $tot_tomorrow = Carbon::parse('tomorrow');
+        foreach ($extension as $key => $value) {
+            $tot_ext_count = 0;
+            $tot_count = 0;
+            for ($i = 1; $i <= 30; $i++) {
+                //用户列
+                $last_day = Carbon::parse('tomorrow')->subDays($i);
+                $ext_count = Order::where('admin_id', $value->id)->whereBetween('pay_time',[$last_day, $tomorrow])->count();
+                $count[$last_day->month."-".$last_day->day] = $ext_count;
+                $tot_ext_count += $ext_count;
+
+                //总计列（最后一次循环的时候才操作）
+                if(count($extension) == $key+1) {
+                    $totcount = Order::where([ [ 'admin_id', '<>', 0 ], [ 'admin_type', '1' ] ])->whereBetween('pay_time', [ $last_day, $tot_tomorrow ])->count();
+                    $aacount[ $last_day->month . "-" . $last_day->day ] = $totcount;
+                    $tot_count += $totcount;
+                    $tot_tomorrow = $last_day;
+                }
+
+                $tomorrow = $last_day;
+            }
+
+            $extension[$key]['count'] = array_merge($count, ['总计'=>$tot_ext_count]);
+            //最后一次循环的时候才操作
+            if(count($extension) == $key+1) {
+                $extension[ $key ][ 'tot_count' ] = array_merge($aacount, [ '总计' => $tot_count ]);
+            }
+        }
+        $head = array_merge($count, ['总计'=>$tot_ext_count]);
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.report.extension', compact('head', 'extension', 'menu', 'active'));
+    }
+
+    /**
+     * 订单报表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function report()
+    {
+        //今天凌晨时间
+        $today_time = Carbon::today();
+        //昨日凌晨时间
+        $yesterday_time = Carbon::yesterday();
+        //明天凌晨时间
+        $tomorrow_time = Carbon::tomorrow();
+        //前天凌晨时间
+        $day_before_yesterday_time = Carbon::yesterday()->subDay();
+        //本月初时间
+        $start_month_time = Carbon::now()->startOfMonth();
+        //下月初时间
+        $end_month_time = Carbon::now()->addMonth(1)->startOfMonth();
+        //上月初时间
+        $last_month_time = Carbon::now()->addMonth(-1)->startOfMonth();
+        //前月初时间
+        $before_last_month_time = Carbon::now()->addMonth(-2)->startOfMonth();
+
+        /*---- 今日 ----*/
+        $today_bw_time = [$today_time, $tomorrow_time];
+        //注册
+        $today['user_register'] = User::whereBetween('created_at', $today_bw_time)->count();
+        //开通
+        $today['membership'] = Order::where('state', 1)->whereBetween('created_at', [$today_time, $tomorrow_time])->count();
+        //开通率
+        $today['order_count'] = Order::whereBetween('created_at', $today_bw_time)->count();
+        if($today['membership'] != 0 || $today['order_count'] != 0) {
+            $today[ 'membership_rate' ] = ($today[ 'membership' ] / $today[ 'order_count' ]) * 100;
+        } else {
+            $today[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $today['order_money'] = Order::where('state', 1)->whereBetween('created_at', $today_bw_time)->sum('price');
+        //退款
+        $today['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $today_bw_time)->count();
+        //退款金额
+        $today['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $today_bw_time)->sum('price');
+        /*---- 今日 ----*/
+
+        /*---- 昨日 ----*/
+        $yesterday_bw_time = [$yesterday_time, $today_time];
+        //注册
+        $yesterday['user_register'] = User::whereBetween('created_at', $yesterday_bw_time)->count();
+        //开通
+        $yesterday['membership'] = Order::where('state', 1)->whereBetween('created_at', $yesterday_bw_time)->count();
+        //开通率
+        $yesterday['order_count'] = Order::whereBetween('created_at', $yesterday_bw_time)->count();
+        if($yesterday['membership'] != 0 || $yesterday['order_count'] != 0) {
+            $yesterday[ 'membership_rate' ] = ($yesterday[ 'membership' ] / $yesterday[ 'order_count' ]) * 100;
+        } else {
+            $yesterday[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $yesterday['order_money'] = Order::where('state', 1)->whereBetween('created_at', $yesterday_bw_time)->sum('price');
+        //退款
+        $yesterday['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $yesterday_bw_time)->count();
+        //退款金额
+        $yesterday['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $yesterday_bw_time)->sum('price');
+        /*---- 昨日 ----*/
+
+        /*---- 同比 ----*/
+        //注册
+        $today_yesterday['user_register'] = $today['user_register'] - $yesterday['user_register'];
+        //开通
+        $today_yesterday['membership'] = $today['membership'] - $yesterday['membership'];
+        //开通率
+        $today_yesterday['order_count'] = $today['order_count'] - $yesterday['order_count'];
+        if($today_yesterday['membership'] != 0 || $today_yesterday['order_count'] != 0) {
+            $today_yesterday[ 'membership_rate' ] = ($today_yesterday[ 'membership' ] / $today_yesterday[ 'order_count' ]) * 100;
+        } else {
+            $today_yesterday[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $today_yesterday['order_money'] = $today['order_money'] - $yesterday['order_money'];
+        //退款
+        $today_yesterday['refund'] = $today['refund'] - $yesterday['refund'];
+        //退款金额
+        $today_yesterday['refund_money'] = $today['refund_money'] - $yesterday['refund_money'];
+        /*---- 同比 ----*/
+
+        /*---- 前日 ----*/
+        $before_yesterday_bw_time = [$day_before_yesterday_time, $yesterday_time];
+        //注册
+        $before_yesterday['user_register'] = User::whereBetween('created_at', $before_yesterday_bw_time)->count();
+        //开通
+        $before_yesterday['membership'] = Order::where('state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->count();
+        //开通率
+        $before_yesterday['order_count'] = Order::whereBetween('created_at', $before_yesterday_bw_time)->count();
+        if($before_yesterday['membership'] != 0 || $before_yesterday['order_count'] != 0) {
+            $before_yesterday[ 'membership_rate' ] = ($before_yesterday[ 'membership' ] / $before_yesterday[ 'order_count' ]) * 100;
+        } else {
+            $before_yesterday[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $before_yesterday['order_money'] = Order::where('state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->sum('price');
+        //退款
+        $before_yesterday['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->count();
+        //退款金额
+        $before_yesterday['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->sum('price');
+        /*---- 前日 ----*/
+
+        /*---- 本月 ----*/
+        $this_month_bw_time = [$start_month_time, $end_month_time];
+        //注册
+        $this_month['user_register'] = User::whereBetween('created_at', $this_month_bw_time)->count();
+        //开通
+        $this_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $this_month_bw_time)->count();
+        //开通率
+        $this_month['order_count'] = Order::whereBetween('created_at', $this_month_bw_time)->count();
+        if($this_month['membership'] != 0 || $this_month['order_count'] != 0) {
+            $this_month[ 'membership_rate' ] = ($this_month[ 'membership' ] / $this_month[ 'order_count' ]) * 100;
+        } else {
+            $this_month[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $this_month['order_money'] = Order::where('state', 1)->whereBetween('created_at', $this_month_bw_time)->sum('price');
+        //退款
+        $this_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $this_month_bw_time)->count();
+        //退款金额
+        $this_month['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $this_month_bw_time)->sum('price');
+        /*---- 本月 ----*/
+
+        /*---- 上月 ----*/
+        $last_month_bw_time = [$last_month_time, $start_month_time];
+        //注册
+        $last_month['user_register'] = User::whereBetween('created_at', $last_month_bw_time)->count();
+        //开通
+        $last_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $last_month_bw_time)->count();
+        //开通率
+        $last_month['order_count'] = Order::whereBetween('created_at', $last_month_bw_time)->count();
+        if($last_month['membership'] != 0 || $last_month['order_count'] != 0) {
+            $last_month[ 'membership_rate' ] = ($last_month[ 'membership' ] / $last_month[ 'order_count' ]) * 100;
+        } else {
+            $last_month[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $last_month['order_money'] = Order::where('state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('price');
+        //退款
+        $last_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->count();
+        //退款金额
+        $last_month['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('price');
+        /*---- 上月 ----*/
+
+        /*---- 前月 ----*/
+        $before_last_month_bw_time = [$before_last_month_time, $last_month_time];
+        //注册
+        $before_last_month['user_register'] = User::whereBetween('created_at', $before_last_month_bw_time)->count();
+        //开通
+        $before_last_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $before_last_month_bw_time)->count();
+        //开通率
+        $before_last_month['order_count'] = Order::whereBetween('created_at', $before_last_month_bw_time)->count();
+        if($before_last_month['membership'] != 0 || $before_last_month['order_count'] != 0) {
+            $before_last_month[ 'membership_rate' ] = ($before_last_month[ 'membership' ] / $before_last_month[ 'order_count' ]) * 100;
+        } else {
+            $before_last_month[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $before_last_month['order_money'] = Order::where('state', 1)->whereBetween('created_at', $before_last_month_bw_time)->sum('price');
+        //退款
+        $before_last_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_last_month_bw_time)->count();
+        //退款金额
+        $before_last_month['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_last_month_bw_time)->sum('price');
+        /*---- 前月 ----*/
+
+        /*---- 总计 ----*/
+        //注册
+        $total['user_register'] = User::count();
+        //开通
+        $total['membership'] = Order::where('state', 1)->count();
+        //开通率
+        $total['order_count'] = Order::count();
+        if($total['membership'] != 0 || $total['order_count'] != 0) {
+            $total[ 'membership_rate' ] = ($total[ 'membership' ] / $total[ 'order_count' ]) *100;
+        } else {
+            $total[ 'membership_rate' ] = 0;
+        }
+        //开通金额
+        $total['order_money'] = Order::sum('price');
+        //退款
+        $total['refund'] = Order::where('refund_state', 1)->count();
+        //退款金额
+        $total['refund_money'] = Order::where('refund_state', 1)->sum('price');
+        /*---- 总计 ----*/
+        $menu = $this->menu;
+        $active = $this->active;
+        $compact = compact('today','yesterday','today_yesterday','before_yesterday','this_month','last_month','before_last_month','total','menu','active');
+
+        return view('admin.report.order_report',$compact);
     }
 }
