@@ -38,7 +38,7 @@
                         <form action="{{route('admin_user.destroy',['id'=>$value['id']])}}" method="post">
                             {{csrf_field()}}
                             {{ method_field('DELETE') }}
-                            <a class="btn btn-xs btn-danger common" style="width: 26px">
+                            <a class="btn btn-xs btn-danger common" data-msg="删除管理员" style="width: 26px">
                                 <i class="icon-trash bigger-120"></i>
                             </a>
                         </form>

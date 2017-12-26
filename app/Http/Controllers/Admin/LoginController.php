@@ -62,6 +62,11 @@ class LoginController extends Controller
                 //用户输入验证码正确
                 $check = Auth::attempt(['account'=>$request->account, 'password'=>$request->password]);
                 if ($check) {
+                    $data = [
+                        'login_ip'  =>  $request->getClientIp(),
+                        'login_time'=>  date('Y-m-d H:i:s', time())
+                    ];
+                    Admin::where('id', Auth::user()->id)->update($data);
                     //验证用户正确
                     return json_encode(['state'=>0, 'msg'=>'登录成功', 'url'=>route('admin')]);
                 }

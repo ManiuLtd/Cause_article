@@ -97,8 +97,8 @@
 		$(".hy").click(function () {
 			@if($res['extension_image'] != '')
 			showProgress('正在发送海报');
-				$.post("{{route('inviting')}}",{url:"{{$res['extension_image']}}", type:1, _token:"{{csrf_token()}}"},function (ret) {
-				hideProgress();
+			$.post("{{route('inviting')}}",{url:"{{$res['extension_image']}}", type:1, _token:"{{csrf_token()}}"},function (ret) {
+			    hideProgress();
 				if(ret.state == 0) {
 					$(".hint").css({"display":"block"});
 					$(".hint").find(".content").addClass('trans');

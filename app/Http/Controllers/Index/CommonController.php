@@ -34,7 +34,7 @@ class CommonController extends Controller
                         //把用户微信头像转换为base64保存到本地以防用户更换头像后不显示
 //                        $head_dir = GrabImage($res['headimgurl'], $res['openid']);
 
-                        $data = ['wc_nickname' => $res['nickname'], 'head' => $res['headimgurl'], 'openid' => $res['openid']];
+                        $data = ['wc_nickname' => "{$res['nickname']}", 'head' => "{$res['headimgurl']}", 'openid' => "{$res['openid']}"];
                         //保存用户
                         $id = User::insertGetId($data);
                         $u = ['id' => $id, 'wc_nickname' => $res['nickname'], 'head' => $res['headimgurl'], 'phone' => ''];

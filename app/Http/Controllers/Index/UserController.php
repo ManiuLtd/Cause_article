@@ -14,6 +14,8 @@ use App\Model\User;
 use App\Model\UserArticles;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Wxpay\Wechat;
 
 class UserController extends CommonController
 {
@@ -51,7 +53,7 @@ class UserController extends CommonController
                 $arr = getimagesize($url);
                 $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
                 //头像转base64
-                if(strpos(\Session::get('head_pic'),"https")) {
+                if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
                     $head = app(User::class)->curl_url(\Session::get('head_pic'), 2);
                 } else {
                     $head = app(User::class)->curl_url(config('app.url').\Session::get('head_pic'), 2);
@@ -125,22 +127,22 @@ class UserController extends CommonController
     public function invitingFriends( Request $request )
     {
         $uid = session()->get('user_id');
-        if ( $request->type == 1 ) {
-            $image = $request->url;
-        } elseif ( $request->type == 2 ) {
-            // 保存本地图片
-            $path = base64Toimg($request->url, 'inviting_qrcode');
-            //待扩展-》如已生成的图片下次直接用原来的图片上传临时素材发送客服消息
-            User::where('id', $uid)->update([ 'extension_image' => $path[ 'path' ] ]);
-            $image = $path[ 'path' ];
-        }
-        // 上传临时图片素材
-        $app = new Application(config('wechat.wechat_config'));
-        $temporary = $app->material_temporary;
-        $ret = $temporary->uploadImage("../public_html/uploads/" . $image);
-        // 发送客服消息
         $user = User::where('id', $uid)->first();
         if ( $user->subscribe == 1 ) {
+            if ( $request->type == 1 ) {
+                $image = $request->url;
+            } elseif ( $request->type == 2 ) {
+                // 保存本地图片
+                $path = base64Toimg($request->url, 'inviting_qrcode');
+                //待扩展-》如已生成的图片下次直接用原来的图片上传临时素材发送客服消息
+                User::where('id', $uid)->update([ 'extension_image' => $path[ 'path' ] ]);
+                $image = $path[ 'path' ];
+            }
+            // 上传临时图片素材
+            $app = new Application(config('wechat.wechat_config'));
+            $temporary = $app->material_temporary;
+            $ret = $temporary->uploadImage("../public_html/uploads/" . $image);
+
             //推送文本消息
             $this->extension_tyep($user->extension_type, $user->extension_num, $user->openid);
             //推送推广图片
@@ -148,7 +150,17 @@ class UserController extends CommonController
 
             return response()->json([ 'state' => 0, 'errormsg' => '发送成功' ]);
         } else {
-            return response()->json([ 'state' => 401, 'errormsg' => '请先关注公众号' ]);
+            $url_token = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . env('WECHAT_APP_ID') . "&secret=" . env('WECHAT_APP_SECRET');
+            $ret_token = json_decode(Wechat::httpGet($url_token), true);
+            $info_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={$ret_token['access_token']}&openid={$user->openid}&lang=zh_CN";
+            $user_info = json_decode(Wechat::httpGet($info_url), true);
+            Log::debug($user_info);
+            if($user_info['subscribe'] != 1) {
+                return response()->json([ 'state' => 401, 'errormsg' => '请先关注公众号' ]);
+            } else {
+                User::where('id', $uid)->update(['subscribe' => 1]);
+
+            }
         }
     }
 

@@ -37,6 +37,7 @@
             </div>
             <div class="space-4"></div>
 
+
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 管理员名 </label>
                 <div class="col-sm-9">
@@ -76,7 +77,7 @@
             <div class="col-md-offset-1 col-md-9">
                 <button class="btn btn-info" type="button" id="submit">
                     <i class="icon-ok bigger-110"></i>
-                    添加
+                    修改
                 </button>
 
                 <button class="btn" type="reset">
