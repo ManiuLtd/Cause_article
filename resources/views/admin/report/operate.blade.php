@@ -5,7 +5,7 @@
         <div class="page-header">
             <h1> {{v('headtitle')}} </h1>
         </div>
-        <form action="{{ route('admin.extension_report') }}" class="form-inline" method="get" style="margin-bottom: 10px">
+        <form action="{{ route('admin.operate_report') }}" class="form-inline" method="get" style="margin-bottom: 10px">
             <div class="row">
                 <div class="col-xs-4 col-sm-3">
                     <div class="input-group">

@@ -129,8 +129,10 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::post('order_del/{order}', 'OrderController@delete')->name('admin.order_del');
         //订单报表
         Route::get('order_report', 'ReportController@report');
+        //运营报表（显示运营所有员工的所有业绩）
+        Route::get('operate_report', 'ReportController@operateReport')->name('admin.operate_report');
         //推广报表（显示招商所有员工的所有业绩）
-        Route::get('extension_report', 'ReportController@extensionReport');
+        Route::get('extension_report', 'ReportController@extensionReport')->name('admin.extension_report');
     });
 
     //上传图片

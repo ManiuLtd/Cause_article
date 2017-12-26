@@ -16,6 +16,7 @@ use App\Model\Report;
 use App\Model\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends CommonController
 {
@@ -41,44 +42,65 @@ class ReportController extends CommonController
         return view('admin.report.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
     }
 
-
-    public function extensionReport()
+    /**
+     * 招商推广报表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function extensionReport(Request $request)
     {
-        $tomorrow = Carbon::parse('tomorrow');
-        $extension = Admin::where('gid', 14)->get();
-        $tot_tomorrow = Carbon::parse('tomorrow');
-        foreach ($extension as $key => $value) {
-            $tot_ext_count = 0;
-            $tot_count = 0;
-            for ($i = 1; $i <= 30; $i++) {
-                //用户列
-                $last_day = Carbon::parse('tomorrow')->subDays($i);
-                $ext_count = Order::where('admin_id', $value->id)->whereBetween('pay_time',[$last_day, $tomorrow])->count();
-                $count[$last_day->month."-".$last_day->day] = $ext_count;
-                $tot_ext_count += $ext_count;
-
-                //总计列（最后一次循环的时候才操作）
-                if(count($extension) == $key+1) {
-                    $totcount = Order::where([ [ 'admin_id', '<>', 0 ], [ 'admin_type', '1' ] ])->whereBetween('pay_time', [ $last_day, $tot_tomorrow ])->count();
-                    $aacount[ $last_day->month . "-" . $last_day->day ] = $totcount;
-                    $tot_count += $totcount;
-                    $tot_tomorrow = $last_day;
-                }
-
-                $tomorrow = $last_day;
-            }
-
-            $extension[$key]['count'] = array_merge($count, ['总计'=>$tot_ext_count]);
-            //最后一次循环的时候才操作
-            if(count($extension) == $key+1) {
-                $extension[ $key ][ 'tot_count' ] = array_merge($aacount, [ '总计' => $tot_count ]);
-            }
+        $time = explode(' - ',$request->date_range_picker);
+        if(!empty($time[0])) {
+            $tomorrow = Carbon::parse($time[1])->addDay();
+            $tot_tomorrow = Carbon::parse($time[1])->addDay();
+            $for_length = $tomorrow->day - Carbon::parse($time[0])->day;
+        } else {
+            $tomorrow = Carbon::parse('tomorrow');
+            $tot_tomorrow = Carbon::parse('tomorrow');
+            $for_length = 30;
         }
-        $head = array_merge($count, ['总计'=>$tot_ext_count]);
+
+        $gid = Auth::user()->gid;
+        if($gid == 1) {
+            $extension = Admin::where('gid', 14)->get();
+        } else {
+            $extension = Admin::where('id', Auth::user()->id)->get();
+        }
+        app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 1);
         $menu = $this->menu;
         $active = $this->active;
 
-        return view('admin.report.extension', compact('head', 'extension', 'menu', 'active'));
+        return view('admin.report.extension', compact('extension', 'menu', 'active'));
+    }
+
+    /**
+     * 运营推广报表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function operateReport(Request $request)
+    {
+        $time = explode(' - ',$request->date_range_picker);
+        if(!empty($time[0])) {
+            $tomorrow = Carbon::parse($time[1])->addDay();
+            $tot_tomorrow = Carbon::parse($time[1])->addDay();
+            $for_length = $tomorrow->day - Carbon::parse($time[0])->day;
+        } else {
+            $tomorrow = Carbon::parse('tomorrow');
+            $tot_tomorrow = Carbon::parse('tomorrow');
+            $for_length = 30;
+        }
+
+        $gid = Auth::user()->gid;
+        if($gid == 1) {
+            $extension = Admin::where('gid', 15)->get();
+        } else {
+            $extension = Admin::where('id', Auth::user()->id)->get();
+        }
+
+        app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 2);
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.report.operate', compact('extension', 'menu', 'active'));
     }
 
     /**
@@ -112,7 +134,7 @@ class ReportController extends CommonController
         $today['membership'] = Order::where('state', 1)->whereBetween('created_at', [$today_time, $tomorrow_time])->count();
         //开通率
         $today['order_count'] = Order::whereBetween('created_at', $today_bw_time)->count();
-        if($today['membership'] != 0 || $today['order_count'] != 0) {
+        if($today['membership'] != 0 && $today['order_count'] != 0) {
             $today[ 'membership_rate' ] = ($today[ 'membership' ] / $today[ 'order_count' ]) * 100;
         } else {
             $today[ 'membership_rate' ] = 0;
@@ -133,7 +155,7 @@ class ReportController extends CommonController
         $yesterday['membership'] = Order::where('state', 1)->whereBetween('created_at', $yesterday_bw_time)->count();
         //开通率
         $yesterday['order_count'] = Order::whereBetween('created_at', $yesterday_bw_time)->count();
-        if($yesterday['membership'] != 0 || $yesterday['order_count'] != 0) {
+        if($yesterday['membership'] != 0 && $yesterday['order_count'] != 0) {
             $yesterday[ 'membership_rate' ] = ($yesterday[ 'membership' ] / $yesterday[ 'order_count' ]) * 100;
         } else {
             $yesterday[ 'membership_rate' ] = 0;
@@ -153,7 +175,7 @@ class ReportController extends CommonController
         $today_yesterday['membership'] = $today['membership'] - $yesterday['membership'];
         //开通率
         $today_yesterday['order_count'] = $today['order_count'] - $yesterday['order_count'];
-        if($today_yesterday['membership'] != 0 || $today_yesterday['order_count'] != 0) {
+        if($today_yesterday['membership'] != 0 && $today_yesterday['order_count'] != 0) {
             $today_yesterday[ 'membership_rate' ] = ($today_yesterday[ 'membership' ] / $today_yesterday[ 'order_count' ]) * 100;
         } else {
             $today_yesterday[ 'membership_rate' ] = 0;
@@ -174,7 +196,7 @@ class ReportController extends CommonController
         $before_yesterday['membership'] = Order::where('state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->count();
         //开通率
         $before_yesterday['order_count'] = Order::whereBetween('created_at', $before_yesterday_bw_time)->count();
-        if($before_yesterday['membership'] != 0 || $before_yesterday['order_count'] != 0) {
+        if($before_yesterday['membership'] != 0 && $before_yesterday['order_count'] != 0) {
             $before_yesterday[ 'membership_rate' ] = ($before_yesterday[ 'membership' ] / $before_yesterday[ 'order_count' ]) * 100;
         } else {
             $before_yesterday[ 'membership_rate' ] = 0;
@@ -195,7 +217,7 @@ class ReportController extends CommonController
         $this_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $this_month_bw_time)->count();
         //开通率
         $this_month['order_count'] = Order::whereBetween('created_at', $this_month_bw_time)->count();
-        if($this_month['membership'] != 0 || $this_month['order_count'] != 0) {
+        if($this_month['membership'] != 0 && $this_month['order_count'] != 0) {
             $this_month[ 'membership_rate' ] = ($this_month[ 'membership' ] / $this_month[ 'order_count' ]) * 100;
         } else {
             $this_month[ 'membership_rate' ] = 0;
@@ -216,7 +238,7 @@ class ReportController extends CommonController
         $last_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $last_month_bw_time)->count();
         //开通率
         $last_month['order_count'] = Order::whereBetween('created_at', $last_month_bw_time)->count();
-        if($last_month['membership'] != 0 || $last_month['order_count'] != 0) {
+        if($last_month['membership'] != 0 && $last_month['order_count'] != 0) {
             $last_month[ 'membership_rate' ] = ($last_month[ 'membership' ] / $last_month[ 'order_count' ]) * 100;
         } else {
             $last_month[ 'membership_rate' ] = 0;
@@ -237,7 +259,7 @@ class ReportController extends CommonController
         $before_last_month['membership'] = Order::where('state', 1)->whereBetween('created_at', $before_last_month_bw_time)->count();
         //开通率
         $before_last_month['order_count'] = Order::whereBetween('created_at', $before_last_month_bw_time)->count();
-        if($before_last_month['membership'] != 0 || $before_last_month['order_count'] != 0) {
+        if($before_last_month['membership'] != 0 && $before_last_month['order_count'] != 0) {
             $before_last_month[ 'membership_rate' ] = ($before_last_month[ 'membership' ] / $before_last_month[ 'order_count' ]) * 100;
         } else {
             $before_last_month[ 'membership_rate' ] = 0;
@@ -257,7 +279,7 @@ class ReportController extends CommonController
         $total['membership'] = Order::where('state', 1)->count();
         //开通率
         $total['order_count'] = Order::count();
-        if($total['membership'] != 0 || $total['order_count'] != 0) {
+        if($total['membership'] != 0 && $total['order_count'] != 0) {
             $total[ 'membership_rate' ] = ($total[ 'membership' ] / $total[ 'order_count' ]) *100;
         } else {
             $total[ 'membership_rate' ] = 0;

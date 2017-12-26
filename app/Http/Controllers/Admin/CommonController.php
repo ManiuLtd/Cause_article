@@ -26,7 +26,7 @@ class CommonController extends Controller
         //必须使用以下方式才能在里面获取session
         $this->middleware(function ($request, $next) {
             $aid = Auth::user()->id;
-            $gid = Admin::where('id', $aid)->value('gid');
+            $gid = Auth::user()->gid;
             //获取用户组权限ID
             $adminrule = explode(',', AdminGroup::where('id', $gid)->value('rule'));
             //递归输出栏目

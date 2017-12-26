@@ -30,7 +30,7 @@
 						<ul class="breadcrumb">
 							<li>
 								<i class="icon-home home-icon"></i>
-								<a href="/admin">首页</a>
+								<a href="/admin/index">首页</a>
 							</li>
 							<li class="active">{{v('headtitle')}}</li>
 						</ul><!-- .breadcrumb -->

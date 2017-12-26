@@ -34,10 +34,10 @@ class UserController extends CommonController
 
             $res = User::where('id', $uid)->first()->toArray();
             //未被员工推广的用户才可以关联
-            if($res['admin_id'] == 0) {
-                //通过招商链接进入（成为经销商）
+            if($res['admin_id'] == 0 && $res['admin_type'] == 0) {
+                //通过招商链接进入（成为经销商并关联招商员工）
                 if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => $admintype]);
-                //该用户成为经销商(部门推广链接会带三个参数)
+                //通过运营链接进入 (该用户关联运营员工)
                 if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => $admintype]);
             }
 
