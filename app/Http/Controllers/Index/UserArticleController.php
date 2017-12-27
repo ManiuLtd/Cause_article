@@ -41,13 +41,12 @@ class UserArticleController extends CommonController
             $addfootid = '';
             $fkarticle = '';
             $uarticle = UserArticles::with('user', 'article')->where('id', $id)->first();
-
             //获取品牌
             $brand = Brand::find($uarticle->user->brand_id);
 
             //关联账号关系
             $user = User::find($uid);
-            if ( empty($user->dealer_id) && empty($user->extension_id) ) {
+            if ( empty($user->dealer_id) && empty($user->extension_id) && $uid != $uarticle->uid ) {
                 if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
 
                     if ( $brand->type == 2 ) {

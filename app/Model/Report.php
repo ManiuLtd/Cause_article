@@ -28,6 +28,7 @@ class Report extends Model
         return $this->belongsTo(User::class, 'uid');
     }
 
+    //通用报表数据
     public function report( $extension, $gid, $tomorrow, $tot_tomorrow, $for_length, $type )
     {
         foreach ($extension as $key => $value) {
@@ -52,7 +53,7 @@ class Report extends Model
 
                 $tomorrow = $last_day;
             }
-
+            $tomorrow = Carbon::parse('tomorrow');
             $extension[$key]['count'] = array_merge($count, ['总计'=>$tot_ext_count]);
             if($gid == 1) {
                 //最后一次循环的时候才操作
@@ -61,9 +62,11 @@ class Report extends Model
                 }
             }
         }
+//        die;
         return $extension;
     }
 
+    //计算
     public function orderCount( $admin_type, $last_day, $tot_tomorrow, $admin_id = 0 )
     {
         $where = [['state', 1],['refund_state', 0]];

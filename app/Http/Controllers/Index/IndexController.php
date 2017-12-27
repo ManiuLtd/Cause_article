@@ -8,20 +8,15 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Model\Article;
-use App\Model\Banner;
-use App\Model\Brand;
-use App\Model\Footprint;
-use App\Model\Report;
-use App\Model\User;
-use App\Model\UserArticles;
+use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
+//use App\Model\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
     /**
      * @title 首页
-     * @param int $type 文章类型
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index(Request $request)
@@ -35,12 +30,18 @@ class IndexController extends CommonController
             }
 
             //banner图
-            $banner_list = Banner::all();
+            if(Cache::has('banner')) {
+                $banner_list = Cache::get('banner');
+            } else {
+                $banner_list = Banner::all();
+                Cache::put('banner', $banner_list, 30);
+            }
 
             $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
             $type = [ 1, 2, 3, 4 ];
             if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 4 ];
-            $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)->when($user_brand, function ( $query ) use ( $user_brand ) {
+            $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
+                ->when($user_brand, function ( $query ) use ( $user_brand ) {
                 //根据用户选择的品牌显示文章
                 return $query->whereIn('brand_id', [ 0, $user_brand ]);
             })->get();

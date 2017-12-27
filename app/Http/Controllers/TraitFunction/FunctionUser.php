@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\TraitFunction;
+namespace App\Http\Controllers\TraitFunction;
 
 use App\Model\User;
 use EasyWeChat\Foundation\Application;

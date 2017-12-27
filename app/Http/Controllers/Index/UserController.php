@@ -9,8 +9,8 @@
 namespace App\Http\Controllers\Index;
 
 use App\Classes\Gdimage\Images;
-use App\Http\Controllers\Admin\TraitFunction\FunctionUser;
-use App\Http\Controllers\Admin\TraitFunction\Wechat;
+use App\Http\Controllers\TraitFunction\FunctionUser;
+use App\Http\Controllers\TraitFunction\Wechat;
 use App\Model\Footprint;
 use App\Model\User;
 use App\Model\UserArticles;
