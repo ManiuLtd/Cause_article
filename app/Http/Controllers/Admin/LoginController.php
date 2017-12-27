@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Model\Admin;
 use Gregwar\Captcha\CaptchaBuilder;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -69,6 +68,8 @@ class LoginController extends Controller
                     Admin::where('id', Auth::user()->id)->update($data);
                     //验证用户正确
                     return json_encode(['state'=>0, 'msg'=>'登录成功', 'url'=>route('admin')]);
+                } else {
+                    return json_encode(['state'=>401, 'msg'=>'账号或密码错误']);
                 }
             } else {
                 //用户输入验证码错误

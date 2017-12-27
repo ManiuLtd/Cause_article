@@ -9,16 +9,17 @@
 namespace App\Http\Controllers\Index;
 
 use App\Classes\Gdimage\Images;
+use App\Http\Controllers\Admin\TraitFunction\FunctionUser;
+use App\Http\Controllers\Admin\TraitFunction\Wechat;
 use App\Model\Footprint;
 use App\Model\User;
 use App\Model\UserArticles;
-use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Wxpay\Wechat;
 
 class UserController extends CommonController
 {
+    use FunctionUser, Wechat;
+
     /**
      * @title  个人中心
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View become_dealer
@@ -129,83 +130,20 @@ class UserController extends CommonController
         $uid = session()->get('user_id');
         $user = User::where('id', $uid)->first();
         if ( $user->subscribe == 1 ) {
-            if ( $request->type == 1 ) {
-                $image = $request->url;
-            } elseif ( $request->type == 2 ) {
-                // 保存本地图片
-                $path = base64Toimg($request->url, 'inviting_qrcode');
-                //待扩展-》如已生成的图片下次直接用原来的图片上传临时素材发送客服消息
-                User::where('id', $uid)->update([ 'extension_image' => $path[ 'path' ] ]);
-                $image = $path[ 'path' ];
-            }
-            // 上传临时图片素材
-            $app = new Application(config('wechat.wechat_config'));
-            $temporary = $app->material_temporary;
-            $ret = $temporary->uploadImage("../public_html/uploads/" . $image);
-
-            //推送文本消息
-            $this->extension_tyep($user->extension_type, $user->extension_num, $user->openid);
-            //推送推广图片
-            message($user->openid, 'image', $ret->media_id);
+            $this->optionInviting($user, $request);
 
             return response()->json([ 'state' => 0, 'errormsg' => '发送成功' ]);
         } else {
-            $url_token = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . env('WECHAT_APP_ID') . "&secret=" . env('WECHAT_APP_SECRET');
-            $ret_token = json_decode(Wechat::httpGet($url_token), true);
-            $info_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token={$ret_token['access_token']}&openid={$user->openid}&lang=zh_CN";
-            $user_info = json_decode(Wechat::httpGet($info_url), true);
-            Log::debug($user_info);
+            $user_info = $this->ObtainUserInfo($user);
+
             if($user_info['subscribe'] != 1) {
                 return response()->json([ 'state' => 401, 'errormsg' => '请先关注公众号' ]);
             } else {
                 User::where('id', $uid)->update(['subscribe' => 1]);
-
+                $this->optionInviting($user, $request);
+                return response()->json([ 'state' => 0, 'errormsg' => '发送成功' ]);
             }
         }
     }
-
-    /**
-     * 推送自己的推广状态
-     * @param $type
-     * @param $openid
-     */
-    public function extension_tyep( $type, $num, $openid )
-    {
-        switch ( $type ) {
-            case '0':
-                $num = 5 - $num;
-                $context = "分享下图邀请你的朋友同事也来使用事业头条，首次成功邀请5个好友使用可免费赠送5天【谁查看我】功能，您还差 $num 人即可免费享受该功能。\n\n↓↓↓↓↓↓";
-
-                return message($openid, 'text', $context);
-                break;
-            case '1':
-                $num = 15 - $num;
-                $context = "分享下图邀请你的朋友同事也来使用事业头条，成功邀请10个好友使用可免费赠送5天【谁查看我】功能，您还差 $num 人即可免费享受该功能。\n\n↓↓↓↓↓↓";
-                message($openid, 'text', $context);
-                break;
-            case '2':
-                $num = 35 - $num;
-                $context = "分享下图邀请你的朋友同事也来使用事业头条，成功邀请20个好友使用可免费赠送10天【谁查看我】功能，您还差 $num 人即可免费享受该功能。\n\n↓↓↓↓↓↓";
-                message($openid, 'text', $context);
-                break;
-            case '3':
-                $num = 65 - $num;
-                $context = "分享下图邀请你的朋友同事也来使用事业头条，成功邀请30个好友使用可免费赠送10天【谁查看我】功能，您还差 $num 人即可免费享受该功能。\n\n↓↓↓↓↓↓";
-                message($openid, 'text', $context);
-                break;
-            case '4':
-                $num = 105 - $num;
-                $context = "分享下图邀请你的朋友同事也来使用事业头条，成功邀请40个好友使用可免费赠送20天【谁查看我】功能，您还差 $num 人即可免费享受该功能。\n\n↓↓↓↓↓↓";
-                message($openid, 'text', $context);
-                break;
-            case '5':
-                $context = "分享下图邀请你的朋友同事也来使用事业头条吧。\n\n↓↓↓↓↓↓";
-                message($openid, 'text', $context);
-                break;
-        }
-    }
-
-
-
 
 }
