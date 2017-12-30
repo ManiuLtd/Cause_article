@@ -7,11 +7,12 @@ var checkForm = function (config){
         "e": /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
         "cname": /^[\u0391-\uFFE5]{2,15}$/,
         "idcard": /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
+        "card" : /^\d{16,20}$/,
         "pwd" : /^[^\s]{6,16}$/,
         "domain" : /^[^\s]{3,6}$/
     };
     this.form = config.form || '#forms';
-    this.btn = config.btn || '#submit';
+    this.btn = config.btn || '.submit';
     this.error = config.error || null;
     this.complete = config.complete || null;
     this.init();
@@ -25,7 +26,7 @@ checkForm.prototype.selector = function (selector,obj){
 checkForm.prototype.init = function (){
     var _this = this;
     var _btn = _this.selector(_this.btn),_form = _this.selector(_this.form);
-    if(!_btn || !_form) return false;
+    if(!_btn || !_form) return this;
     _btn.addEventListener('click',function (){
         var _formEle = _this.selector('input,select,textarea',_form);
         var _passed = true;
@@ -62,15 +63,22 @@ checkForm.prototype.init = function (){
 checkForm.prototype.check = function (){
     if(arguments.length == 0) return false;
     var _this = this;
-    for(var i = 0;i < arguments.length;i ++){
-        var rule = arguments[i].getAttribute('data-rule'),disable = arguments[i].disabled;
+    for(var i = 0;i < arguments[0].length;i ++){
+        var obj = arguments[0][i];
+        var rule = obj.getAttribute('data-rule'),disable = obj.disabled,sync = obj.getAttribute('data-sync');
+        if(sync && _this.selector(sync)) rule = _this.selector(sync).getAttribute('data-rule');
+        if(sync && obj.value != _this.selector(sync).value && !disable){
+            return obj.getAttribute('data-errmsg');
+            break;
+        }
         if(rule && !disable){
             var ruleReg = rule.indexOf('/') > -1 ? eval(rule) : _this.defaultRule[rule];
             if(ruleReg){
-                var errMsg = arguments[i].getAttribute('data-errmsg'),val = arguments[i].value;
+                var errMsg = obj.getAttribute('data-errmsg'),val = obj.value;
                 if(!ruleReg.test(val)){
-                    arguments[i].focus();
+                    obj.focus();
                     return errMsg;
+                    break;
                 }
             }
         }

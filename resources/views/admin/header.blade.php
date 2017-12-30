@@ -19,7 +19,7 @@
 
                 <li class="light-blue">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="/uploads/{{ Auth::user()->head }}" alt="Jason's Photo" />
+                        <img class="nav-user-photo" src="{{!empty(Auth::user()->head) ? '/uploads/' . Auth::user()->head : '/kf_login.png' }}" alt="Jason's Photo" />
                         <span class="user-info">
                             <small>欢迎光临</small>
                             {{ Auth::user()->account }}

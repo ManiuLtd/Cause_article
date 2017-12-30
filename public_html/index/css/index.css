@@ -132,14 +132,70 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #focus .front .myfront i{width: 2rem;height:2rem;font-size: 2rem;}
 #focus .front .line{width: 1px;height: 4rem;margin-top: 0.5rem; background: #cacaca;}
 #focus .func{margin-top: 1.5rem;background: #fff;color:#393939;}
-#focus .func a{height:4rem;font-size: 1.3rem;}
-#focus .func a.card,a.kt{border-bottom:1px solid #f2f2f2; }
+#focus .func a{height:4rem;font-size: 1.3rem;border-bottom:1px solid #f2f2f2;}
+#focus .func a:last-child{border-bottom:none;}
 #focus .func a i{margin: 0 1rem;width: 3rem;height:3rem;font-size:2rem;border-radius: 6px;color:#fff;}
 #focus .hint {position: fixed;top:0;left:0;width: 100%;bottom: 0;overflow: hidden;z-index: 20;display: none;}
 #focus .hint .content.trans{animation: zoomIn 0.3s ease;}
 #focus .hint .content{position: absolute;top:22rem;left:4rem; width: 66%;background: #fff;color: #333;padding:10px;border-radius: 6px;}
 #focus .hint .content div{padding:3rem 0;height: 3rem;font-size: 1.4rem;color:#3b3b3b;}
 #focus .hint .content a{height: 3rem;background: -webkit-linear-gradient(#f95e48, #f7403c);color:#fdebea;border-radius: 6rem;font-size: 1.4rem;}
+/************************************* 推广中心 *******************************/
+#expand .sub{width:100%; padding:4rem 0 0;background:url("../image/focus.jpg") no-repeat;background-size: 100%; color:#fefaf9; }
+#expand .sub .num{height:4rem;font-size:3rem;}
+#expand .sub h2.income{height: 3rem;font-weight: lighter;font-size: 1.8rem;}
+#expand .front{width: 100%; display: flex;justify-content:space-around;padding: 4rem 0 1rem; }
+#expand .front .myfront{color:#333;}
+#expand .front .myfront em{height: 3rem;font-size: 2rem;}
+#expand .front .myfront span{height: 2rem;font-size: 1.3rem;}
+#expand .func{margin-top: 1.5rem;background: #fff;color:#393939;}
+#expand .func a{height:4rem;font-size: 1.3rem;border-bottom:1px solid #f2f2f2;}
+#expand .func a:last-child{border-bottom:none;}
+#expand .func a i{margin: 0 1rem;width: 3rem;height:3rem;font-size:2rem;border-radius: 6px;color:#fff;}
+/****************************** 申请提现 *****************************/
+#cash .cashes{margin: 2rem; background: #fff; border: 1px solid #f2f2f2;}
+#cash .cashes .title{position: relative; height: 4.6rem; border-bottom: 2px dotted #f2f2f2; padding: 0 1rem; font-size: 1.6rem;}
+#cash .cashes .title:before,#cash .cashes .title:after{content: ''; position: absolute; left: -0.6rem; bottom: -0.6rem; width: 1rem; height: 1rem; border-style: solid; border-width: 1px; border-color: transparent #eee #eee transparent; transform: rotate(-45deg); background: #f2f2f2; border-radius: 50%;}
+#cash .cashes .title:after{left: initial; right: -0.6rem; border-color: #eee transparent transparent #eee;}
+#cash .cashes .bank{position: relative; margin: 2rem; padding-right: 3rem;}
+#cash .cashes .bank div{padding: 2px 0;}
+#cash .cashes .bank div span{color: #333; font-size: 1.6rem;}
+#cash .cashes .bank div em{font-size: 1.4rem; color: #999;}
+#cash .cashes .bank a{position: absolute; top: 0; left: 0; right: 0; bottom: 0; font-size: 3.2rem; color: #999;}
+#cash .cashes h2{font-weight: normal; font-size: 3.2rem; padding-top: 1rem;}
+#cash .cashes p{font-size: 1.3rem; color: #999; padding-bottom: 2rem;}
+#cash .cashes .getcash{width: 16rem; height: 4rem; margin: 2rem auto; background: #28a7e1; color: #fff; border-radius: 5rem;font-size:1.6rem;}
+#cash .cashes .disable{background: #eee;}
+#cash .tips{position: relative; height: 3rem;}
+#cash .tips:after{content: ''; position: absolute; top: 50%; left: 2rem; right: 2rem; height: 1px; background: #e1e1e1;}
+#cash .tips span{position: relative; z-index: 6; font-size: 1.3rem; color: #888; background: #f2f2f2; padding: 0 1rem;}
+#cash .tip{padding: 1rem 2rem; font-size: 1.3rem; color: #999;}
+#cash .tip p{margin-bottom: 0.8rem;}
+/******************************** 绑定账户 *****************************/
+#account .tips{padding: 1rem 1rem 0; font-size: 1.4rem; color: #999;}
+#account .block{margin-top: 1rem; background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
+#account .block .row{position: relative; padding: 0.5rem; border-bottom: 1px solid #f5f5f5; margin-left: 1rem;}
+#account .block .row:last-child{border-bottom: none;}
+#account .block .row .title{width: 8rem;font-size:1.6rem;}
+#account .block .row select{padding: 1rem; height: 4rem; border: none;font-size:1.6rem; color: #999;}
+#account .block .row .input{text-align: right; height: 4rem; padding: 1rem; border: none; background: none;font-size:1.6rem;}
+#account .block .row input.normal{text-align: left;}
+#account .block .row i{width: 2rem; font-size: 2.2rem; color: #888;}
+#account .submit{width: 20rem; height: 4.6rem; border-radius: 5rem; background: #28a7e1; color: #fff;font-size:1.6rem; margin: 2rem auto 1rem;}
+#account .block .row a.getcode{color: #27e;font-size:1.6rem;}
+#account .block .row a.disable{color: #999;}
+#account .hide{display: none;}
+/******************************** 提现记录 *****************************/
+#record #none{min-height: 100px;}
+#record #none.hide{display: none;}
+#record #none i{font-size: 3rem;color: #ccc;}
+#record #none p{font-size: 1.5rem; color: #999;}
+#record .date{background: #fff;}
+#record .nape{padding:1rem 2rem;border-bottom:1px solid #c9c9c9;}
+#record .nape h2{height:2.5rem;font-size:1.5rem;}
+#record .nape p{height:2rem;font-size: 1.2rem;color: #969696;}
+#record .nape p.state{color: #ffd541;font-weight: bold;}
+
 /**************************************** 我的头条 *****************************/
 #headlines .listbox{padding:0 12px;background: #fff;}
 #headlines .listbox .lists{border-bottom: 1px solid #f2f2f2;padding-top: 12px;padding-bottom: 10px;}

@@ -33,7 +33,7 @@ class User extends Model
      */
     public function extension()
     {
-        return $this->belongsTo(User::class,'extension_id');
+        return $this->belongsTo(User::class, 'extension_id');
     }
 
     /**
@@ -42,16 +42,21 @@ class User extends Model
      */
     public function dealer()
     {
-        return $this->belongsTo(User::class,'dealer_id');
+        return $this->belongsTo(User::class, 'dealer_id');
     }
 
     /**
      * @title  我的文章
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
      */
     public function user_article()
     {
-        return $this->hasMany(UserArticles::class,'uid');
+        return $this->hasMany(UserArticles::class, 'uid');
+    }
+
+    public function user_account()
+    {
+        return $this->hasOne(UserAccount::class, 'user_id');
     }
 
     /**

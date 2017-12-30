@@ -24,7 +24,7 @@ class UserController extends CommonController
      * @title  个人中心
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View become_dealer
      */
-    public function index($type = '', $dealer = '', $admintype = '')
+    public function index($type = '', $dealer = '')
     {
         $uid = \Session::get('user_id');;
         if ( $uid ) {
@@ -39,9 +39,9 @@ class UserController extends CommonController
             //未被员工推广的用户才可以关联
             if($res['admin_id'] == 0 && $res['admin_type'] == 0) {
                 //通过招商链接进入（成为经销商并关联招商员工）
-                if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => $admintype]);
+                if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
                 //通过运营链接进入 (该用户关联运营员工)
-                if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => $admintype]);
+                if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
             }
 
             $res[ 'user_article' ] = UserArticles::where('uid', $res[ 'id' ])->count();

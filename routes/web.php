@@ -37,11 +37,25 @@ Route::group(['namespace' => 'Index'], function () {
     //微信配置
     Route::any('bw_wechat', 'WechatController@index')->name('wechat');
     //用户中心
-    Route::get('user/{type?}/{dealer?}/{admintype?}', 'UserController@index')->name('index.user');
+    Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息
     Route::match(['get','post'], 'user_basic', 'UserController@userBasic')->name('user_basic');
     //查看获取个人二维码帮助页面
     Route::get('qrcode_help', 'UserController@qrcodeHelp')->name('qecode_help');
+    //推广中心
+    Route::get('extension', 'ExtensionController@index')->name('index.extension');
+    //提现申请
+    Route::get('cash', 'ExtensionController@applyCash')->name('index.apply_cash');
+    //绑定提现账户
+    Route::get('bind_account', 'ExtensionController@bindAccount')->name('index.bind_account');
+    //获取验证码
+    Route::post('get_code', 'ExtensionController@getCode')->name('index.get_code');
+    //验证码验证
+    Route::post('checkCode', 'ExtensionController@checkCode')->name('index.checkCode');
+    //提现
+    Route::post('get_money/{integralUse?}', 'ExtensionController@getMoney')->name('get_money');
+    //提现记录
+    Route::get('get_money_record/{integralUse?}', 'ExtensionController@getMoneyRecord')->name('get_money_record');
     //开通会员页面
     Route::get('open_member', 'UserController@openMember')->name('open_member');
     //获取用户在个人文章页面停留时间

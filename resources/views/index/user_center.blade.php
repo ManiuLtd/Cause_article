@@ -71,6 +71,10 @@
 				<img id="code" src="{{ $pic }}" alt="" style="display: none">
 				<img src="{{ $head }}" id="userImg" alt="" style="display: none;">
 			</a>
+			<a href="{{ route('index.extension') }}" class="flexitem centerv tg">
+				<i class="flex center bls bls-generalize" style="background:#35f921; "></i>
+				<span class="flex center text">推广中心</span>
+			</a>
 		</div>
 	</div>
 

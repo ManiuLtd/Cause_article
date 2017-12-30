@@ -9,6 +9,7 @@
             {{csrf_field()}}
             {{method_field('PUT')}}
 
+            @if($res->gid == 1)
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 所属分组 </label>
                 <div class="col-sm-2">
@@ -19,6 +20,7 @@
                     </select>
                 </div>
             </div>
+            @endif
 
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 头像 </label>
@@ -26,7 +28,7 @@
                     <div class="upload-list">
                         <div class="old">
                             <input type="hidden" name="head" value="{{$res->head}}" />
-                            <img src="@if(empty($res->head)) /default.jpg @else /uploads/{{$res->head}} @endif" width="100px" height="100"/>
+                            <img src="@if(empty($res->head)) /kf_login.png @else /uploads/{{$res->head}} @endif" width="100px" height="100"/>
                             <span class="deleteImage">修改</span>
                         </div>
                     </div>
@@ -37,7 +39,7 @@
             </div>
             <div class="space-4"></div>
 
-
+            @if($res->gid == 1)
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 管理员名 </label>
                 <div class="col-sm-9">
@@ -48,6 +50,7 @@
                 </div>
             </div>
             <div class="space-4"></div>
+            @endif
 
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 密码 </label>
@@ -62,7 +65,6 @@
 
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 状态 </label>
-
                 <div class="col-sm-9">
                     <label>
                         <input name="state" @if($res->state == 1) checked @endif class="ace ace-switch ace-switch-5" type="checkbox" value="1">
@@ -73,6 +75,19 @@
                     </label>
                 </div>
             </div>
+
+            @if($res->gid == 14 || $res->gid == 15)
+            <div class="form-group">
+                <label class="col-sm-1 control-label no-padding-right"> 推广链接 </label>
+                <div class="col-sm-9">
+                    @if($res->gid == 14)
+                        <input type="text" class="col-xs-10 col-sm-5" value="{{ route('index.user', ['type'=>'become_dealer', 'dealer'=>$res->id]) }}"/>
+                    @elseif($res->gid == 15)
+                        <input type="text" class="col-xs-10 col-sm-5" value="{{ route('index.user', ['type'=>'become_extension', 'dealer'=>$res->id]) }}"/>
+                    @endif
+                </div>
+            </div>
+            @endif
 
             <div class="col-md-offset-1 col-md-9">
                 <button class="btn btn-info" type="button" id="submit">

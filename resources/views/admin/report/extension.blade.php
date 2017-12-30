@@ -59,7 +59,7 @@
         </div><!-- /.table-responsive -->
     </div><!-- /span -->
     <script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
-    <script src="/admin/js/bootstrap.min.js"></script>
+    {{--<script src="/admin/js/bootstrap.min.js"></script>--}}
     <script src="/admin/js/date-time/daterangepicker.min.js"></script>
     <script src="/admin/js/date-time/moment.min.js"></script>
     <script>

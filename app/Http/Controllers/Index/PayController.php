@@ -111,8 +111,8 @@ class PayController extends Controller
                 //经销商获得佣金
                 if($pay_user->dealer_id){
                     $data = [
-                        'uid'   =>  $pay_user->dealer_id,
-                        'price' =>  $order->price * 0.3,
+                        'user_id'   =>  $pay_user->dealer_id,
+                        'price' =>  number_format($order->price * 0.3),
                         'created_at'  => date('Y-m-d H:i:s',time())
                     ];
                     DB::table('integral')->insert($data);
@@ -124,8 +124,8 @@ class PayController extends Controller
                     }
                     if($pdealer->dealer_id){
                         $dealer_data = [
-                            'uid'   =>  $pdealer->dealer_id,
-                            'price' =>  $order->price * 0.1,
+                            'user_id'   =>  $pdealer->dealer_id,
+                            'price' =>  number_format($order->price * 0.1),
                             'created_at'  => date('Y-m-d H:i:s',time())
                         ];
                         DB::table('integral')->insert($dealer_data);
@@ -142,11 +142,11 @@ class PayController extends Controller
                         "first"     => "尊敬的 $pdealer->wc_nickname 你好，你推荐的客户已成交。",
                         "keyword1"  => $pay_user->wc_nickname,
                         "keyword2"  => date('Y-m-d H:i:s',time()),
-                        "keyword3"  => $notify->total_fee/100,
+                        "keyword3"  => number_format($notify->total_fee/100, 2),
                         "keyword4"  => '开通会员',
                         "remark"    => "感谢您的推荐。"
                     ];
-                    template_message($app, $pdealer->openid, $msg, 'n2VZx_vlgyUfgE2wWYQ4FG8GLht798cKXImI5-TGX3o','http://bw.eyooh.com');
+                    template_message($app, $pdealer->openid, $msg, config('wechat.template_id.success_pay'), config('app.url'));
                 }
 
                 // 订单表修改为已经支付状态

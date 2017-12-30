@@ -82,6 +82,7 @@ class AdminUserController extends CommonController
     public function update(Request $request, $id)
     {
         $data = $request->only('gid','account','head','state','password');
+        $data['password'] = bcrypt($data['password']);
         $update = Admin::where('id',$id)->update($data);
         if($update){
             return json_encode(['state'=>0, 'msg'=>'更新用户完成','url'=>route('admin_user.index')]);
