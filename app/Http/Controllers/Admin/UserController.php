@@ -32,7 +32,7 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'dealer'=>function($query){
             $query->select('id','wc_nickname');
-        },'brand'])->where($where)->paginate(15);
+        },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
 
         foreach ($list as $key => $value) {
             $list[$key]['is_dealer'] = '';

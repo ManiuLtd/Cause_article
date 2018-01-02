@@ -9,7 +9,6 @@
 namespace App\Http\Controllers\Index;
 
 use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
-//use App\Model\Banner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,33 +20,24 @@ class IndexController extends CommonController
      */
     public function index(Request $request)
     {
-        if ( session()->get('user_id') ) {
-            //是否有新访客
-            if ( Footprint::where([ 'uid' => session()->get('user_id'), 'new' => 1 ])->first() ) {
-                session()->put('newkf', 1);
-            } else {
-                session()->forget('newkf');
-            }
-
-            //banner图
-            if(Cache::has('banner')) {
-                $banner_list = Cache::get('banner');
-            } else {
-                $banner_list = Banner::all();
-                Cache::put('banner', $banner_list, 30);
-            }
-
-            $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
-            $type = [ 1, 2, 3, 4 ];
-            if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 4 ];
-            $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
-                ->when($user_brand, function ( $query ) use ( $user_brand ) {
-                //根据用户选择的品牌显示文章
-                return $query->whereIn('brand_id', [ 0, $user_brand ]);
-            })->get();
-
-            return view('index.index', compact('banner_list', 'list', 'user'));
+        //banner图
+        if(Cache::has('banner')) {
+            $banner_list = Cache::get('banner');
+        } else {
+            $banner_list = Banner::all();
+            Cache::put('banner', $banner_list, 30);
         }
+
+        $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
+        $type = [ 1, 2, 3, 4 ];
+        if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 4 ];
+        $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
+            ->when($user_brand, function ( $query ) use ( $user_brand ) {
+            //根据用户选择的品牌显示文章
+            return $query->whereIn('brand_id', [ 0, $user_brand ]);
+        })->get();
+
+        return view('index.index', compact('banner_list', 'list', 'user'));
     }
 
     /**

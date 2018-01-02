@@ -73,14 +73,13 @@ class UserController extends CommonController
         if ( request()->ajax() ) {
             $data = request()->except('_token');
             //是否上传头像
-            if ( $request->head ) {
+            if ( $request->head != $user->head ) {
 //                $upload = $this->thumdImageUpload(200, 200, request()->file('head'), 'user_head');
                 $upload = base64ToImage($request->head, 'user_head');
                 $data[ 'head' ] = $upload[ 'path' ];
-
             }
             //是否上传个人二维码
-            if ( $request->qrcode ) {
+            if ( $request->qrcode != $user->qrcode ) {
 //                $upload = thumdImageUpload(200, 200, $request->qrcode, 'user_qrcode');
                 $upload = base64ToImage($request->qrcode, 'user_qrcode');
                 $data[ 'qrcode' ] = $upload[ 'path' ];
@@ -91,7 +90,7 @@ class UserController extends CommonController
                 return response()->json([ 'code' => 401, 'errormsg' => '修改资料失败' ]);
             }
         } else {
-            $res = $user->with('brand')->where('id', session()->get('user_id'))->first();
+            $res = $user->with('brand')->where('id', \Session::get('user_id'))->first();
 
             return view('index.user_basic', compact('res'));
         }

@@ -15,7 +15,12 @@ class IntegralUse extends Model
 {
     protected $table = 'integral_used';
 
-    protected $fillable = [ 'integral' ];
+    protected $fillable = [ 'integral', 'remark', 'state' ];
 
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

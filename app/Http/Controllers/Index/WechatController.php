@@ -20,7 +20,7 @@ class WechatController extends Controller
 {
     public function index()
     {
-        $options = config('wechat.wechat_config');
+        $options = config('wechat');
         $app = new Application($options);
         //菜单
         $this->button();
@@ -45,7 +45,7 @@ class WechatController extends Controller
     //创建普通菜单
     public function button()
     {
-        $options = config('wechat.wechat_config');
+        $options = config('wechat');
         $app = new Application($options);
         $menu = $app->menu;
         $buttons = [
@@ -142,7 +142,7 @@ class WechatController extends Controller
                         "keyword2"  => date('Y-m-d H:i:s',time()),
                         "remark"    => "感谢您的推荐。"
                     ];
-                    template_message($app, $pinfo->openid, $msg, '89TzNFzi_G2bkoqFAXfvyNQdKAgyIYHS1p1ySVtUyl8', 'http://bw.eyooh.com');
+                    template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
                     //推广奖励操作
                     extension($eventkey);
                 }
@@ -174,7 +174,7 @@ class WechatController extends Controller
                 "keyword2"  => date('Y-m-d H:i:s',time()),
                 "remark"    => "感谢您的推荐。"
             ];
-            template_message($app, $FromUserName, $msg, '89TzNFzi_G2bkoqFAXfvyNQdKAgyIYHS1p1ySVtUyl8', 'http://bw.eyooh.com');
+            template_message($app, $FromUserName, $msg, config('wechat.template_id.extension_user'), config('app.url'));
             //推广奖励操作
             extension($eventkey);
         }

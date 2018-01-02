@@ -56,35 +56,6 @@ class ArticleController extends CommonController
     }
 
     /**
-     * @title 查看用户文章详情
-     * @param $uid 文章用户id
-     * @param $aid 文章id
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-//    public function useArticleDetails($uid, $aid, $share)
-//    {
-//        //公共文章浏览数+1
-//        Article::where('id',$aid)->increment('read',1);
-//        //用户文章浏览数+1
-//        UserArticles::where(['aid'=>$aid,'uid'=>$uid])->increment('read',1);
-//        if(!empty($share)){
-//            //公共文章分享数+1
-//            Article::where('id',$aid)->increment('share',1);
-//            //用户文章分享数+1
-//            UserArticles::where(['aid'=>$aid,'uid'=>$uid])->increment('share',1);
-//        }
-//
-//        $res = UserArticles::with('user','article')->where(['uid'=>$uid,'aid'=>$aid])->first();
-//        //浏览足迹
-//        if(session()->get('user_id') != $uid){
-//            Footprint::create(['uid'=>session()->get('user_id'),'uaid'=>$res->id]);
-//        }
-//        //微信分享配置
-//        $package = wecahtPackage();
-//        return view('index.',compact('res','package'));
-//    }
-
-    /**
      * @title 在文章中停留时间
      * @param $uid 浏览用户id
      * @param $uaid 用户文章表的主键id

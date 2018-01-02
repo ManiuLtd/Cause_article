@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="basic" class="flexv wrap">
-	<form action="{{route('user_basic')}}" id="form" enctype="multipart/form-data" method="post">
+	<form action="{{route('user_basic',$res->id)}}" id="form" enctype="multipart/form-data" method="post">
 		{{csrf_field()}}
 		<div class="flexitemv user">
 			<div class="users">
@@ -21,7 +21,7 @@
 					<span class="flex centerv">头像</span>
 					<div class="flex centerv right">
 						<div class="flex center userimg">
-							<img src="{{$res->head}}" class="fitimg">
+							<img src="{{ $res->head }}" class="fitimg">
 						</div>
 						<i class="flex center bls bls-yjt"></i>
 					</div>
@@ -30,25 +30,25 @@
 				<div class="item name">
 					<span class="flex centerv">姓名</span>
 					<div class="flex centerv right">
-						<input type="text" name="wc_nickname" class="flexi center userimg" value="{{$res->wc_nickname}}" data-rule="*" data-errmsg="请填写您的姓名">
+						<input type="text" name="wc_nickname" class="flexi center userimg" value="{{ $res->wc_nickname }}" data-rule="*" data-errmsg="请填写您的姓名">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
 				</div>
 				<div class="item phone">
 					<span class="flex centerv">手机号</span>
 					<div class="flex centerv right">
-						<input type="tel" name="phone" class="flex center userimg" value="{{$res->phone}}" data-rule="m" data-errmsg="手机号码格式错误">
+						<input type="tel" name="phone" class="flex center userimg" value="{{  $res->phone}}" data-rule="m" data-errmsg="手机号码格式错误">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="head">
+			<input type="hidden" name="head" value="{{ $res->head }}">
 			<div class="users">
 				<div class="item brand">
 					<span class="flex centerv">我的品牌</span>
 					<div class="flex centerv right">
 						<input readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" @if($res->brand != null) value="{{$res->brand['name']}} @endif" data-rule="*" data-errmsg="请选择您的品牌">
-						<input type="hidden" name="brand_id" class="brand_id" value="{{$res->brand_id}}">
+						<input type="hidden" name="brand_id" class="brand_id" value="{{  $res->brand_id }}">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
 				</div>
@@ -66,7 +66,7 @@
 					<div class="flex centerv right">
 						<div class="flex center userimg">
 							@if($res->qrcode)
-								<img src="{{$res->qrcode}}" class="fitimg">
+								<img src="{{ $res->qrcode }}" class="fitimg">
 							@else
 								请上传
 							@endif
@@ -76,7 +76,7 @@
 					<input type="file" class="fileElem" accept="image/jpg,image/png,image/jpeg">
 				</div>
 			</div>
-			<input type="hidden" name="qrcode">
+			<input type="hidden" name="qrcode" value="{{ $res->qrcode }}">
 			<a href="{{route('qecode_help')}}" class='clook'>查看如何获取二维码？</a>
 			<div class="button">
 				<a href="javascript:;" class="flex center" id="submit">保存</a>

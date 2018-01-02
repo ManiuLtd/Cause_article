@@ -109,9 +109,9 @@
 	<div class="flex center hint">
 		<div class="mask"></div>
 		<div class='content'>
-			<h3 class="flex center">更多免费<span>@if(!empty($res->brand)) {{$res->brand->name}} @else 爆文 @endif</span>资讯</h3>
+			<h3 class="flex center">更多免费<span>@if(!empty($brand)){{ $brand->name }}@else爆文@endif</span>资讯</h3>
 			<div class="qrcode">
-				<img src="@if(!empty($res->brand)) /uploads/{{$res->brand->qrcode}} @else /qrcode.jpg @endif" class="fitimg">
+				<img src="@if(!empty($brand)) /uploads/{{ $brand->qrcode }} @else /qrcode.jpg @endif" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>

@@ -41,6 +41,7 @@ class UserArticleController extends CommonController
             $addfootid = '';
             $fkarticle = '';
             $uarticle = UserArticles::with('user', 'article')->where('id', $id)->first();
+
             //获取品牌
             $brand = Brand::find($uarticle->user->brand_id);
 
@@ -57,16 +58,17 @@ class UserArticleController extends CommonController
                         $dealer = $uarticle->user->dealer_id;
                     }
                     User::where('id', $uid)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer ]);
+
                     //推送【推荐会员成功提醒】模板消息
                     $msg = [
-                        "first"    => "你好，【" . $user->wc_nickname . "】已通过查看您的文章被推荐成了会员。",
+                        "first"    => "你好，【{$user->wc_nickname}】已通过查看您的文章被推荐成了会员。",
                         "keyword1" => $user->wc_nickname,
                         "keyword2" => date('Y-m-d H:i:s', time()),
                         "remark"   => "感谢您的推荐。"
                     ];
-                    $options = config('wechat.wechat_config');
+                    $options = config('wechat');
                     $app = new Application($options);
-                    template_message($app, $uarticle->user->openid, $msg, '89TzNFzi_G2bkoqFAXfvyNQdKAgyIYHS1p1ySVtUyl8', 'http://bw.eyooh.com');
+                    template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
 
                 }
             }
@@ -76,7 +78,7 @@ class UserArticleController extends CommonController
                 $cachename = $id . $uarticle->user[ 'openid' ];
                 if ( !Cache::has("$cachename") ) {
                     //推送消息
-                    $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《" . $uarticle->article[ 'title' ] . "》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
+                    $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《{$uarticle->article[ 'title' ]}》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
                     message($uarticle->user[ 'openid' ], 'text', $context);
                     Cache::put("$cachename", 1, 60);
                 }
@@ -275,7 +277,7 @@ class UserArticleController extends CommonController
         $data[ 'created_at' ] = date('Y-m-d H:i:s', time());
         $add_id = Message::insertGetId($data);
         if ( $add_id ) {
-            //推送【推荐会员成功提醒】模板消息
+            //推送【咨询消息】模板消息
             if ( $request->type == 1 ) {
                 $type = '健康问题';
             } elseif ( $request->type == 2 ) {
@@ -301,8 +303,8 @@ class UserArticleController extends CommonController
                     "remark"   => "点击查看详情。"
                 ];
             }
-            $app = new Application(config('wechat.wechat_config'));
-            template_message($app, $openid->openid, $msg, 'eDqlUq_myz5aexSLfY1UeGX6ddoZ9-Wu_J7UJO3xsX4', route('message_detail', [ 'id' => $add_id ]));
+            $app = new Application(config('wechat'));
+            template_message($app, $openid->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add_id ]));
 
             return redirect(route('user_article_details', [ 'id' => request()->uaid ]));
         }

@@ -11,14 +11,14 @@
 |
 */
 //前台路由组
-Route::group(['namespace' => 'Index'], function () {
+Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
     //首页
     Route::get('/', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
     //品牌接口
     Route::get('brand_list', 'IndexController@brandList')->name('brand_list');
     //完善弹窗信息
     Route::post('perfect_information', 'IndexController@perfectInformation')->name('perfect_information');
-    //搜索文章
+    //搜索文章1
     Route::get('article_search/{key?}', 'ArticleController@searchArticle')->name('article_search');
     //公共文章详情
     Route::get('article_details/{id}/{share?}', 'ArticleController@articleDetails')->name('article_details');
@@ -39,7 +39,7 @@ Route::group(['namespace' => 'Index'], function () {
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息
-    Route::match(['get','post'], 'user_basic', 'UserController@userBasic')->name('user_basic');
+    Route::any('user_basic/{user?}', 'UserController@userBasic')->name('user_basic');
     //查看获取个人二维码帮助页面
     Route::get('qrcode_help', 'UserController@qrcodeHelp')->name('qecode_help');
     //推广中心
@@ -147,6 +147,12 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('operate_report', 'ReportController@operateReport')->name('admin.operate_report');
         //推广报表（显示招商所有员工的所有业绩）
         Route::get('extension_report', 'ReportController@extensionReport')->name('admin.extension_report');
+        //提现列表
+        Route::get('extract_cash', 'ExtractCashController@index')->name('admin.extract_cash');
+        //客服备注提现列表
+        Route::post('extract_remark/{integralUse}', 'ExtractCashController@remark')->name('admin.extract_remark');
+        //客服完成提现
+        Route::get('extract_complete/{integralUse}', 'ExtractCashController@complete')->name('admin.extract_complete');
     });
 
     //上传图片

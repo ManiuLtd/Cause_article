@@ -2,7 +2,7 @@
     <div class="flexitem center middle">
         <a href="{{route('index.index')}}" class="flexv center user">
 				<span class="flex userimg">
-					<img class="fitimg" src="{{session()->get('head_pic')}}"/>
+					<img class="fitimg" src="{{ \Session::get('wechat.oauth_user')['avatar'] }}"/>
 				</span>
             <em class="flex center">首页</em>
         </a>

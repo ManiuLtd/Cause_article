@@ -12,7 +12,7 @@
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
             <option value="phone" @if(request()->key == 'phone') selected @endif>手机号</option>
         </select>
-        <input type="text" name="value" class="input" value="{{request()->value}}">
+        <input type="text" name="value" class="input" value="{{ request()->value }}">
         <button class="btn btn-sm btn-info" type="submit">&nbsp;搜索&nbsp;</button>
     </form>
     <div class="table-responsive">
