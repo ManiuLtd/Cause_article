@@ -1,7 +1,7 @@
 <!--提示-->
-<form class="flex center alert" id="form" action="{{route('perfect_information')}}">
+<form class="flex center alert" id="form" action="{{route('perfect_information', \Session::get('user_id'))}}">
     {{csrf_field()}}
-    <input type="hidden" name="id" value="{{session()->get('user_id')}}">
+    {{--<input type="hidden" name="id" value="{{session()->get('user_id')}}">--}}
     <div class="mask"></div>
     <div class='content'>
         <i class="flex center bls bls-cuo cuo"></i>

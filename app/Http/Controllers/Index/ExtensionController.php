@@ -38,6 +38,10 @@ class ExtensionController extends CommonController
         return view('index.extension', compact('today_integral','tot_integral','use_integral','nu_integral'));
     }
 
+    /**
+     * 申请提现页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function applyCash(  )
     {
         $user = User::with('user_account')->where('id', \Session::get('user_id'))->first();
@@ -49,6 +53,10 @@ class ExtensionController extends CommonController
         return view('index.cash', compact('user','nu_integral'));
     }
 
+    /**
+     * 绑定账户
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function bindAccount()
     {
         $user = User::with('user_account')->where('id', \Session::get('user_id'))->first();
@@ -129,6 +137,11 @@ class ExtensionController extends CommonController
         return response()->json(['state' => 401, 'code' => 0, 'msg' => '申请提现失败，请联系客服']);
     }
 
+    /**
+     * 提现记录
+     * @param IntegralUse $integralUse
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getMoneyRecord( IntegralUse $integralUse )
     {
         $lists = $integralUse->get();

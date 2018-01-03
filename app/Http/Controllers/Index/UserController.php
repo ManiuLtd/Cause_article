@@ -26,42 +26,34 @@ class UserController extends CommonController
      */
     public function index($type = '', $dealer = '')
     {
-        $uid = \Session::get('user_id');;
-        if ( $uid ) {
-            //查看是否有新访客
-            if ( Footprint::where([ 'uid' => $uid, 'new' => 1 ])->first() ) {
-                session()->put('newkf', 1);
-            } else {
-                session()->forget('newkf');
-            }
-
-            $res = User::where('id', $uid)->first()->toArray();
-            //未被员工推广的用户才可以关联
-            if($res['admin_id'] == 0 && $res['admin_type'] == 0) {
-                //通过招商链接进入（成为经销商并关联招商员工）
-                if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
-                //通过运营链接进入 (该用户关联运营员工)
-                if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
-            }
-
-            $res[ 'user_article' ] = UserArticles::where('uid', $res[ 'id' ])->count();
-            $res[ 'read_share' ] = Footprint::where('uid', $res[ 'id' ])->count();
-            $pic = '';
-            $head = '';
-            if ( $res[ 'extension_image' ] == '' ) {
-                $url = app(User::class)->createQrcode($uid);
-                //二维码转base64位
-                $arr = getimagesize($url);
-                $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
-                //头像转base64
-                if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
-                    $head = app(User::class)->curl_url(\Session::get('head_pic'), 2);
-                } else {
-                    $head = app(User::class)->curl_url(config('app.url').\Session::get('head_pic'), 2);
-                }
-            }
-            return view('index.user_center', compact('res', 'pic', 'head'));
+        $uid = \Session::get('user_id');
+        $res = User::where('id', $uid)->first()->toArray();
+        //未被员工推广的用户才可以关联
+        if($res['admin_id'] == 0 && $res['admin_type'] == 0) {
+            //通过招商链接进入（成为经销商并关联招商员工）
+            if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
+            //通过运营链接进入 (该用户关联运营员工)
+            if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
         }
+
+        $res[ 'user_article' ] = UserArticles::where('uid', $res[ 'id' ])->count();
+        $res[ 'read_share' ] = Footprint::where('uid', $res[ 'id' ])->count();
+        $pic = '';
+        $head = '';
+        if ( $res[ 'extension_image' ] == '' ) {
+            $url = app(User::class)->createQrcode($uid);
+            //二维码转base64位
+            $arr = getimagesize($url);
+            $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
+            //头像转base64
+            $head = \Session::get('head_pic');
+            if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+                $head = app(User::class)->curl_url($head, 2);
+            } else {
+                $head = app(User::class)->curl_url(config('app.url').$head, 2);
+            }
+        }
+        return view('index.user_center', compact('res', 'pic', 'head'));
     }
 
     /**
@@ -71,36 +63,36 @@ class UserController extends CommonController
     public function userBasic(Request $request, User $user)
     {
         if ( request()->ajax() ) {
-            $data = request()->except('_token');
+            $data = request()->all();
             //是否上传头像
             if ( $request->head != $user->head ) {
-//                $upload = $this->thumdImageUpload(200, 200, request()->file('head'), 'user_head');
                 $upload = base64ToImage($request->head, 'user_head');
                 $data[ 'head' ] = $upload[ 'path' ];
             }
+
             //是否上传个人二维码
             if ( $request->qrcode != $user->qrcode ) {
 //                $upload = thumdImageUpload(200, 200, $request->qrcode, 'user_qrcode');
                 $upload = base64ToImage($request->qrcode, 'user_qrcode');
                 $data[ 'qrcode' ] = $upload[ 'path' ];
             }
-            if ( $user->where('id', session()->get('user_id'))->update($data) ) {
+
+            //如果有变更名称或头像则需清空推广图片
+            if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
+              $data['extension_image'] = '';
+            }
+
+            if ( $user->update($data) ) {
                 return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);
             } else {
                 return response()->json([ 'code' => 401, 'errormsg' => '修改资料失败' ]);
             }
         } else {
-            $res = $user->with('brand')->where('id', \Session::get('user_id'))->first();
+            $user_id = \Session::get('user_id');
+            $res = $user->with('brand')->where('id', $user_id)->first();
 
             return view('index.user_basic', compact('res'));
         }
-    }
-
-    public function thumdImage( $with, $hight, $imagepath )
-    {
-        $thumdimage = Images::open($imagepath);
-        $thumdimage->thumb($with, $hight);
-        $thumdimage->save($imagepath);
     }
 
     /**
@@ -112,10 +104,15 @@ class UserController extends CommonController
         return view('index.qrcode_help');
     }
 
+    /**
+     * 开通会员页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function openMember()
     {
         $shiptime = User::where('id', session()->get('user_id'))->select('membership_time')->first();
-        //微信分享配置
+
+        //微信支付配置
         $package = wecahtPackage();
 
         return view('index.open_member', compact('shiptime', 'package'));

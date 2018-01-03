@@ -67,7 +67,7 @@ class User extends Model
     public function createQrcode($uid)
     {
         //创建永久二维码
-        $options = config('wechat.wechat_config');
+        $options = config('wechat');
         $app = new Application($options);
         $qrcode = $app->qrcode;
         $result = $qrcode->forever($uid);// 或者 $qrcode->forever("foo");

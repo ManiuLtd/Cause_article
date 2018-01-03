@@ -185,7 +185,7 @@ function extension($id)
  */
 function message($FromUserName,$type,$context)
 {
-    $app = new Application(config('wechat.wechat_config'));
+    $app = new Application(config('wechat'));
     $staff = $app->staff;
     switch($type) {
         case 'text':
@@ -317,7 +317,7 @@ function GrabImage($url, $filename){
  * @param string $type
  */
 function rwLog($phone = null, $status=null, $type = ''){
-    $filename = storage_path('logs/sms').$type.date("Y-m-d").".log";
+    $filename = storage_path('logs/sms/').$type.date("Y-m-d").".log";
     if(file_exists($filename)){
         /*数组写入*/
         $arr = array('phone'=>$phone,'message'=>$status,'time'=>date("Y-m-d H:i:s"));

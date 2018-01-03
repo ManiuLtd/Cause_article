@@ -46,7 +46,7 @@ class PayController extends Controller
     public function wechatConfig(array $order)
     {
         $user = User::where('id',$order['uid'])->select('openid')->first();
-        $options = config('wechat.wechat_config');
+        $options = config('wechat');
         $app = new Application($options);
         $payment = $app->payment;
 
@@ -72,7 +72,7 @@ class PayController extends Controller
      */
     public function outTradeNo()
     {
-        $options = config('wechat.wechat_config');
+        $options = config('wechat');
         $app = new Application($options);
         $response = $app->payment->handleNotify(function($notify, $successful){
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
@@ -137,7 +137,7 @@ class PayController extends Controller
                         }
                     }
                     //推送【推荐成交通知】模板消息
-                    $app = new Application(config('wechat.wechat_config'));
+                    $app = new Application(config('wechat'));
                     $msg = [
                         "first"     => "尊敬的 $pdealer->wc_nickname 你好，你推荐的客户已成交。",
                         "keyword1"  => $pay_user->wc_nickname,

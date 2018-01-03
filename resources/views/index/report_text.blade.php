@@ -60,7 +60,7 @@
                     $(".tip-msg").text("提交成功，谢谢你的反馈");
                     setTimeout(function () {
                         window.location.href = ret.url;
-                    },1000)
+                    },2000)
                 }
             })
         }

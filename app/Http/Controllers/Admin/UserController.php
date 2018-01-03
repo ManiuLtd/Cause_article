@@ -8,9 +8,8 @@ use Illuminate\Http\Request;
 
 class UserController extends CommonController
 {
-    /********前台用户管理********/
     /**
-     * Display a listing of the resource.
+     * 前台用户管理
      * @普通用户列表
      * @return \Illuminate\Http\Response
      */
@@ -45,7 +44,6 @@ class UserController extends CommonController
                 }
             }
         }
-//        dd($list->toarray());
         $menu = $this->menu; $active = $this->active;
 
         return view('admin.user.index',compact('list','menu','active'));
@@ -79,7 +77,8 @@ class UserController extends CommonController
         foreach ($list as $key =>$value) {
             $list[$key]['cmmission'] = app(Integral::class)->commission($value->id);
         }
-        $menu = $this->menu; $active = $this->active;
+        $menu = $this->menu;
+        $active = $this->active;
 
         return view('admin.user.dealer_index',compact('list','menu','active'));
     }

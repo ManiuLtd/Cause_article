@@ -24,13 +24,19 @@ class UserInfo
     {
         $user = session('wechat.oauth_user'); // 拿到授权用户资料
         $find_user = User::where('openid', $user['id'])->first();
-        if(!$find_user) {
-            $data = ['wc_nickname' => $user['name'], 'head' => $user['avatar'], 'openid' => $user['id']];
-            User::create($data);
-            \Session::put('user_id', $user['id']);
-        } else {
-            \Session::put('phone', $find_user['phone']);
-            \Session::put('user_id', $find_user['id']);
+        if(!\Session::has('user_id')) {
+            if ( !$find_user ) {
+                $data = [ 'wc_nickname' => $user[ 'name' ], 'head' => $user[ 'avatar' ], 'openid' => $user[ 'id' ] ];
+                User::create($data);
+                \Session::put('user_id', $user[ 'id' ]);
+                \Session::put('head_pic', $user[ 'avatar' ]);
+                \Session::put('nickname', $user[ 'nickname' ]);
+            } else {
+                \Session::put('phone', $find_user[ 'phone' ]);
+                \Session::put('user_id', $find_user[ 'id' ]);
+                \Session::put('head_pic', $find_user[ 'head' ]);
+                \Session::put('nickname', $find_user[ 'wc_nickname' ]);
+            }
         }
         return $next($request);
     }

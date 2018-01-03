@@ -53,13 +53,16 @@ class IndexController extends CommonController
     /**
      * @title 完善资料
      * @param Request $request
+     * @param User $user
      * @return \Illuminate\Http\JsonResponse
      */
-    public function perfectInformation(Request $request)
+    public function perfectInformation(Request $request, User $user)
     {
-        $data = ['wc_nickname'=>$request->wc_nickname,'phone'=>$request->phone,'brand_id'=>$request->brand_id];
-        if(User::where('id',$request->id)->update($data)){
-            return response()->json(['state'=>0]);
+        if($user->update($request->all())){
+            \Session::put('phone', $request->phone);
+            return response()->json(['state' => 0, 'msg' => '完善资料成功']);
+        } else {
+            return response()->json(['state' => 500, 'msg' => '完善资料出错']);
         }
     }
 
@@ -68,7 +71,7 @@ class IndexController extends CommonController
      * @param $article_id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function report($article_id)
+    public function report($article_id, $atype)
     {
         return view('index.report');
     }
@@ -79,7 +82,7 @@ class IndexController extends CommonController
      * @param $type
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function reportText($article_id, $type)
+    public function reportText($article_id, $atype, $type)
     {
         return view('index.report_text');
     }
@@ -92,7 +95,6 @@ class IndexController extends CommonController
     public function reportPost(Request $request)
     {
         $data = [
-            'aid'   =>  $request->aid,
             'uid'   =>  session()->get('user_id'),
             'message'   =>  $request->message,
             'type'  =>  $request->type,

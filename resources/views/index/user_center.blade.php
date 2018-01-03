@@ -131,7 +131,7 @@
 			ctx.font="25px Arial";
 			ctx.textAlign = 'center';
 			ctx.fillStyle = '#fff';
-			ctx.fillText("我是{{session()->get('nickname')}}",image.width/2,200);
+			ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);
 			ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
 			ctx.stroke();
 			ctx.clip();

@@ -117,7 +117,7 @@
 		</div>
 	</div>
 	<!--提示-->
-	<form class="flex center alert" id="form" action="{{route('perfect_information')}}">
+	<form class="flex center alert" id="form" action="{{route('perfect_information', \Session::get('user_id'))}}">
 		{{csrf_field()}}
 		<input type="hidden" name="id" value="{{session()->get('user_id')}}">
 		<div class="mask"></div>
@@ -127,7 +127,7 @@
 			<p class="flex center tis">立刻完善资料，让客户找到您</p>
 			<div class="flex center input">
 				<span class="flex centerv">姓名</span>
-				<input type="text" name="wc_nickname" class="flexitem" value="{{session()->get('nickname')}}" data-rule="*" data-errmsg="请填写您的姓名">
+				<input type="text" name="wc_nickname" class="flexitem" value="{{ \Session::get('nickname') }}" data-rule="*" data-errmsg="请填写您的姓名">
 			</div>
 			<div class="flex center input">
 				<span class="flex centerv">手机号</span>
@@ -203,47 +203,47 @@
 
     $('#cut').click(function () {
 		@if(session()->get('phone') == '')
-		$(".alert").css({"display":"block"});
-		$(".alert").find(".content").addClass('trans');
-		//  品牌
-		$.get("{{route('brand_list')}}",function (ret) {
-			console.log(ret.brand_list);
-			var brands = ret.brand_list;
-			var char = '', charlist = [];
-			var charTpl = [], listTpl = [];
-			for (var k = 0; k < brands.length; k++) {
-				var ch = brands[k].domain.substring(0, 1);
-				if (char == ch) {
-					charlist[char].push(brands[k]);
-					listTpl.push('<div>' + brands[k].name + '</div>');
-				} else {
-					if (char != '') listTpl.push('</li>');
-					char = ch;
-					charlist[char] = [brands[k]];
-					listTpl.push('<li id="' + char.toUpperCase() + '">');
-					listTpl.push('<p>' + char.toUpperCase() + '</p>');
-					listTpl.push('<div data-id="' + brands[k].id + '">' + brands[k].name + '</div>');
-					charTpl.push('<li><a href="#' + char + '">' + char.toUpperCase() + '</a></li>');
+			$(".alert").css({"display":"block"});
+			$(".alert").find(".content").addClass('trans');
+			//  品牌
+			$.get("{{route('brand_list')}}",function (ret) {
+				console.log(ret.brand_list);
+				var brands = ret.brand_list;
+				var char = '', charlist = [];
+				var charTpl = [], listTpl = [];
+				for (var k = 0; k < brands.length; k++) {
+					var ch = brands[k].domain.substring(0, 1);
+					if (char == ch) {
+						charlist[char].push(brands[k]);
+						listTpl.push('<div>' + brands[k].name + '</div>');
+					} else {
+						if (char != '') listTpl.push('</li>');
+						char = ch;
+						charlist[char] = [brands[k]];
+						listTpl.push('<li id="' + char.toUpperCase() + '">');
+						listTpl.push('<p>' + char.toUpperCase() + '</p>');
+						listTpl.push('<div data-id="' + brands[k].id + '">' + brands[k].name + '</div>');
+						charTpl.push('<li><a href="#' + char + '">' + char.toUpperCase() + '</a></li>');
+					}
 				}
-			}
-			listTpl.push('</li>');
+				listTpl.push('</li>');
 
-			$(".company").append(listTpl.join(''));
-			//   选择
-			$(".brand").click(function () {
-				$("#brand").addClass('show');
-				$("#brand ul li div").click(function () {
-					$(".cenk").val($(this).text());
-					$(".brand_id").val($(this).attr('data-id'));
-					$("#brand").removeClass('show');
+				$(".company").append(listTpl.join(''));
+				//   选择
+				$(".brand").click(function () {
+					$("#brand").addClass('show');
+					$("#brand ul li div").click(function () {
+						$(".cenk").val($(this).text());
+						$(".brand_id").val($(this).attr('data-id'));
+						$("#brand").removeClass('show');
+					});
+					$('#brand .bls').click(function () {
+						$("#brand").removeClass('show');
+					})
 				});
-				$('#brand .bls').click(function () {
-					$("#brand").removeClass('show');
-				})
 			});
-		});
 		@else
-		window.location.href = "{{route('become_my_article',['uid'=>session()->get('user_id'),'aid'=>$res->article['id']])}}";
+			window.location.href = "{{ route('become_my_article',['user_id'=>session()->get('user_id'),'article_id'=>$res->article['id'],'pid'=>$res->uid]) }}";
 		@endif
     });
 
@@ -265,7 +265,7 @@
                 if(ret.state == 0) {
                     showMsg('完善资料成功', 1);
 					setTimeout(function () {
-						window.location.href = "{{ route('become_my_article',['uid'=>session()->get('user_id'),'aid'=>$res->article['id']]) }}";
+						window.location.href = "{{ route('become_my_article',['user_id'=>session()->get('user_id'),'article_id'=>$res->article['id'],'pid'=>$res->uid]) }}";
 					}, 1000);
                 } else {
                     showMsg('完善资料失败');

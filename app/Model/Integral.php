@@ -18,6 +18,6 @@ class Integral extends Model
 
     public function commission($id)
     {
-        return Integral::where('uid', $id)->sum('price');
+        return Integral::where('user_id', $id)->sum('price');
     }
 }

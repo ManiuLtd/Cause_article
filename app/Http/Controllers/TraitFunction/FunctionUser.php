@@ -20,7 +20,7 @@ trait FunctionUser
             $image = $path[ 'path' ];
         }
         // 上传临时图片素材
-        $app = new Application(config('wechat.wechat_config'));
+        $app = new Application(config('wechat'));
         $temporary = $app->material_temporary;
         $ret = $temporary->uploadImage("../public_html/uploads/" . $image);
 

@@ -45,34 +45,6 @@ class UserArticleController extends CommonController
             //获取品牌
             $brand = Brand::find($uarticle->user->brand_id);
 
-            //关联账号关系
-            $user = User::find($uid);
-            if ( empty($user->dealer_id) && empty($user->extension_id) && $uid != $uarticle->uid ) {
-                if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
-
-                    if ( $brand->type == 2 ) {
-                        $extension = 0;
-                        $dealer = $uarticle->user->id;
-                    } else {
-                        $extension = $uarticle->user->id;
-                        $dealer = $uarticle->user->dealer_id;
-                    }
-                    User::where('id', $uid)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer ]);
-
-                    //推送【推荐会员成功提醒】模板消息
-                    $msg = [
-                        "first"    => "你好，【{$user->wc_nickname}】已通过查看您的文章被推荐成了会员。",
-                        "keyword1" => $user->wc_nickname,
-                        "keyword2" => date('Y-m-d H:i:s', time()),
-                        "remark"   => "感谢您的推荐。"
-                    ];
-                    $options = config('wechat');
-                    $app = new Application($options);
-                    template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
-
-                }
-            }
-
             if ( $uarticle->uid != $uid ) {
                 //用户文章第一次阅读则推送文本消息给该文章拥有者
                 $cachename = $id . $uarticle->user[ 'openid' ];

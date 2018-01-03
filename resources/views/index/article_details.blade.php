@@ -83,7 +83,7 @@
 	<div class="flex center hint">
 		<div class="mask"></div>
 		<div class='content'>
-			<h3 class="flex center">更多免费<span>@if(!empty($res->brand)) {{$res->brand['name']}} @else 爆文 @endif</span>资讯</h3>
+			<h3 class="flex center">更多免费<span>@if(!empty($res->brand)){{$res->brand['name']}}@else爆文@endif</span>资讯</h3>
 			<div class="qrcode">
 				<img src="@if(!empty($res->brand)) /uploads/{{$res->brand['qrcode']}} @else /qrcode.jpg @endif" class="fitimg">
 			</div>
@@ -151,7 +151,7 @@
             });
         });
 		@else
-            window.location.href = "{{route('become_my_article',['uid'=>session()->get('user_id'),'aid'=>$res->id])}}";
+            window.location.href = "{{route('become_my_article',['user_id'=>session()->get('user_id'),'article_id'=>$res->id])}}";
 		@endif
     });
 

@@ -190,10 +190,37 @@ class WechatController extends Controller
             //之前未关注公众号扫【成为我的文章】二维码
             $eventkey = str_replace('qrscene_', '', $eventkey);
         }
-        list($uid, $aid) = explode('|', $eventkey);
+        list($user_id, $article_id, $pid) = explode('|', $eventkey);
+
+        //关联账号关系
+        $user = User::find($user_id);
+        $puser = User::find($pid);
+        if ( empty($user->dealer_id) && empty($user->extension_id) && $pid != $user_id && $user->type != 2 ) {
+            if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
+                if ( $puser->type == 2 ) {
+                    $extension = 0;
+                    $dealer = $pid;
+                } else {
+                    $extension = $pid;
+                    $dealer = $puser->dealer_id;
+                }
+                User::where('id', $user_id)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer ]);
+
+                //推送【推荐会员成功提醒】模板消息
+                $msg = [
+                    "first"    => "你好，【{$user->wc_nickname}】已通过查看您的文章被推荐成了会员。",
+                    "keyword1" => $user->wc_nickname,
+                    "keyword2" => date('Y-m-d H:i:s', time()),
+                    "remark"   => "感谢您的推荐。"
+                ];
+                $options = config('wechat');
+                $app = new Application($options);
+                template_message($app, $puser->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+            }
+        }
         $data = [
-            'uid' => $uid,
-            'aid' => $aid
+            'uid' => $user_id,
+            'aid' => $article_id,
         ];
         UserArticles::create($data);
         //推送客服消息

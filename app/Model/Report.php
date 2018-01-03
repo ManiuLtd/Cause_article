@@ -41,7 +41,7 @@ class Report extends Model
                 $count[$last_day->month."-".$last_day->day] = $ext_count;
                 $tot_ext_count += $ext_count;
 
-                if($gid == 1) {
+                if($gid) {
                     //总计行（最后一次循环的时候才操作）
                     if ( count($extension) == $key + 1 ) {
                         $totcount = app(Report::class)->orderCount($type, $last_day, $tot_tomorrow);

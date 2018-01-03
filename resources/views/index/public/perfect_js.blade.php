@@ -75,13 +75,15 @@
             $.post(url,post,function (ret){
                 hideProgress();
                 if(ret.state == 0) {
-                    showMsg('完善资料成功', 1);
+                    showMsg('完善资料成功', 1, 2000);
                     if (ret.url) {
                         setTimeout(function () {
                             window.location.href = ret.url;
-                        }, 1000);
+                        }, 2000);
                     }else{
-                        window.location.reload();
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
                     }
                 } else {
                     showMsg('完善资料失败');

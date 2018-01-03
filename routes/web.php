@@ -17,13 +17,13 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //品牌接口
     Route::get('brand_list', 'IndexController@brandList')->name('brand_list');
     //完善弹窗信息
-    Route::post('perfect_information', 'IndexController@perfectInformation')->name('perfect_information');
+    Route::post('perfect_information/{user}', 'IndexController@perfectInformation')->name('perfect_information');
     //搜索文章1
     Route::get('article_search/{key?}', 'ArticleController@searchArticle')->name('article_search');
     //公共文章详情
-    Route::get('article_details/{id}/{share?}', 'ArticleController@articleDetails')->name('article_details');
+    Route::get('article_details/{article}/{share?}', 'ArticleController@articleDetails')->name('article_details');
     //分享公共文章成功
-    Route::get('article_share/{id}', 'ArticleController@articleShare')->name('article_share');
+    Route::get('article_share/{article}', 'ArticleController@articleShare')->name('article_share');
     //我的文章
     Route::get('user_article', 'UserArticleController@index')->name('user_article');
     //用户文章详情
@@ -31,7 +31,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //我的文章详情页上传二维码
     Route::post('upload_qrcode', 'UserArticleController@uploadQrcode')->name('upload_qrcode');
     //使公共文章成为我的文章
-    Route::get('become_my_article/{uid}/{aid}', 'ArticleController@becomeMyArticle')->name('become_my_article');
+    Route::get('become_my_article/{user_id}/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
     //别人分享我的文章
     Route::get('user_article_share/{id}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //微信配置
@@ -77,9 +77,9 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //用户文章访客记录
     Route::get('visitor_record', 'UserArticleController@visitorRecord')->name('visitor_record');
     //举报文章页面（选择举报类型）
-    Route::get('report/{article_id}', 'IndexController@report')->name('report');
+    Route::get('report/{article_id}/{atype}', 'IndexController@report')->name('report');
     //举报文章内容页面（显示填写举报信息）
-    Route::get('report_text/{article_id}/{type}', 'IndexController@reportText')->name('report_text');
+    Route::get('report_text/{article_id}/{atype}/{type}', 'IndexController@reportText')->name('report_text');
     //举报文章内容页面（显示填写举报信息）
     Route::post('report_post', 'IndexController@reportPost')->name('report_post');
     //未开通会员或会员时间到期中间件

@@ -59,11 +59,12 @@ class ReportController extends CommonController
             $for_length = 30;
         }
 
-        $gid = Auth::user()->gid;
-        if($gid == 1) {
+        if(has_menu($this->menu, '/admin/see_all')) {
             $extension = Admin::where('gid', 14)->get();
+            $gid = true;
         } else {
             $extension = Admin::where('id', Auth::user()->id)->get();
+            $gid = false;
         }
         app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 1);
         $menu = $this->menu;
@@ -89,11 +90,12 @@ class ReportController extends CommonController
             $for_length = 30;
         }
 
-        $gid = Auth::user()->gid;
-        if($gid == 1) {
+        if(has_menu($this->menu, '/admin/see_all')) {
             $extension = Admin::where('gid', 15)->get();
+            $gid = true;
         } else {
             $extension = Admin::where('id', Auth::user()->id)->get();
+            $gid = false;
         }
 
         app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 2);
