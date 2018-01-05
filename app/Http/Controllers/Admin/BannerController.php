@@ -7,38 +7,41 @@ use Illuminate\Http\Request;
 
 class BannerController extends CommonController
 {
-    /********用户管理********/
     /**
-     * Display a listing of the resource.
-     * @title 品牌列表
+     * @title banner列表
+     * @param $banner
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Banner $banner)
     {
-        $list = Banner::get();
-        return view('admin.banner.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+        $list = $banner->get();
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.banner.index',compact('list','menu','active'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * 新增banner页
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        return view('admin.banner.add', ['menu'=>$this->menu, 'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.banner.add', compact('menu','active'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 新增banner操作
+     * @param $banner
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Banner $banner)
     {
-        $data = $request->except('_token');
-        if(Banner::create($data)){
+        $banner->fill($request->all());
+        if($brand->save()){
             return json_encode(['state'=>0, 'msg'=>'添加banner图完成', 'url'=>route('banner.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'添加banner图失败，请联系管理员']);
@@ -46,39 +49,27 @@ class BannerController extends CommonController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @title  更新banner页
+     * @param  $banner
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function edit(Banner $banner)
     {
-        //
+        $res = $banner;
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.banner.edit', compact('res','menu','active'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     * @title  修改用户组页
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $find = Banner::find($id);
-        return view('admin.banner.edit', ['res'=>$find, 'menu'=>$this->menu, 'active'=>$this->active]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
+     * 更新banner操作
+     * @param $banner
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Banner $banner)
     {
-        $data = $request->except('_token','_method');
-        $update = Banner::where('id',$id)->update($data);
+        $update = $banner->update($request->all());
         if($update){
             return json_encode(['state'=>0, 'msg'=>'更新banner图完成','url'=>route('banner.index')]);
         }else{
@@ -87,15 +78,14 @@ class BannerController extends CommonController
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除banner
+     * @param $banner
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Banner $banner)
     {
-        $del = Banner::find($id);
-        if($del->delete()){
+        if($banner->delete()){
             return redirect(route('banner.index'));
         }else{
             return redirect(route('banner.index'));

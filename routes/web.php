@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//微信配置
+Route::any('bw_wechat', 'Index\WechatController@index')->name('wechat');
 //前台路由组
 Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
     //首页
@@ -27,15 +29,13 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //我的文章
     Route::get('user_article', 'UserArticleController@index')->name('user_article');
     //用户文章详情
-    Route::get('user_article_details/{id}', 'UserArticleController@articleDetail')->name('user_article_details');
+    Route::get('user_article_details/{articles}', 'UserArticleController@articleDetail')->name('user_article_details');
     //我的文章详情页上传二维码
     Route::post('upload_qrcode', 'UserArticleController@uploadQrcode')->name('upload_qrcode');
     //使公共文章成为我的文章
     Route::get('become_my_article/{user_id}/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
     //别人分享我的文章
-    Route::get('user_article_share/{id}', 'UserArticleController@userArticleShare')->name('user_article_share');
-    //微信配置
-    Route::any('bw_wechat', 'WechatController@index')->name('wechat');
+    Route::get('user_article_share/{articles}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息
@@ -65,7 +65,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //提交在线咨询
     Route::post('submit_message','UserArticleController@submitMessage')->name('submit_message');
     //咨询列表
-    Route::get('message_list', 'UserArticleController@messageList')->name('message_list');
+    Route::get('message_list/{message}', 'UserArticleController@messageList')->name('message_list');
     //咨询列表
     Route::get('message_detail/{id}', 'UserArticleController@messageDetail')->name('message_detail');
     //前端提交订单
@@ -112,7 +112,7 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         //经销商列表
         Route::get('user_dealer', 'UserController@dealerList')->name('admin.dealerlist');
         //成为经销商
-        Route::get('be_dealer/{id}', 'UserController@be_dealer')->name('admin.be_dealer');
+        Route::get('be_dealer/{user}', 'UserController@be_dealer')->name('admin.be_dealer');
         //品牌管理资源路由
         Route::resource('brand', 'BrandController');
         //品牌管理资源路由

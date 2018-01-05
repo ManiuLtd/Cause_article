@@ -13,8 +13,6 @@ use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
-use EasyWeChat\Message\Image;
-use EasyWeChat\Message\Text;
 
 class WechatController extends Controller
 {
@@ -33,7 +31,7 @@ class WechatController extends Controller
                     break;
                 //收到文字消息
                 case 'text':
-                    return "欢迎关注我!";
+                    return "欢迎关注我！有事请联系客服喔~";
                     break;
             }
         });
@@ -204,7 +202,7 @@ class WechatController extends Controller
                     $extension = $pid;
                     $dealer = $puser->dealer_id;
                 }
-                User::where('id', $user_id)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer ]);
+                User::where('id', $user_id)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer, 'subscribe' => 1 ]);
 
                 //推送【推荐会员成功提醒】模板消息
                 $msg = [

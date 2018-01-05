@@ -7,37 +7,40 @@ use Illuminate\Http\Request;
 class MenusController extends CommonController
 {
     /**
-     * Display a listing of the resource.栏目资源控制器
      * @title  栏目列表
+     * @param $menu
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Menu $menu)
     {
-        $list = getMenu(Menu::orderBy('sort', 'asc')->get()->toArray());
-        return view('admin.menu.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+        $list = getMenu($menu->orderBy('sort', 'asc')->get()->toArray());
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.menu.index',compact('list','menu','active'));
     }
 
     /**
-     * Show the form for creating a new resource.
      * @title  添加栏目页
+     * @param $menu
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Menu $menu)
     {
-        $select = getMenu(Menu::select('id','pid','title')->orderBy('sort', 'asc')->get()->toArray());
-        return view('admin.menu.add',['select'=>$select,'menu'=>$this->menu,'active'=>$this->active]);
+        $select = getMenu($menu->select('id','pid','title')->orderBy('sort', 'asc')->get()->toArray());
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.menu.add',compact('select','menu','active'));
     }
 
     /**
-     * Store a newly created resource in storage.
      * @title  添加栏目操作
+     * @param  $menu
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Menu $menu)
     {
-        $input = $request->only(['pid','title','icon','url','sort','display']);
-        $store = Menu::create($input);
+        $store = $menu->create($request->all());
         if ($store) {
             return json_encode(['state'=>0, 'msg'=>'添加完成', 'url'=>route('menu.index')]);
         } else {
@@ -46,43 +49,32 @@ class MenusController extends CommonController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @title  更新栏目显示页
+     * @param  $menu
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function edit(Menu $menu)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @title  修改栏目显示页
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $res = Menu::find($id);
+        $res = $menu;
         $select = getMenu(Menu::select('id','pid','title')->orderBy('sort', 'asc')->get()->toArray());
-        return view('admin.menu.edit',['select'=>$select,'res'=>$res,'menu'=>$this->menu,'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.menu.edit',compact('res','select','menu','active'));
     }
 
     /**
-     * Update the specified resource in storage.
-     * @title  更新栏目
+     * @title  更新栏目操作
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  $menu
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Menu $menu)
     {
-        $input = $request->only(['pid','title','icon','url','sort','display']);
-        if(!isset($input['display'])){
-            $input['display'] = 0;
+        $data = $request->all();
+        if(!isset($request->display)){
+            $data['display'] = 0;
         }
-        $update = Menu::where('id',$id)->update($input);
+        $update = $menu->update($data);
         if ($update) {
             return json_encode(['state'=>0, 'msg'=>'修改完成', 'url'=>route('menu.index')]);
         } else {
@@ -91,17 +83,16 @@ class MenusController extends CommonController
     }
 
     /**
-     * Remove the specified resource from storage.
-     * @title  删除栏目
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除栏目
+     * @param Menu $menu
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Menu $menu)
     {
-        $del = Menu::find($id);
-        if($del->delete()){
-            if(Menu::where('pid',$id)->get()){
-                Menu::where('pid',$id)->delete();
+        if($menu->delete()){
+            if($menu->where('pid', $menu->id)->get()){
+                $menu->where('pid', $menu->id)->delete();
             }
             return redirect(route('menu.index'));
         }else{

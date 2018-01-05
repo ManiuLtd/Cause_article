@@ -25,7 +25,7 @@
 			</p>
 			<div class="flexv centerv front">
 				<a href="{{route('user_article')}}" class="flexitemv center myfront">
-					<em class="flex">{{$res['user_article']}}</em>
+					<em class="flex">{{ $user_article }}</em>
 					<div class="flex">
 						<span class="flex center">我的头条</span>
 						<i class="flex center bls bls-yjt"></i>
@@ -33,7 +33,7 @@
 				</a>
 				<div class="flex line"></div>
 				<a href="{{route('read_share')}}" class="flexitemv center myfront">
-					<em class="flex">{{$res['read_share']}}</em>
+					<em class="flex">{{ $read_share }}</em>
 					<div class="flex">
 						<span class="flex center">谁查看我的头条 </span>
 						<i class="flex center bls bls-yjt"></i>

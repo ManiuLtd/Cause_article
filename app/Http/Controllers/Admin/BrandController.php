@@ -7,38 +7,40 @@ use Illuminate\Http\Request;
 
 class BrandController extends CommonController
 {
-    /********用户管理********/
     /**
-     * Display a listing of the resource.
      * @title 品牌列表
+     * @param $brand
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Brand $brand)
     {
-        $list = Brand::get();
-        return view('admin.brand.index',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+        $list = $brand->get();
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.brand.index',compact('list','menu','active'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * 新增品牌页
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        return view('admin.brand.add', ['menu'=>$this->menu, 'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.brand.add', compact('menu','active'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 新增品牌操作
+     * @param $brand
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Brand $brand)
     {
-        $data = $request->except('_token');
-        if(Brand::create($data)){
+        if($brand->create($request->all())){
             return json_encode(['state'=>0, 'msg'=>'添加品牌完成', 'url'=>route('brand.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'添加品牌失败，请联系管理员']);
@@ -46,39 +48,28 @@ class BrandController extends CommonController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @title  更新品牌页
+     * @param  $brand
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function edit(Brand $brand)
     {
-        //
+        $res = $brand;
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.brand.edit', compact('res','menu','active'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     * @title  修改用户组页
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $find = Brand::find($id);
-        return view('admin.brand.edit', ['res'=>$find, 'menu'=>$this->menu, 'active'=>$this->active]);
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * 更新品牌操作
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  $brand
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Brand $brand)
     {
-        $data = $request->except('_token','_method');
-        $update = Brand::where('id',$id)->update($data);
+        $update = $brand->update($request->all());
         if($update){
             return json_encode(['state'=>0, 'msg'=>'更新品牌完成','url'=>route('brand.index')]);
         }else{
@@ -87,15 +78,14 @@ class BrandController extends CommonController
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除品牌操作
+     * @param $brand
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Brand $brand)
     {
-        $del = Brand::find($id);
-        if($del->delete()){
+        if($brand->delete()){
             return redirect(route('brand.index'));
         }else{
             return redirect(route('brand.index'));

@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 
 class ArticlesController extends CommonController
 {
-    /********用户管理********/
     /**
-     * Display a listing of the resource.
-     * @用户列表
-     * @return \Illuminate\Http\Response
+     * 文章列表
+     * @param Request $request
+     * @param Article $article
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index(Request $request, Article $article)
     {
         $where = [];
         switch ($request->key) {
@@ -24,34 +24,37 @@ class ArticlesController extends CommonController
                 if($request->brand) $where['brand_id'] = $request->brand;
                 break;
         }
-        $list = Article::with('brand')->where($where)->orderBy('created_at', 'desc')->paginate(12);
+        $list = $article->with('brand')->where($where)->orderBy('created_at', 'desc')->paginate(12);
         //品牌列表
         $brand_list = Brand::all();
-        return view('admin.articles.index',['list'=>$list,'brand_list'=>$brand_list,'menu'=>$this->menu,'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.articles.index',compact('list','brand_list','menu','active'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * 新增文章页
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
         $brand = Brand::get();
-        return view('admin.articles.add', ['brand'=>$brand, 'menu'=>$this->menu, 'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.articles.add', compact('brand','menu','active'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 新增文章操作
+     * @param Request $request
+     * @param Article $article
+     * @return string
      */
     public function store(Request $request, Article $article)
     {
-        $data = $request->all();
-        $data['created_at'] = date('Y-m-d H:i:s',time());
-        if($article->create($data)){
+        $article->fill($request->all());
+        if($article->save()){
             return json_encode(['state'=>0, 'msg'=>'添加文章完成', 'url'=>route('articles.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'添加文章失败，请联系管理员']);
@@ -59,41 +62,28 @@ class ArticlesController extends CommonController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @title  更新文章页
+     * @param  $article
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function edit(Article $article)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @title  修改用户组页
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $find = Article::find($id);
+        $res = $article;
         $brand = Brand::get();
-        return view('admin.articles.edit', ['res'=>$find, 'brand'=>$brand, 'menu'=>$this->menu, 'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.articles.edit', compact('res','brand','menu','active'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 更新文章操作
+     * @param Request $request
+     * @param Article $article
+     * @return string
      */
     public function update(Request $request, Article $article)
     {
-        $data = $request->except('_token','_method');
-//        $data['details'] = $request->editorValue;
-        $update = $article->update($data);
+        $update = $article->update($request->all());
         if($update){
             return json_encode(['state'=>0, 'msg'=>'更新文章完成','url'=>route('articles.index')]);
         }else{
@@ -102,15 +92,14 @@ class ArticlesController extends CommonController
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除文章操作
+     * @param $article
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
-        $del = Article::find($id);
-        if($del->delete()){
+        if($article->delete()){
             return redirect(route('articles.index'));
         }else{
             return redirect(route('articles.index'));

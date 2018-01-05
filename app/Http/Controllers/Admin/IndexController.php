@@ -59,31 +59,4 @@ class IndexController extends CommonController
             return json_encode(['state'=>401, 'msg'=>'上传失败']);
         }
     }
-
-    /**
-     * @title   文本编辑器上传图片
-     */
-    public function ckeditor()
-    {
-        $file = request()->file('upload');
-        // 移动到框架应用根目录/public/uploads/ 目录下
-        $daytime = date('Ymd',time());
-        $allowed_extensions = ["png", "jpg", "gif"];
-        if ($file->getClientOriginalExtension() && !in_array($file->getClientOriginalExtension(), $allowed_extensions)) {
-            return json_encode(['error' => '文件格式错误！']);
-        }
-
-        $destinationPath = "../public_html/uploads/ckeditor_article/$daytime/";
-        $extension = $file->getClientOriginalExtension();
-        $fileName = str_random(10).'.'.$extension;
-        $ret = $file->move($destinationPath, $fileName);
-        if($ret){
-            // 成功上传后 获取上传信息
-            $callback = $_REQUEST["CKEditorFuncNum"];
-            return "<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction($callback,'".'http://bw.eyooh.com/uploads/ckeditor_article/'.$daytime.'/'.$fileName."','');</script>";
-        }else{
-            // 上传失败获取错误信息
-            return '上传出错';
-        }
-    }
 }

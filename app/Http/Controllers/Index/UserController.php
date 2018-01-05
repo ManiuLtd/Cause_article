@@ -22,25 +22,27 @@ class UserController extends CommonController
 
     /**
      * @title  个人中心
+     * @param $type 'become_dealer->招商，become_extension->运营'
+     * @param $dealer '推广id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View become_dealer
      */
     public function index($type = '', $dealer = '')
     {
         $uid = \Session::get('user_id');
-        $res = User::where('id', $uid)->first()->toArray();
+        $res = User::where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if($res['admin_id'] == 0 && $res['admin_type'] == 0) {
+        if($res->admin_id == 0 && $res->admin_type == 0) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
         }
 
-        $res[ 'user_article' ] = UserArticles::where('uid', $res[ 'id' ])->count();
-        $res[ 'read_share' ] = Footprint::where('uid', $res[ 'id' ])->count();
+        $user_article = UserArticles::where('uid', $res->id)->count();
+        $read_share = Footprint::where('uid', $res->id)->count();
         $pic = '';
         $head = '';
-        if ( $res[ 'extension_image' ] == '' ) {
+        if ( $res->extension_image == '' ) {
             $url = app(User::class)->createQrcode($uid);
             //二维码转base64位
             $arr = getimagesize($url);
@@ -53,11 +55,13 @@ class UserController extends CommonController
                 $head = app(User::class)->curl_url(config('app.url').$head, 2);
             }
         }
-        return view('index.user_center', compact('res', 'pic', 'head'));
+        return view('index.user_center', compact('res', 'user_article', 'read_share', 'pic', 'head'));
     }
 
     /**
      * @title  用户基本信息及修改
+     * @param $request Request
+     * @param $user User
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function userBasic(Request $request, User $user)
@@ -123,7 +127,7 @@ class UserController extends CommonController
      */
     public function invitingFriends( Request $request )
     {
-        $uid = session()->get('user_id');
+        $uid = \Session::get('user_id');
         $user = User::where('id', $uid)->first();
         if ( $user->subscribe == 1 ) {
             $this->optionInviting($user, $request);

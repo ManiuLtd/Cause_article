@@ -8,40 +8,44 @@ use Illuminate\Http\Request;
 
 class AdminUserController extends CommonController
 {
-    /********用户管理********/
     /**
-     * Display a listing of the resource.
-     * @用户列表
+     * 用户管理
+     * @param $admin Admin
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Admin $admin)
     {
-        $list = Admin::with('group')->get();
-        return view('admin.admin.admin',['list'=>$list,'menu'=>$this->menu,'active'=>$this->active]);
+        $list = $admin->with('group')->get();
+        $menu = $this->menu;
+        $active = $this->active;
+        return view('admin.admin.admin',compact('list','menu','active'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
+     * 用户新增页
+     * @param $admin
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
         $select = AdminGroup::get();
-        return view('admin.admin.add', ['select'=>$select, 'menu'=>$this->menu, 'active'=>$this->active]);
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.admin.add', compact('select','menu','active'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * 用户新增操作
+     * @param $admin
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Admin $admin)
     {
-        $data = $request->only('gid','account','head','state','password');
-        $data['password'] = bcrypt($data['password']);
-        if(Admin::create($data)){
+        $admin->fill($request->all());
+        $admin->password = bcrypt($request->password);
+        if($admin->save()){
             return json_encode(['state'=>0, 'msg'=>'添加用户完成', 'url'=>route('admin_user.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'添加用户组失败，请联系管理员']);
@@ -49,42 +53,32 @@ class AdminUserController extends CommonController
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @title  更新用户组页
+     * @param  $admin
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function edit(Admin $admin)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @title  修改用户组页
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $find = Admin::find($id);
         $select = AdminGroup::get();
-        return view('admin.admin.edit', ['res'=>$find, 'select'=>$select, 'menu'=>$this->menu, 'active'=>$this->active]);
+        $res = $admin;
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.admin.edit', compact('res','select','menu','active'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * 用户更新操作
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  $admin
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Admin $admin)
     {
-        $data = $request->only('gid','account','head','state','password');
-        $data['password'] = bcrypt($data['password']);
-        $update = Admin::where('id',$id)->update($data);
-        if($update){
+        $data = $request->all();
+        $data['password'] = bcrypt($request->password);
+        if($admin->update($data)){
             return json_encode(['state'=>0, 'msg'=>'更新用户完成','url'=>route('admin_user.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'更新用户失败，请联系管理员']);
@@ -92,15 +86,14 @@ class AdminUserController extends CommonController
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 删除用户
+     * @param $admin
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Admin $admin)
     {
-        $del = Admin::find($id);
-        if($del->delete()){
+        if($admin->delete()){
             return redirect(route('admin_group.index'));
         }else{
             return redirect(route('admin_group.index'));

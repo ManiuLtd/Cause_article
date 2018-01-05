@@ -85,12 +85,14 @@ class UserController extends CommonController
 
     /**
      * 成为经销商
-     * @param int $id
+     * @param $user
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function be_dealer($id)
+    public function be_dealer(User $user)
     {
-        $update = User::where('id', $id)->update(['type' => 2]);
+        $update = $user->update(['type' => 2]);
+        //该用户推广的所有用户更新关联关系
+        $user->where('extension_id', $user->id)->update(['extension_id' => 0, 'dealer_id' => $user->id]);
         if($update){
             return redirect(route('admin.user'));
         }
@@ -103,7 +105,7 @@ class UserController extends CommonController
      */
     public function seeIntegral($id)
     {
-        $history_integral = number_format(Integral::where('uid',$id)->sum('price'), 2);
+        $history_integral = number_format(Integral::where('user_id',$id)->sum('price'), 2);
         return response()->json(['history'=>$history_integral]);
     }
 

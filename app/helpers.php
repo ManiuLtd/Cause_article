@@ -95,9 +95,7 @@ function getMenu($items, $id = 'id', $pid = 'pid', $son = 'children')
  * @return boolean
  */
 function has_menu ($menus,$url = null){
-    $nowUrl = $url ? $url : ucfirst(\think\Request::instance()->controller()).'/'. strtolower(\think\Request::instance()->action());
-    $allowList = array('index/index','index/profile','index/upload','index/trash','index/ueditor');
-    if(in_array($nowUrl,$allowList)) return true;
+    $nowUrl = $url;
     $result = false;
     foreach($menus as $k=>$v){
         if($v['url'] == $nowUrl){

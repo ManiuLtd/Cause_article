@@ -24,7 +24,7 @@ class UserArticleController extends CommonController
     //我的头条列表
     public function index()
     {
-        $list = UserArticles::with('article')->where('uid', session()->get('user_id'))->orderBy('created_at', 'desc')->get();
+        $list = UserArticles::with('article')->where('uid', \Session::get('user_id'))->orderBy('created_at', 'desc')->get();
 
         return view('index.user_article', [ 'list' => $list ]);
     }
@@ -34,53 +34,50 @@ class UserArticleController extends CommonController
      * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function articleDetail( $id )
+    public function articleDetail( UserArticles $articles )
     {
         $uid = session()->get('user_id');
-        if ( $uid ) {
-            $addfootid = '';
-            $fkarticle = '';
-            $uarticle = UserArticles::with('user', 'article')->where('id', $id)->first();
+        $addfootid = '';
+        $fkarticle = '';
+        $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
 
-            //获取品牌
-            $brand = Brand::find($uarticle->user->brand_id);
+        //获取品牌
+        $brand = Brand::find($uarticle->user->brand_id);
 
-            if ( $uarticle->uid != $uid ) {
-                //用户文章第一次阅读则推送文本消息给该文章拥有者
-                $cachename = $id . $uarticle->user[ 'openid' ];
-                if ( !Cache::has("$cachename") ) {
-                    //推送消息
-                    $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《{$uarticle->article[ 'title' ]}》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
-                    message($uarticle->user[ 'openid' ], 'text', $context);
-                    Cache::put("$cachename", 1, 60);
-                }
-                //公共文章浏览数+1
-                Article::where('id', $uarticle->aid)->increment('read', 1);
-                //用户文章浏览数+1
-                UserArticles::where('id', $id)->increment('read', 1);
-
-                //更新第一次阅读状态
-                if ( $uarticle->first_read == 0 ) {
-                    UserArticles::where('id', $id)->update([ 'first_read' => 1 ]);
-                }
-                //记录访客足迹(停留时间处理)
-                $addfootid = Footprint::insertGetId([ 'uid' => $uarticle->uid, 'see_uid' => $uid, 'uaid' => $id, 'created_at' => date('Y-m-d H:i:s', time()), 'type' => 1 ]);
-
-                //判断访客是否已拥有该文章
-                $fkarticle = UserArticles::where([ 'aid' => $uarticle->article[ 'id' ], 'uid' => $uid ])->first();
+        if ( $uarticle->uid != $uid ) {
+            //用户文章第一次阅读则推送文本消息给该文章拥有者
+            $cachename = $articles->id . $uarticle->user[ 'openid' ];
+            if ( !Cache::has("$cachename") ) {
+                //推送消息
+                $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《{$uarticle->article[ 'title' ]}》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
+                message($uarticle->user[ 'openid' ], 'text', $context);
+                Cache::put("$cachename", 1, 60);
             }
+            //公共文章浏览数+1
+            Article::where('id', $uarticle->aid)->increment('read', 1);
+            //用户文章浏览数+1
+            $articles->increment('read', 1);
 
-            $uarticle[ 'brand' ] = Brand::find($uarticle->article[ 'brand_id' ]);
+            //更新第一次阅读状态
+            if ( $uarticle->first_read == 0 ) {
+                $articles->update([ 'first_read' => 1 ]);
+            }
+            //记录访客足迹(停留时间处理)
+            $addfootid = Footprint::insertGetId([ 'uid' => $uarticle->uid, 'see_uid' => $uid, 'uaid' => $articles->id, 'created_at' => date('Y-m-d H:i:s', time()), 'type' => 1 ]);
 
-            //微信分享配置
-            $package = wecahtPackage();
-
-            //判断是否是会员或会员已过期
-            $member_time = Carbon::parse($uarticle->user[ 'membership_time' ])->gt(Carbon::parse('now'));
-
-            return view('index.user_article_details', [ 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'package' => $package, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
+            //判断访客是否已拥有该文章
+            $fkarticle = UserArticles::where([ 'aid' => $uarticle->article[ 'id' ], 'uid' => $uid ])->first();
         }
 
+        $uarticle[ 'brand' ] = Brand::find($uarticle->article[ 'brand_id' ]);
+
+        //微信分享配置
+        $package = wecahtPackage();
+
+        //判断是否是会员或会员已过期
+        $member_time = Carbon::parse($uarticle->user[ 'membership_time' ])->gt(Carbon::parse('now'));
+
+        return view('index.user_article_details', [ 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'package' => $package, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
     }
 
     /**
@@ -89,7 +86,7 @@ class UserArticleController extends CommonController
     public function uploadQrcode( Request $request )
     {
         $path = base64Toimg($request->url, 'user_qrcode');
-        $save = User::where('id', session()->get('user_id'))->update([ 'qrcode' => "/uploads/" . $path[ 'path' ] ]);
+        $save = User::where('id', \Session::get('user_id'))->update([ 'qrcode' => "/uploads/" . $path[ 'path' ] ]);
         if ( $save ) {
             return response()->json([ 'state' => 0, 'errormsg' => '上传二维码成功' ]);
         } else {
@@ -99,24 +96,23 @@ class UserArticleController extends CommonController
 
     /**
      * @title 文章被其他用户分享时分享数+1
-     * @param $id
+     * @param $articles UserArticles
      */
-    public function userArticleShare( $id )
+    public function userArticleShare( UserArticles $articles )
     {
-        $farticle = UserArticles::find($id);
-        if ( $farticle->uid != session()->get('user_id') ) {
-            if ( $farticle->isrs == 0 ) UserArticles::where('id', $id)->update([ 'isrs' => 1 ]);
+        if ( $articles->uid != session()->get('user_id') ) {
+            if ( $articles->isrs == 0 ) $articles->update([ 'isrs' => 1 ]);
             //用户文章分享数+1
-            UserArticles::where('id', $id)->increment('share', 1);
+            $articles->increment('share', 1);
             $data = [
-                'uid'     => $farticle->uid,
+                'uid'     => $articles->uid,
                 'see_uid' => session()->get('user_id'),
-                'uaid'    => $id,
+                'uaid'    => $articles->id,
                 'type'    => 2
             ];
             Footprint::create($data);
             //公共文章分享数+1
-            Article::where('id', $farticle->aid)->increment('share', 1);
+            Article::where('id', $articles->aid)->increment('share', 1);
         }
     }
 
@@ -157,7 +153,7 @@ class UserArticleController extends CommonController
     {
         $list = Footprint::with('userArticle', 'user')->where([ 'uid' => session()->get('user_id') ])->orderBy('created_at', 'desc')->get();
         foreach ( $list->toArray() as $key => $value ) {
-            $list[ $key ][ 'article' ] = Article::where('id', $value[ 'user_article' ][ 'aid' ])->first()->toArray();
+            $list[ $key ][ 'article' ] = Article::where('id', $value[ 'user_article' ][ 'aid' ])->first();
         }
 
         return view('index.read_share', compact('list'));
@@ -170,43 +166,34 @@ class UserArticleController extends CommonController
     public function visitorRecord()
     {
         $uid = session()->get('user_id');
-        if ( $uid ) {
-            //是否有新访客
-            if ( Footprint::where([ 'uid' => session()->get('user_id'), 'new' => 1 ])->first() ) {
-                session()->put('newkf', 1);
-            } else {
-                session()->forget('newkf');
-            }
+        //判断用户会员是否过期
+        $member_time = User::where('id', $uid)->select('membership_time')->first();
 
-            //判断用户会员是否过期
-            $member_time = User::where('id', $uid)->select('membership_time')->first();
+        $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
+        foreach ( $list as $key => $value ) {
+            //统计新访客
+            $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
 
-            $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
-            foreach ( $list as $key => $value ) {
-                //统计新访客
-                $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
-
-                //去重获取单个用户id
-                $user_list = remove_duplicate($value[ 'footprint' ]);
-                foreach ( $user_list as $k => $v ) {
-                    //获取用户头像
-                    if ( Carbon::parse($member_time->membership_time)->gt(Carbon::parse('now')) ) {
-                        //已开通会员
-                        $list[ $key ][ 'user' ][ $k ] = User::where('id', $v[ 'see_uid' ])->select('head')->first();
-                    } else {
-                        //未开通会员
-                        $list[ $key ][ 'user' ][ $k ][ 'head' ] = '/head.png';
-                    }
+            //去除重复用户获取单个用户id
+            $user_list = remove_duplicate($value[ 'footprint' ]);
+            foreach ( $user_list as $k => $v ) {
+                //获取用户头像
+                if ( Carbon::parse($member_time->membership_time)->gt(Carbon::parse('now')) ) {
+                    //已开通会员
+                    $list[ $key ][ 'user' ][ $k ] = User::where('id', $v[ 'see_uid' ])->select('head')->first();
+                } else {
+                    //未开通会员
+                    $list[ $key ][ 'user' ][ $k ][ 'head' ] = '/head.png';
                 }
             }
-
-            return view('index.visitor_record', compact('list', 'user_list'));
         }
+
+        return view('index.visitor_record', compact('list', 'user_list'));
     }
 
     /**
      * @title 用户文章访客详细列表
-     * @param $id 用户文章表id
+     * @param $id '用户文章表id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function visitorDetails( $id )
@@ -227,7 +214,7 @@ class UserArticleController extends CommonController
 
     /**
      * @title 在线询问用户文章
-     * @param $id 用户文章表id
+     * @param $id '用户文章表id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function chatroom( $id )
@@ -239,14 +226,15 @@ class UserArticleController extends CommonController
 
     /**
      * @title  提交在线咨询信息
+     * @param $request Request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function submitMessage( Request $request )
     {
         $data = $request->except('_token', 'uaid');
         $data[ 'sub_uid' ] = session()->get('user_id');
-        $data[ 'order_id' ] = date('Ymd') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
-        $data[ 'created_at' ] = date('Y-m-d H:i:s', time());
+        $data[ 'order_id' ] = date('YmdHis') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+        $data[ 'created_at' ] = date('Y-m-d H:i:s');
         $add_id = Message::insertGetId($data);
         if ( $add_id ) {
             //推送【咨询消息】模板消息
@@ -284,11 +272,12 @@ class UserArticleController extends CommonController
 
     /**
      * 咨询列表
+     * @param $message Message
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function messageList()
+    public function messageList(Message $message)
     {
-        $list = Message::with('user')->where('uid', session()->get('user_id'))->get();
+        $list = $message->with('user')->where('uid', \Session::get('user_id'))->get();
 
         return view('index.message', compact('list'));
     }
@@ -308,7 +297,7 @@ class UserArticleController extends CommonController
 
     /**
      * @title 访客记录统计页
-     * @param $uid  查找的用户id
+     * @param $uid  '查找的用户id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function connection( $uid )
