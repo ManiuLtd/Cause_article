@@ -198,7 +198,7 @@ class OrderController extends CommonController
         $orderPrice = $order->price * 100;
         $refundPrice = $request->money * 100;
 
-        $app = new Application(config('wechat.wechat_config'));
+        $app = new Application(config('wechat'));
         $payment = $app->payment;
         $ret = $payment->refund($orderNo, $refundNo, $orderPrice, $refundPrice);
         if($ret['result_code'] == 'SUCCESS' && $ret['return_code'] == 'SUCCESS') {

@@ -27,7 +27,7 @@ class PayController extends Controller
     {
         //下订单
         $order = [
-            'order_id'  =>  date('Ymd') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8),
+            'order_id'  =>  date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8).rand(100000, 999999),
             'uid'       =>  $request->uid,
             'price'     =>  $request->price,
             'title'     =>  $request->title,
@@ -72,11 +72,11 @@ class PayController extends Controller
      */
     public function outTradeNo()
     {
-        $options = config('wechat');
-        $app = new Application($options);
+        $app = new Application(config('wechat'));
         $response = $app->payment->handleNotify(function($notify, $successful){
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
             $order = MemberOrder::where('order_id',$notify->out_trade_no)->first();
+            \Log::info($notify->out_trade_no);
             if (!$order) { // 如果订单不存在
                 return '如果订单不存在.'; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
             }

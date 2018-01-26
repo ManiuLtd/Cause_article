@@ -263,10 +263,10 @@
             $.post(url,post,function (ret){
                 hideProgress();
                 if(ret.state == 0) {
-                    showMsg('完善资料成功', 1);
+                    showMsg('完善资料成功', 1, 2000);
 					setTimeout(function () {
 						window.location.href = "{{ route('become_my_article',['user_id'=>session()->get('user_id'),'article_id'=>$res->article['id'],'pid'=>$res->uid]) }}";
-					}, 1000);
+					}, 2000);
                 } else {
                     showMsg('完善资料失败');
                 }

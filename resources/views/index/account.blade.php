@@ -104,7 +104,6 @@
 
     getCode.click(function () {
         if (!$(this).hasClass('disabled')) {
-            // smsTimer(getCode, '重新获取', 60, 'disabled');
             //发送验证码
             var url = $('.step1').attr('action');
             $.post(url, {again:1,_token:"{{ csrf_token() }}"}, function (ret) {

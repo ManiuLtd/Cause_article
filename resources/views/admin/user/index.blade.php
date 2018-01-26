@@ -52,6 +52,9 @@
                         @elseif(has_menu($menu,'/admin/user') && $value['is_dealer'] == 1)
                             <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为二级经销商</a>
                         @endif
+                        @if(has_menu($menu,'admin/setMemberTime'))
+                            <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -66,21 +69,28 @@
 <script type="text/javascript" src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
 <script type="text/javascript" src="/admin/layer/layer.js"></script>
 <script>
-    function see_commis(url) {
-        $.get(url, function (ret) {
-            var content = '<form class="form-horizontal" style="margin-top: 20px">' +
-                '<div class="form-group"><label class="col-sm-5 control-label no-padding-right"> 历史推广佣金 </label>' +
-                '<label class="col-sm-5 control-label no-padding-left"> ' + ret.history + '元 </label>' +
-                '</div>' +
-//                '<div class="form-group"><label class="col-sm-5 control-label no-padding-right"> 可用推广佣金 </label>' +
-//                '<label class="col-sm-5 control-label no-padding-left"> ' + 1 + '元 </label>' +
-//                '</div>' +
-                '</form>';
-            layer.open({
-                type: 1,
-                skin: 'layui-layer-rim', //加上边框
-                area: ['340px', '370px'], //宽高
-                content: content
+    function setMembertime(th, id, time) {
+        var content = '<form class="form-horizontal" style="margin-top: 20px">' +
+            '<div class="form-group">' +
+            '<label class="col-sm-3 control-label no-padding-right" style="margin: 4px 10px 0 0"> 会员时间：</label>' +
+            '<input type="date" value="'+time+'" class="member-time" >' +
+            '</div>' +
+            '</form>';
+        layer.confirm(content, {
+            btn: ['确定','取消'],
+            skin: 'layui-layer-rim',
+            area: ['370px', '220px']
+        }, function(){
+            var time = $('.member-time').val(),
+                url = $(th).attr('data-url');
+            $.post(url, {user_id:id, membership_time:time, _token:"{{ csrf_token() }}"}, function(ret){
+                console.log(ret);
+                if(ret.state == 0) {
+                    layer.msg(ret.error, {icon: 1});
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000)
+                }
             });
         });
     }

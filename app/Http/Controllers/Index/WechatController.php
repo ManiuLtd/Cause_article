@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TraitFunction\FunctionUser;
 use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
@@ -16,6 +17,8 @@ use EasyWeChat\Foundation\Application;
 
 class WechatController extends Controller
 {
+    use FunctionUser;
+
     public function index()
     {
         $options = config('wechat');
@@ -142,7 +145,7 @@ class WechatController extends Controller
                     ];
                     template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
                     //推广奖励操作
-                    extension($eventkey);
+                    $this->extension($eventkey);
                 }
             }
         }else {
@@ -174,7 +177,7 @@ class WechatController extends Controller
             ];
             template_message($app, $FromUserName, $msg, config('wechat.template_id.extension_user'), config('app.url'));
             //推广奖励操作
-            extension($eventkey);
+            $this->extension($eventkey);
         }
     }
 

@@ -21,6 +21,7 @@
                 <th>手机号</th>
                 <th>从事品牌</th>
                 <th>从业地区</th>
+                <th>会员到期时间</th>
                 <th>用户类型</th>
                 <th>上级经销商/id</th>
                 <th>所属部门员工</th>
@@ -39,6 +40,7 @@
                 <td>{{$value->phone}}</td>
                 <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
                 <td>{{$value->employed_area}}</td>
+                <td>{{ $value->membership_time }}</td>
                 <td>@if($value->type == 2) 经销商 @endif</td>
                 <td> {{$value->dealer['wc_nickname'].' / '.$value->dealer['id']}} </td>
                 <td>@if($value->admin)<color style="color:green">{{ $value->admin->account }}</color>@endif</td>
@@ -53,6 +55,9 @@
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                         <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral',['id'=>$value->id]) }}');">查看推广金</a>
                         {{--<a class="btn btn-xs btn-info" onclick="set_integral('{{ route('set_integral') }}',{{$value->id}},'{{csrf_token()}}');">佣金比例设置</a>--}}
+                        @if(has_menu($menu,'admin/setMemberTime'))
+                            <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
+                        @endif
                     </div>
                 </td>
             </tr>
@@ -85,6 +90,34 @@
             });
         });
     }
+
+    function setMembertime(th, id, time) {
+        var content = '<form class="form-horizontal" style="margin-top: 20px">' +
+            '<div class="form-group">' +
+            '<label class="col-sm-3 control-label no-padding-right" style="margin: 4px 10px 0 0"> 会员时间：</label>' +
+            '<input type="date" value="'+time+'" class="member-time" >' +
+            '</div>' +
+            '</form>';
+        layer.confirm(content, {
+            btn: ['确定','取消'],
+            skin: 'layui-layer-rim',
+            area: ['370px', '220px']
+        }, function(){
+            var time = $('.member-time').val(),
+                url = $(th).attr('data-url');
+            $.post(url, {user_id:id, membership_time:time, _token:"{{ csrf_token() }}"}, function(ret){
+                console.log(ret);
+                if(ret.state == 0) {
+                    layer.msg(ret.error, {icon: 1});
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000)
+                }
+            });
+        });
+    }
+
+
 
     function dealer_url(id) {
         var url = "{{ config('app.url') }}user/become_dealer/"+id+"/1";

@@ -8,9 +8,8 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Classes\Gdimage\Images;
 use App\Http\Controllers\TraitFunction\FunctionUser;
-use App\Http\Controllers\TraitFunction\Wechat;
+use App\Jobs\extensionImage;
 use App\Model\Footprint;
 use App\Model\User;
 use App\Model\UserArticles;
@@ -18,7 +17,7 @@ use Illuminate\Http\Request;
 
 class UserController extends CommonController
 {
-    use FunctionUser, Wechat;
+    use FunctionUser;
 
     /**
      * @title  个人中心
@@ -124,25 +123,20 @@ class UserController extends CommonController
 
     /**
      * 邀请好友(保存生成的图片并上传至微信之后客服消息发送图片)
+     * @param $request
+     * @return mixed
      */
     public function invitingFriends( Request $request )
     {
-        $uid = \Session::get('user_id');
+        $uid = session('user_id');
         $user = User::where('id', $uid)->first();
         if ( $user->subscribe == 1 ) {
-            $this->optionInviting($user, $request);
+
+            dispatch(new extensionImage($user, $request->type, $request->url));
 
             return response()->json([ 'state' => 0, 'errormsg' => '发送成功' ]);
         } else {
-            $user_info = $this->ObtainUserInfo($user);
-
-            if($user_info['subscribe'] != 1) {
-                return response()->json([ 'state' => 401, 'errormsg' => '请先关注公众号' ]);
-            } else {
-                User::where('id', $uid)->update(['subscribe' => 1]);
-                $this->optionInviting($user, $request);
-                return response()->json([ 'state' => 0, 'errormsg' => '发送成功' ]);
-            }
+            return response()->json([ 'state' => 401, 'errormsg' => '请先关注公众号' ]);
         }
     }
 

@@ -12,8 +12,11 @@
 */
 //微信配置
 Route::any('bw_wechat', 'Index\WechatController@index')->name('wechat');
+//微信支付回调地址
+Route::any('out_trade_no','Index\PayController@outTradeNo');
 //前台路由组
 Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
+    Route::get('test', 'IndexController@test');
     //首页
     Route::get('/', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
     //品牌接口
@@ -70,8 +73,6 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('message_detail/{id}', 'UserArticleController@messageDetail')->name('message_detail');
     //前端提交订单
     Route::post('submit_order','PayController@addOrder')->name('submit_order');
-    //微信支付回调地址
-    Route::any('out_trade_no','PayController@outTradeNo');
     //点击邀请好友
     Route::post('inviting','UserController@invitingFriends')->name('inviting');
     //用户文章访客记录
@@ -153,6 +154,8 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::post('extract_remark/{integralUse}', 'ExtractCashController@remark')->name('admin.extract_remark');
         //客服完成提现
         Route::get('extract_complete/{integralUse}', 'ExtractCashController@complete')->name('admin.extract_complete');
+        //客服修改会员时间
+        Route::post('set_member_time', 'UserController@setMemberTime')->name('admin.set_member_time');
     });
 
     //上传图片

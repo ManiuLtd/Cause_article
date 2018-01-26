@@ -10,6 +10,7 @@ namespace App\Http\Middleware;
 
 use App\Model\User;
 use Closure;
+use EasyWeChat\Foundation\Application;
 
 class UserInfo
 {
@@ -22,20 +23,17 @@ class UserInfo
      */
     public function handle($request, Closure $next)
     {
-        $user = session('wechat.oauth_user'); // 拿到授权用户资料
-        $find_user = User::where('openid', $user['id'])->first();
         if(!\Session::has('user_id')) {
+            $user = session('wechat.oauth_user'); // 拿到授权用户资料
+            $find_user = User::where('openid', $user['id'])->first();
             if ( !$find_user ) {
-                $data = [ 'wc_nickname' => $user[ 'name' ], 'head' => $user[ 'avatar' ], 'openid' => $user[ 'id' ] ];
-                User::create($data);
-                \Session::put('user_id', $user[ 'id' ]);
-                \Session::put('head_pic', $user[ 'avatar' ]);
-                \Session::put('nickname', $user[ 'nickname' ]);
+                $app = new Application(config('wechat'));
+                $wechatUserInfo = $app->user->get($user->id);
+                $data = [ 'wc_nickname' => $user[ 'name' ], 'head' => $user[ 'avatar' ], 'openid' => $user[ 'id' ], 'subscribe' => $wechatUserInfo['subscribe'] ];
+                $add = User::create($data);
+                session(['user_id' => $add->id, 'head_pic' => $user[ 'avatar' ], 'nickname' => $user[ 'nickname' ]]);
             } else {
-                \Session::put('phone', $find_user[ 'phone' ]);
-                \Session::put('user_id', $find_user[ 'id' ]);
-                \Session::put('head_pic', $find_user[ 'head' ]);
-                \Session::put('nickname', $find_user[ 'wc_nickname' ]);
+                session(['user_id' => $find_user[ 'id' ], 'phone' => $find_user[ 'phone' ], 'head_pic' => $find_user[ 'head' ], 'nickname' => $find_user[ 'wc_nickname' ]]);
             }
         }
         return $next($request);

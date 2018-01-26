@@ -68,7 +68,7 @@
                 <td>{{ $value->created_at }}</td>
                 <td>
                     @if($value->state == 1 && $value->refund_state != 1)
-                        <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
+                        <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
                     @endif
                     @if($value->state != 1)
                         <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
@@ -94,10 +94,11 @@
 <script>
     $('.wx-refund').click(function () {
         var url = $(this).attr('data-url'),
-            max_price = $(this).attr('data-price');
+            max_price = $(this).attr('data-price'),
+            nickname = $(this).attr('data-name');
         var content = '退款金额<input class="bootbox-input form-control money" type="text">';
         bootbox.dialog({
-            title: '填写退款金额：',
+            title: '填写退款金额(退款人：'+nickname+')：',
             message: content,
             buttons: {
                 "success" : {

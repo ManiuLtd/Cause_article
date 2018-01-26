@@ -8,12 +8,19 @@
 
 namespace App\Http\Controllers\Index;
 
+use App\Jobs\mondaySlug;
 use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
+    public function test()
+    {
+        $user = User::where('id', 102)->first();
+        dispatch(new mondaySlug($user));
+    }
+
     /**
      * @title 首页
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

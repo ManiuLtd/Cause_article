@@ -2,33 +2,11 @@
 
 namespace App\Http\Controllers\TraitFunction;
 
+
 use App\Model\User;
-use EasyWeChat\Foundation\Application;
 
 trait FunctionUser
 {
-
-    public function optionInviting($user, $request)
-    {
-        if ( $request->type == 1 ) {
-            $image = $request->url;
-        } elseif ( $request->type == 2 ) {
-            // 保存本地图片
-            $path = base64Toimg($request->url, 'inviting_qrcode');
-            //待扩展-》如已生成的图片下次直接用原来的图片上传临时素材发送客服消息
-            User::where('id', $user->id)->update([ 'extension_image' => $path[ 'path' ] ]);
-            $image = $path[ 'path' ];
-        }
-        // 上传临时图片素材
-        $app = new Application(config('wechat'));
-        $temporary = $app->material_temporary;
-        $ret = $temporary->uploadImage("../public_html/uploads/" . $image);
-
-        //推送文本消息
-        $this->extension_tyep($user->extension_type, $user->extension_num, $user->openid);
-        //推送推广图片
-        message($user->openid, 'image', $ret->media_id);
-    }
     /**
      * 推送自己的推广状态
      * @param $type
@@ -67,6 +45,71 @@ trait FunctionUser
                 $context = "分享下图邀请你的朋友同事也来使用事业头条吧。\n\n↓↓↓↓↓↓";
                 message($openid, 'text', $context);
                 break;
+        }
+    }
+
+    /**
+     * @title 推广用户成功奖励
+     * @param $id
+     */
+    function extension($id)
+    {
+        User::where('id',$id)->increment('extension_num', 1);
+        $user = User::find($id);
+        if($user->extension_num <= 105) {
+            switch ($user->extension_num) {
+                case '5':
+                    if ($user->extension_type == 0) {
+                        $this->membership_time($user->membership_time, $user->id, 5, 1);
+                        $context = "恭喜您成功推荐5位朋友使用事业头条，你已获赠5天免费使用【谁查看我】功能，赶紧点击下方“谁查看我”看看吧！ \n↓↓↓↓↓↓↓↓ \n\n继续推荐10位好友使用，获赠更多功能特权！";
+                        message($user->openid, 'text', $context);
+                    }
+                    break;
+                case '15':
+                    if ($user->extension_type == 1) {
+                        $this->membership_time($user->membership_time, $user->id, 5, 2);
+                        $context = "恭喜您成功推荐10位朋友使用事业头条，你已获赠5天免费使用【谁查看我】功能，赶紧点击下方“谁查看我”看看吧！ \n↓↓↓↓↓↓↓↓ \n\n继续推荐20位好友使用，获赠更多功能特权！";
+                        message($user->openid, 'text', $context);
+                    }
+                    break;
+                case '35':
+                    if ($user->extension_type == 2) {
+                        $this->membership_time($user->membership_time, $user->id, 10, 3);
+                        $context = "恭喜您成功推荐20位朋友使用事业头条，你已获赠10天免费使用【谁查看我】功能，赶紧点击下方“谁查看我”看看吧！ \n↓↓↓↓↓↓↓↓ \n\n继续推荐30位好友使用，获赠更多功能特权！";
+                        message($user->openid, 'text', $context);
+                    }
+                    break;
+                case '65':
+                    if ($user->extension_type == 3) {
+                        $this->membership_time($user->membership_time, $user->id, 10, 4);
+                        $context = "恭喜您成功推荐30位朋友使用事业头条，你已获赠10天免费使用【谁查看我】功能，赶紧点击下方“谁查看我”看看吧！ \n↓↓↓↓↓↓↓↓ \n\n继续推荐40位好友使用，获赠更多功能特权！";
+                        message($user->openid, 'text', $context);
+                    }
+                    break;
+                case '105':
+                    //推广奖励到此就获取完
+                    if ($user->extension_type == 4) {
+                        $this->membership_time($user->membership_time, $user->id, 20, 5);
+                        $context = "恭喜您成功推荐40位朋友使用事业头条，你已获赠20天免费使用【谁查看我】功能，赶紧点击下方“谁查看我”看看吧！ \n↓↓↓↓↓↓↓↓ \n\n事业爆文感谢你的支持，祝你使用愉快！";
+                        message($user->openid, 'text', $context);
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @title 操作会员时间
+     * @param $membership_time
+     * @param $user_id
+     * @param $daynum
+     * @param $tyep
+     */
+    function membership_time($membership_time, $user_id, $daynum, $tyep){
+        if (Carbon::parse('now')->gt(Carbon::parse($membership_time))) {
+            User::where('id',$user_id)->update(['membership_time' => Carbon::now()->addDays($daynum), 'extension_type' => $tyep]);
+        } else {
+            User::where('id',$user_id)->update(['membership_time'=>Carbon::parse($membership_time)->addDays($daynum),'extension_type'=>$tyep]);
         }
     }
 }

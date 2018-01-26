@@ -109,9 +109,22 @@ class UserController extends CommonController
         return response()->json(['history'=>$history_integral]);
     }
 
+    /**
+     * 设置佣金比例
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function setIntegral(Request $request)
     {
         User::where('id',$request->id)->update(['integral_scale'=>$request->scale]);
+
         return redirect()->route('admin.user');
+    }
+
+    public function setMemberTime( Request $request )
+    {
+        User::where('id', $request->user_id)->update(['membership_time' => $request->membership_time]);
+
+        return response()->json(['state' => 0, 'error' => '设置成功']);
     }
 }
