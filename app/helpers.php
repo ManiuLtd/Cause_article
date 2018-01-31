@@ -211,6 +211,7 @@ function base64Toimg($img_base64,$file_name)
         $new_file = "../public_html/uploads/$file_name/$daytime/";
         if(!file_exists($new_file))
         {
+            \Illuminate\Support\Facades\Log::info($new_file);
             //检查是否有该文件夹，如果没有就创建，并给予最高权限
             mkdir($new_file, 0777);
         }

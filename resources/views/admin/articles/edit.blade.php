@@ -26,10 +26,9 @@
             <label class="col-sm-1 control-label no-padding-right"> 文章类型 </label>
             <div class="col-sm-2">
                 <select name="type" class="form-control" id="form-field-select-1">
-                    <option value="4" @if($res->type == 4) selected @endif>全类型</option>
-                    <option value="1" @if($res->type == 1) selected @endif>事业资讯</option>
-                    <option value="2" @if($res->type == 2) selected @endif>产品资讯</option>
-                    <option value="3" @if($res->type == 3) selected @endif>直销资讯</option>
+                    @foreach($types as $type)
+                        <option value="{{ $type->id }}" @if($res->type == $type->id) selected @endif>{{ $type->name }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>

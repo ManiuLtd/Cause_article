@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Model\Article;
+use App\Model\ArticleType;
 use App\Model\Brand;
 use Illuminate\Http\Request;
 
@@ -24,13 +25,14 @@ class ArticlesController extends CommonController
                 if($request->brand) $where['brand_id'] = $request->brand;
                 break;
         }
-        $list = $article->with('brand')->where($where)->orderBy('created_at', 'desc')->paginate(12);
+        $list = $article->with('brand', 'article_type')->where($where)->orderBy('created_at', 'desc')->paginate(12);
         //品牌列表
         $brand_list = Brand::all();
+        $types = ArticleType::all();
         $menu = $this->menu;
         $active = $this->active;
 
-        return view('admin.articles.index',compact('list','brand_list','menu','active'));
+        return view('admin.articles.index',compact('list','brand_list', 'types','menu','active'));
     }
 
     /**
@@ -40,9 +42,10 @@ class ArticlesController extends CommonController
     public function create()
     {
         $brand = Brand::get();
+        $types = ArticleType::get();
         $menu = $this->menu;
         $active = $this->active;
-        return view('admin.articles.add', compact('brand','menu','active'));
+        return view('admin.articles.add', compact('brand','types','menu','active'));
     }
 
     /**
@@ -70,9 +73,10 @@ class ArticlesController extends CommonController
     {
         $res = $article;
         $brand = Brand::get();
+        $types = ArticleType::get();
         $menu = $this->menu;
         $active = $this->active;
-        return view('admin.articles.edit', compact('res','brand','menu','active'));
+        return view('admin.articles.edit', compact('res','brand','types','menu','active'));
     }
 
     /**
@@ -100,9 +104,9 @@ class ArticlesController extends CommonController
     public function destroy(Article $article)
     {
         if($article->delete()){
-            return redirect(route('articles.index'));
+            return redirect()->back();
         }else{
-            return redirect(route('articles.index'));
+            return redirect()->back();
         }
     }
 }

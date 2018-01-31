@@ -11,9 +11,11 @@ namespace App\Http\Controllers\Index;
 use App\Http\Controllers\TraitFunction\FunctionUser;
 use App\Jobs\extensionImage;
 use App\Model\Footprint;
+use App\Model\Order;
 use App\Model\User;
 use App\Model\UserArticles;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class UserController extends CommonController
 {
@@ -39,22 +41,44 @@ class UserController extends CommonController
 
         $user_article = UserArticles::where('uid', $res->id)->count();
         $read_share = Footprint::where('uid', $res->id)->count();
+        $orders = Order::with(['user'=>function($query){
+            $query->select('id','wc_nickname');
+        }])->where('state', 1)->orderBy('pay_time')->limit(10)->get();
         $pic = '';
         $head = '';
         if ( $res->extension_image == '' ) {
-            $url = app(User::class)->createQrcode($uid);
-            //二维码转base64位
-            $arr = getimagesize($url);
-            $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
+            $pic = Cache::remember('user_qrcode', 60 * 24 * 29, function () {
+                $url = app(User::class)->createQrcode(session('user_id'));
+                //二维码转base64位
+                $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
+
+                return $pic;
+            });
+            $head = Cache::remember('user_head', 60 * 24 * 30, function () {
+                //头像转base64
+                $head = session('head_pic');
+                if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+                    $content = file_get_contents($head);
+                    $head =  'data:image/jpeg;base64,' . base64_encode($content);
+                } else {
+                    $content = file_get_contents(config('app.url').$head);
+                    $head =  'data:image/jpeg;base64,' . base64_encode($content);
+                }
+                return $head;
+            });
+//            $url = app(User::class)->createQrcode($uid);
+//            //二维码转base64位
+//            $arr = getimagesize($url);
+//            $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
             //头像转base64
-            $head = \Session::get('head_pic');
-            if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
-                $head = app(User::class)->curl_url($head, 2);
-            } else {
-                $head = app(User::class)->curl_url(config('app.url').$head, 2);
-            }
+//            $head = \Session::get('head_pic');
+//            if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+//                $head = app(User::class)->curl_url($head, 2);
+//            } else {
+//                $head = app(User::class)->curl_url(config('app.url').$head, 2);
+//            }
         }
-        return view('index.user_center', compact('res', 'user_article', 'read_share', 'pic', 'head'));
+        return view('index.user_center', compact('res', 'user_article', 'read_share', 'orders', 'pic', 'head'));
     }
 
     /**
@@ -71,6 +95,9 @@ class UserController extends CommonController
             if ( $request->head != $user->head ) {
                 $upload = base64ToImage($request->head, 'user_head');
                 $data[ 'head' ] = $upload[ 'path' ];
+
+                session(['head_pic'=>$data[ 'head' ]]);
+                Cache::forget('user_head');
             }
 
             //是否上传个人二维码

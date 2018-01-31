@@ -11,10 +11,10 @@
 <div id="home" class="flexv wrap">
 	<div class="flexitemv box">
 		<div class="flex nav">
-			<a href="{{route('index.index')}}" class="flexitem center item @if(request()->type == '') current @endif"><span class="flex center">最新资讯</span></a>
-			<a href="{{route('index.index',['type'=>1])}}" class="flexitem center item @if(request()->type == 1) current @endif"><span class="flex center">事业资讯</span></a>
-			<a href="{{route('index.index',['type'=>2])}}" class="flexitem center item @if(request()->type == 2) current @endif"><span class="flex center">产品资讯</span></a>
-			<a href="{{route('index.index',['type'=>3])}}" class="flexitem center item @if(request()->type == 3) current @endif"><span class="flex center">直销资讯</span></a>
+			<a href="{{route('index.index')}}" class="flexitem center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>
+			@foreach($article_type as $type)
+				<a href="{{route('index.index',['type'=>$type->id])}}" class="flexitem center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
+			@endforeach
 			<a href="javascript:;" class="flex center bls bls-yjt more"></a>
 		</div>
 		<div class="flexitemv mainbox">
@@ -22,7 +22,7 @@
 				<div class="swiper-container">
 					<div class="swiper-wrapper">
 						@foreach($banner_list as $value)
-						<div class="swiper-slide"><img class="fitimg" src="/uploads/{{$value->image}}"/></div>
+							<div class="swiper-slide"><img class="fitimg" src="/uploads/{{ $value->image }}"/></div>
 						@endforeach
 					</div>
 					<div class="swiper-pagination"></div>
@@ -39,20 +39,24 @@
 			</form>
 			<div class="listbox">
 				@foreach($list as $value)
-				<div class="flex lists">
-					<div class="img">
-						<img class="fitimg" src="/uploads/{{$value->pic}}"/>
-					</div>
-					<div class="flexitemv cont">
-						<a href="{{route('article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->title}}</a>
-						<div class="base">
-							<span><em>{{$value->read}}</em>阅读</span>
-							<span><em>{{$value->share}}</em>分享</span>
-							<span>轩轩</span>
-							<span>首创</span>
+					<a href="{{route('article_details',['id'=>$value->id])}}" class="flex lists">
+						<div class="img">
+							<img class="fitimg" src="/uploads/{{$value->pic}}"/>
+							@if(request()->type == 3)
+								<i class="flex center bls bls-video"></i>
+							@endif
 						</div>
-					</div>
-				</div>
+						<div class="flexitemv cont">
+							<h1 class="flexitemv">{{$value->title}}</h1>
+							<div class="flex base">
+								<span class="flex center">
+									<i class="flex center bls bls-listen"></i>
+									{{$value->read}}
+								</span>
+								<span class="flex center"><i class="flex center bls bls-time"></i>{{ $value->created_at->toDateString() }}</span>
+							</div>
+						</div>
+					</a>
 				@endforeach
 			</div>
 		</div>

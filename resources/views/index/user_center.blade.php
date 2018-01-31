@@ -10,20 +10,29 @@
 </head>
 <body>
 <div id="focus" class="flexv wrap">
-	<div class="flexitemv datum">
-		<div class="flexv center sub">
-			<div class="userimg">
-				<img src="{{$res['head']}}" class="fitimg">
+	<div class="flexitemv mainbox datum">
+		<div class="flexv sub">
+			<div class="flexitem centerv userbox">
+				<div class="userimg">
+					<img src="{{$res['head']}}" class="fitimg">
+				</div>
+				<div class="flexitemv info">
+					<div class="flex name">
+						<h2 class="flex center">{{$res['wc_nickname']}}</h2>
+					</div>
+					@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($res['membership_time'])))
+						<p class="flex lock">谁查看我的功能：<span>未开通</span></p>
+					@else
+						<p class="vip">正式会员</p>
+						<p class="flex lock">
+							有效期至：<span>{{ \Carbon\Carbon::parse($res['membership_time'])->toDateString() }}</span>
+						</p>
+					@endif
+				</div>
+				<a href="{{ route('open_member') }}" class="flex center renew">续费会员</a>
 			</div>
-			<h2 class="flex center name">{{$res['wc_nickname']}}</h2>
-			<p class="flex center lock">
-				@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($res['membership_time'])))
-					谁查看我的功能：<span>未开通</span>
-				@else
-					有效期至：<span>{{ \Carbon\Carbon::parse($res['membership_time'])->toDateString() }}</span>
-				@endif
-			</p>
-			<div class="flexv centerv front">
+
+			<div class="flexv centerv around front">
 				<a href="{{route('user_article')}}" class="flexitemv center myfront">
 					<em class="flex">{{ $user_article }}</em>
 					<div class="flex">
@@ -41,16 +50,27 @@
 				</a>
 			</div>
 		</div>
+
+		<div class="flipbox">
+			<div class="bor">
+				@foreach($orders as $order)
+					<div class="flex centerv flip">
+						<i class="flex center bls bls-horn"></i>
+						<div class="text"> 恭喜“<span>{{ $order->user->wc_nickname }}</span>”成功开通图保进行获客展示</div>
+					</div>
+				@endforeach
+			</div>
+		</div>
 		
 		<div class="flexv func">
 			<a href="{{route('user_basic')}}" class="flexitem centerv card">
 				<i class="flex center bls bls-mp" style="background:#fbc45d; "></i>
 				<span class="flex center text">设置名片</span>
 			</a>
-			<a href="{{route('open_member')}}" class="flexitem centerv kt">
-				<i class="flex center bls bls-ck" style="background:#f68f66; "></i>
-				<span class="flex center text">开通谁查看我的功能</span>
-			</a>
+			{{--<a href="{{route('open_member')}}" class="flexitem centerv kt">--}}
+				{{--<i class="flex center bls bls-ck" style="background:#f68f66; "></i>--}}
+				{{--<span class="flex center text">开通谁查看我的功能</span>--}}
+			{{--</a>--}}
 			<a href="javascript:;" class="flexitem centerv hy">
 				<i class="flex center bls bls-jhy" style="background:#67cef9; "></i>
 				<span class="flex center text">
@@ -78,6 +98,19 @@
 			</a>
 			@endif
 		</div>
+
+		<div class="picture" style="padding-bottom: 15px">
+			<div class="between title">
+				<div class="tex">展示美图</div>
+				<a href="{{ route('extension_photo_list') }}" class="flex center more">更多 <i class="flex center bls bls-yjt"></i></a>
+			</div>
+			<div class="flex imgbox">
+				<img src="/poster.jpg">
+				<img src="/poster.jpg">
+				<img src="/poster.jpg">
+				<img src="/poster.jpg">
+			</div>
+		</div>
 	</div>
 
 	<canvas id="myCanvas" style="display: none"></canvas>
@@ -95,64 +128,69 @@
 	</div>
 </div>
 </body>
-<!-- <script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script> -->
-<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 <script type="text/javascript" src="/js/common/functions.js"></script>
 <script type="text/javascript">
+    //滚动广告
+    setInterval(function roll() {
+        var objh = $('.flip').height();
+        $(".flipbox .bor").append($(".flipbox .bor .flip").first().height(0).animate({"height":objh+"px"},500));
+    },2000);
+
 	$(function () {
 		$(".hy").click(function () {
 			@if($res['extension_image'] != '')
-			showProgress('正在发送海报');
-			$.post("{{route('inviting')}}",{url:"{{$res['extension_image']}}", type:1, _token:"{{csrf_token()}}"},function (ret) {
-			    hideProgress();
-				if(ret.state == 0) {
-					$(".hint").css({"display":"block"});
-					$(".hint").find(".content").addClass('trans');
-				} else {
-					showMsg(ret.errormsg)
-				}
-			});
+				showProgress('正在发送海报');
+				$.post("{{route('inviting')}}",{url:"{{$res['extension_image']}}", type:1, _token:"{{csrf_token()}}"},function (ret) {
+					hideProgress();
+					if(ret.state == 0) {
+						$(".hint").css({"display":"block"});
+						$(".hint").find(".content").addClass('trans');
+					} else {
+						showMsg(ret.errormsg)
+					}
+				});
 			@else
-			showProgress('正在发送海报');
-			//canvas画图
-			var image = document.querySelector('#background');
-			var userimg = document.querySelector('#userImg');
-			var c=document.getElementById("myCanvas");
-			var ctx=c.getContext("2d");
-			c.width = image.width;
-			c.height = image.height;
-			ctx.drawImage(image,0,0);
-			ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）
-			ctx.beginPath();
-			ctx.strokeStyle = '#fff';
-			userBorderSize = 50;
-			userBorderX = image.width/2;
-			userBorderY = 100;
-			ctx.font="25px Arial";
-			ctx.textAlign = 'center';
-			ctx.fillStyle = '#fff';
-			ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);
-			ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
-			ctx.stroke();
-			ctx.clip();
-            ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);
-			ctx.restore();
-			var qrcode = document.getElementById('code');
-			ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);
-			try {
-				var data = c.toDataURL('image/jpeg');
-			} catch (e) {
-				alert(e);
-			}
-			$.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {
-				if(ret.state == 0) {
-                    hideProgress();
-					$(".hint").css({"display":"block"});
-					$(".hint").find(".content").addClass('trans');
-				} else {
-					showMsg(ret.errormsg);
+				showProgress('正在发送海报');
+				//canvas画图
+				var image = document.querySelector('#background');
+				var userimg = document.querySelector('#userImg');
+				var c=document.getElementById("myCanvas");
+				var ctx=c.getContext("2d");
+				c.width = image.width;
+				c.height = image.height;
+				ctx.drawImage(image,0,0);
+				ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）
+				ctx.beginPath();
+				ctx.strokeStyle = '#fff';
+				userBorderSize = 50;
+				userBorderX = image.width/2;
+				userBorderY = 100;
+				ctx.font="25px Arial";
+				ctx.textAlign = 'center';
+				ctx.fillStyle = '#fff';
+				ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);
+				ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
+				ctx.stroke();
+				ctx.clip();
+				ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);
+				ctx.restore();
+				var qrcode = document.getElementById('code');
+				ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);
+				try {
+					var data = c.toDataURL('image/jpeg');
+				} catch (e) {
+					alert(e);
 				}
-            });
+				$.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {
+					if(ret.state == 0) {
+						hideProgress();
+						$(".hint").css({"display":"block"});
+						$(".hint").find(".content").addClass('trans');
+					} else {
+						showMsg(ret.errormsg);
+					}
+				});
 			@endif
 		});
 

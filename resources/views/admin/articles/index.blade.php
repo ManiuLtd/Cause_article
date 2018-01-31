@@ -15,10 +15,9 @@
             @endforeach
         </select>
         <select class="form-control" name="type" style="width: 100px">
-            <option value="4" @if(request()->type == 4) selected @endif>全类型</option>
-            <option value="1" @if(request()->type == 1) selected @endif>事业资讯</option>
-            <option value="2" @if(request()->type == 2) selected @endif>产品资讯</option>
-            <option value="3" @if(request()->type == 3) selected @endif>直销资讯</option>
+            @foreach($types as $type)
+                <option value="{{ $type->id }}" @if(request()->type == $type->id) selected @endif>{{ $type->name }}</option>
+            @endforeach
         </select>
         <select class="form-control" name="key" style="width: 120px">
             <option value="title" @if(request()->key == 'title') selected @endif>标题</option>
@@ -50,7 +49,7 @@
                 <td><img src="/uploads/{{$value->pic}}" width="100px"></td>
                 <td>{{$value->read}}</td>
                 <td>{{$value->share}}</td>
-                <td>@switch($value->type) @case(4) 全类型 @break @case(1) 事业资讯 @break @case(2) 产品资讯 @break @case(3) 直销资讯 @break @endswitch</td>
+                <td>{{ $value->article_type->name }}</td>
                 <td>@if($value->brand){{$value->brand['name']}}@else 全品牌 @endif</td>
                 <td>{{$value->created_at}}</td>
                 <td>{{$value->updated_at}}</td>

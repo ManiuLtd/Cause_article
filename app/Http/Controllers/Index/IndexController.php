@@ -10,16 +10,12 @@ namespace App\Http\Controllers\Index;
 
 use App\Jobs\mondaySlug;
 use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
+use App\Model\ArticleType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
-    public function test()
-    {
-        $user = User::where('id', 102)->first();
-        dispatch(new mondaySlug($user));
-    }
 
     /**
      * @title 首页
@@ -36,15 +32,16 @@ class IndexController extends CommonController
         }
 
         $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
-        $type = [ 1, 2, 3, 4 ];
-        if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 4 ];
+        $article_type = ArticleType::where('id', '<>', 0)->get();
+        $type = ArticleType::get()->pluck('id');
+        if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 0 ];
         $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
             ->when($user_brand, function ( $query ) use ( $user_brand ) {
             //根据用户选择的品牌显示文章
             return $query->whereIn('brand_id', [ 0, $user_brand ]);
         })->get();
 
-        return view('index.index', compact('banner_list', 'list', 'user'));
+        return view('index.index', compact('banner_list', 'article_type', 'list', 'user'));
     }
 
     /**

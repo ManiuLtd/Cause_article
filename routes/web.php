@@ -77,6 +77,9 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::post('inviting','UserController@invitingFriends')->name('inviting');
     //用户文章访客记录
     Route::get('visitor_record', 'UserArticleController@visitorRecord')->name('visitor_record');
+    //分享图片列表
+    Route::get('extension_photo_list/{type?}', 'PhotoController@index')->name('extension_photo_list');
+    Route::get('extension_poster/{photo}', 'PhotoController@poster')->name('extension_poster');
     //举报文章页面（选择举报类型）
     Route::get('report/{article_id}/{atype}', 'IndexController@report')->name('report');
     //举报文章内容页面（显示填写举报信息）
@@ -116,8 +119,14 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('be_dealer/{user}', 'UserController@be_dealer')->name('admin.be_dealer');
         //品牌管理资源路由
         Route::resource('brand', 'BrandController');
-        //品牌管理资源路由
+        //轮播图管理资源路由
         Route::resource('banner', 'BannerController');
+        //文章分类资源路由
+        Route::resource('article_type', 'ArticleTypeController');
+        //美图类型资源路由
+        Route::resource('photo_type', 'PhotoTypeController');
+        //美图资源路由
+        Route::resource('photo', 'PhotoController');
         //显示和修改网站信息
         Route::match(['get','post'],'web_config','IndexController@webConfig')->name('web_config');
         //查看佣金

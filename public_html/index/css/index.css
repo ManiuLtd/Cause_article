@@ -13,8 +13,9 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .endh{-webkit-box-pack: end;}  /*水平向右*/
 .endv{-webkit-box-align: end;} /*垂直向下*/
 .end{-webkit-box-align: end; -webkit-box-pack: end;}
-.between{display:flex;justify-content:space-between;} /*两端对齐*/
-.around{display:flex;justify-content:space-around;}  /*等间距*/
+.between{display:flex;justify-content:space-between;align-items: center;} /*两端对齐*/
+.around{display:flex;justify-content:space-around;align-items: center;}  /*等间距*/
+.fwrap{display: flex;flex-wrap:wrap;}  /*换行*/
 /*************************** 动画 *****************************/
 @-webkit-keyframes zoomIn {0% {opacity: 0;-webkit-transform: scale3d(.3,.3,.3);transform: scale3d(.3,.3,.3)}50% {opacity: 1}}
 @keyframes zoomIn { 0% {opacity: 0; -webkit-transform: scale3d(.3,.3,.3); transform: scale3d(.3,.3,.3)} 50%{opacity:1}}
@@ -53,10 +54,13 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #home .listbox{padding:0 12px;}
 #home .listbox .lists{border-bottom: 1px solid #f2f2f2;padding-top: 12px;padding-bottom: 10px;}
 #home .listbox .lists:last-child{border-bottom: none;}
-#home .listbox .lists .img{width:8rem;height:6rem;}
+#home .listbox .lists .img{width:8rem;height:6rem;position:relative;}
+#home .listbox .lists .img i{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:#fff;}
 #home .listbox .lists .cont{height: 6rem;padding-left:10px;}
-#home .listbox .lists .cont a{font-size: 1.4rem;color:#424242;overflow: hidden;-webkit-box-orient: vertical;-webkit-line-clamp: 2;}
-#home .listbox .lists .cont .base{display: flex;justify-content: space-between;color:#969696;font-size: 1.2rem;padding:0.2rem 0;}
+#home .listbox .lists .cont h1{font-size: 1.4rem;color:#424242;overflow:hidden;font-weight:normal;-webkit-box-orient: vertical;-webkit-line-clamp: 2;}
+#home .listbox .lists .cont .base{padding:0.2rem 0;color:#969696;font-size: 1.2rem;}
+#home .listbox .lists .cont .base span{margin-right:1rem;}
+#home .listbox .lists .cont .base span i{font-size:1.6rem;}
 /************* 弹窗 *************/
 .alert{position: fixed;top:0;left:0;width: 100%;bottom: 0;overflow: hidden;z-index: 20;display: none;}
 .mask{position: absolute;top:0;left:0;width:100%;height:100%;background: rgba(0,0,0,.5);}
@@ -121,25 +125,69 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #visitor .mainbox .details .userimg{width:3rem;height:3rem;border-radius:50%;overflow: hidden;margin-right: 1rem; font-size: 2.5rem;}
 #visitor .mainbox .lock a{width:7rem;height: 2.5rem;font-size:1.2rem;background: -webkit-linear-gradient(#f95e48, #f7403c);color:#fdebea;border-radius: 6rem;}
 /************************************* 个人中心 *******************************/
-#focus .sub{width:100%; padding: 3rem 0 0;background:url("../image/focus.jpg") no-repeat;background-size: 100%; color:#fefaf9; }
-#focus .sub .userimg{width: 6rem;height:6rem;border-radius: 50%;overflow: hidden;}
-#focus .sub h2{height: 3rem;font-weight: lighter;font-size: 1.8rem;}
-#focus .sub p{height: 2rem;font-size: 1.3rem;}
-#focus .front{width: 100%; display: flex;justify-content:space-around;padding: 4rem 0 1rem; }
+#focus .sub{width:100%; padding: 3rem 0 0;background:url("../image/focus.jpg") no-repeat;background-size:100% 100%;}
+#focus .sub .userbox{padding-left:1rem;}
+#focus .sub .userimg{width: 6rem;height:6rem;border:1px solid #fff;border-radius:50%;overflow:hidden;}
+#focus .sub .info{margin-left:1rem;color:#fff;}
+#focus .sub .name h2{height:3rem;font-weight:lighter;font-size:1.8rem;color:#000;}
+#focus .sub .name .amend{margin-left:1rem;font-size:2rem;color:#f95c49;}
+#focus .sub p{height:2rem;font-size: 1.3rem;}
+#focus .userbox>a.renew{width:7rem;height:2.5rem;border-top-left-radius:5rem;border-bottom-left-radius:5rem;background:#f95c49;font-size:1.3rem;color:#fff;}
+#focus .front{width:100%;padding: 4rem 0 1rem; }
 #focus .front .myfront{color:#333;}
 #focus .front .myfront em{height: 3rem;font-size: 2rem;}
 #focus .front .myfront span{height: 2rem;font-size: 1.3rem;}
 #focus .front .myfront i{width: 2rem;height:2rem;font-size: 2rem;}
 #focus .front .line{width: 1px;height: 4rem;margin-top: 0.5rem; background: #cacaca;}
-#focus .func{margin-top: 1.5rem;background: #fff;color:#393939;}
+#focus .flipbox{height:3rem;overflow:hidden;position:relative;}
+#focus .flipbox .bor{position:absolute;bottom:-3rem;left:1rem;font-size:1.2rem;color:#f58d84;}
+#focus .flipbox .flip{padding:0.4rem 0;}
+#focus .flipbox .flip i{font-size:2rem;}
+#focus .func{background: #fff;color:#393939;}
 #focus .func a{height:4rem;font-size: 1.3rem;border-bottom:1px solid #f2f2f2;}
 #focus .func a:last-child{border-bottom:none;}
 #focus .func a i{margin: 0 1rem;width: 3rem;height:3rem;font-size:2rem;border-radius: 6px;color:#fff;}
+#focus .picture{margin-top:0.5rem;background:#fff;}
+#focus .picture .title{padding:0 1rem;height:4rem;border-bottom:1px solid #f2f2f2;font-size:1.2rem;}
+#focus .picture .tex{position:relative;margin-left:1rem;}
+#focus .picture .tex:before{content: '';width:2px;height:100%;background:#fe776e;position:absolute;top:0;left:-1rem;}
+#focus .picture .more i{font-size:1.6rem;}
+#focus .picture .imgbox{margin:1rem 1rem 1rem 0;font-size:0;overflow:hidden;height: 11rem;}
+#focus .picture .imgbox img{width:21.4%;height:11rem;padding-left:1rem;}
 #focus .hint {position: fixed;top:0;left:0;width: 100%;bottom: 0;overflow: hidden;z-index: 20;display: none;}
 #focus .hint .content.trans{animation: zoomIn 0.3s ease;}
 #focus .hint .content{position: absolute;top:22rem;left:4rem; width: 66%;background: #fff;color: #333;padding:10px;border-radius: 6px;}
 #focus .hint .content div{padding:3rem 0;height: 3rem;font-size: 1.4rem;color:#3b3b3b;}
 #focus .hint .content a{height: 3rem;background: -webkit-linear-gradient(#f95e48, #f7403c);color:#fdebea;border-radius: 6rem;font-size: 1.4rem;}
+
+/************************************* 图片列表 *******************************/
+#more .tex-t{height:4rem;overflow-x:auto;background:#fff;}
+#more .tex-t::-webkit-scrollbar{display:none;}
+#more .tex-t a{font-size:1.3rem;margin:0 1rem;border-bottom:2px solid transparent;}
+#more .tex-t a.current{border-bottom-color:#f73c39;color:#f73c39;}
+#more .listbox{padding-top:1rem;}
+#more .listbox .imgbox{margin:0 0 1rem 1rem;width:29%;background:#fff;}
+#more .listbox .imgbox .img{width:100%;height:15rem;font-size:0;}
+#more .listbox .imgbox .tit{height:2rem;font-size:1.3rem;overflow:hidden;-webkit-line-clamp:1;}
+
+/************************************* 增员海报 *******************************/
+#posters .edit{padding:1rem;border-bottom:1px solid #bbb;font-size:1.4rem;color:#282828;}
+#posters .edit i{font-size:2rem;}
+#posters .posterbox p{padding:.5rem 0;font-size:1.4rem;color:red;}
+#posters .poster i{width:4.5rem;font-size:2rem;color:#999;}
+#posters .poster i:last-child{-webkit-transform:rotate(180deg);transform:rotate(180deg);}
+#posters .share-btn{width:85%;height:4rem;margin:1rem auto;background:#f73c39;font-size:1.6rem;color:#fff;border-radius:.5rem;}
+#posters .listbox{background:#fff;}
+#posters .listbox .title{padding:0 1rem;height:4rem;font-size:1.2rem;color:#666;}
+#posters .listbox .title .change i{font-size:2rem;color:#ffb502;}
+#posters .listbox .list{padding-top:1rem;}
+#posters .listbox .list .item{width:29%;margin:0 0 1rem 1rem;}
+#posters .listbox .list .item .link{height:16rem;font-size:0;border-bottom:1px solid #eee;}
+#posters .listbox .list .item .name{height:3rem;font-size:1.4rem;}
+#posters .user{width:4rem;height:4rem;}
+#posters .qrcode{width:5rem;height:5rem;}
+#posters .hidden{display:none;}
+
 /************************************* 推广中心 *******************************/
 #expand .sub{width:100%; padding:4rem 0 0;background:url("../image/focus.jpg") no-repeat;background-size: 100%; color:#fefaf9; }
 #expand .sub .num{height:4rem;font-size:3rem;}

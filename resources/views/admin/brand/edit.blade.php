@@ -66,35 +66,4 @@
         </div>
     </form>
 </div>
-<script src="//cdn.ckeditor.com/4.6.2/full/ckeditor.js"></script>
-<script type="text/javascript">
-    CKEDITOR.replace( 'detail' ,{ //这里的 mycontent就是上面我们设置的textarea或者input元素的id
-        filebrowserBrowseUrl:"",//设置上传图片的页面为ckfinder.html
-        filebrowserImageBrowseUrl:'',
-        filebrowserFlashBrowseUrl: '',
-        filebrowserUploadUrl: '',
-        filebrowserImageUploadUrl: "{:url('index/detailimg')}",
-        filebrowserFlashUploadUrl: "",
-        width:1060,//设置默认宽度为900px
-        height:400  //设置默认高度是300px，这个高度是不包含顶部菜单的高度
-    });
-
-//    new checkForm({
-//        form : '#formm',
-//        btn : '#submitt',
-//        error : function (e,msg){
-//            showMsg(msg);
-//        },
-//        complete : function (form){
-//            var url = form.getAttribute('action'),
-//                datas = $(form).serializeArray();
-//            $.post(url,datas,function (ret) {
-//                swal({
-//                    title: "", text: ret.msg, timer: 2000, type: !!ret.code ? 'success' : 'error', showConfirmButton: false
-//                });
-//                if(ret.url) setTimeout(function (){window.location.href = ret.url;},1000);
-//            });
-//        }
-//    });
-</script>
 @endsection

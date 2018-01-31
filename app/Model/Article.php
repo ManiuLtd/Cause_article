@@ -15,7 +15,12 @@ class Article extends Model
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class, 'brand_id');
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function article_type()
+    {
+        return $this->belongsTo(ArticleType::class, 'type');
     }
 
 }
