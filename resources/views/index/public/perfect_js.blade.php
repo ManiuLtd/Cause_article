@@ -13,9 +13,10 @@
     //	    $(".alert").css({"display":"block"});
     //        $(".alert").find(".content").addClass('trans');
     //	});
-        @if(session()->get('phone') == ''){
-        $(".alert").css({"display":"block"});
-        $(".alert").find(".content").addClass('trans');
+        @if(session('phone') == ''){
+            $(".alert").css({"display":"block"});
+            $(".alert").find(".content").addClass('trans');
+        @endif
         //  品牌
         $.get("{{route('brand_list')}}",function (ret) {
             console.log(ret.brand_list);
@@ -26,7 +27,7 @@
                 var ch = brands[k].domain.substring(0, 1);
                 if (char == ch) {
                     charlist[char].push(brands[k]);
-                    listTpl.push('<div>' + brands[k].name + '</div>');
+                    listTpl.push('<div data-id="' + brands[k].id + '">' + brands[k].name + '</div>');
                 } else {
                     if (char != '') listTpl.push('</li>');
                     char = ch;
@@ -52,43 +53,16 @@
                     $("#brand").removeClass('show');
                 })
             });
-        })
-    }
-    @endif
+        });
+
     //	关闭
     $(".cuo").click(function(){
         $(".alert").css({"display":"none"});
-    });
+    })
 
 //    $('.submit').click(function () {
 //        $('form').submit();
 //    });
 
-    new checkForm({
-        form : '#form',
-        btn : '#submit',
-        error : function (ele,err){showMsg(err);},
-        complete : function (ele){
-            var url = $(ele).attr('action'),post = $(ele).serializeArray();
-            showProgress('正在提交');
-            console.log(post);
-            $.post(url,post,function (ret){
-                hideProgress();
-                if(ret.state == 0) {
-                    showMsg('完善资料成功', 1, 2000);
-                    if (ret.url) {
-                        setTimeout(function () {
-                            window.location.href = ret.url;
-                        }, 2000);
-                    }else{
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 2000);
-                    }
-                } else {
-                    showMsg('完善资料失败');
-                }
-            },'json');
-        }
-    });
+
 </script>

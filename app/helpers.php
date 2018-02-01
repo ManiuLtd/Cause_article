@@ -205,13 +205,13 @@ function base64Toimg($img_base64,$file_name)
 {
     $base64_image_content = $img_base64;
     $daytime = date('Ymd',time());
+
     //匹配出图片的格式
     if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
         $type = $result[2];
-        $new_file = "../public_html/uploads/$file_name/$daytime/";
+        $new_file = config('app.image_real_path')."uploads/$file_name/$daytime/";
         if(!file_exists($new_file))
         {
-            \Illuminate\Support\Facades\Log::info($new_file);
             //检查是否有该文件夹，如果没有就创建，并给予最高权限
             mkdir($new_file, 0777);
         }

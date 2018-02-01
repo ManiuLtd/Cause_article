@@ -23,6 +23,7 @@
             <label class="col-sm-1 control-label no-padding-right"> 文章类型 </label>
             <div class="col-sm-2">
                 <select name="type" class="form-control" id="form-field-select-1">
+                    <option value="0">全类型</option>
                     @foreach($types as $type)
                         <option value="{{ $type->id }}">{{ $type->name }}</option>
                     @endforeach
@@ -34,6 +35,7 @@
             <label class="col-sm-1 control-label no-padding-right"> 所属品牌 </label>
             <div class="col-sm-2">
                 <select name="brand_id" class="form-control" id="form-field-select-1">
+                    <option value="0">全品牌</option>
                     @foreach($brand as $value)
                         <option value="{{$value->id}}">{{$value->name}}</option>
                     @endforeach

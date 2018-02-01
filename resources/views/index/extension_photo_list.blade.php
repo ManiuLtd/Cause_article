@@ -10,7 +10,7 @@
 <body>
 <div id="more" class="flexv wrap">
     <div class="flex tex-t">
-        @foreach($type as $value)
+        @foreach($types as $value)
             <a href="{{ route('extension_photo_list', $value->id) }}" class="flex center @if(request()->type) @if($value->id == request()->type) current @endif @else @if($loop->first) current @endif @endif">
                 {{ $value->name }}
             </a>
@@ -21,7 +21,7 @@
             @foreach($photos as $photo)
                 <a href="{{ route('extension_poster', $photo->id) }}" class="flexv imgbox">
                     <div class="img">
-                        <img src="/uploads/{{ $photo->url }}" class="fitimg">
+                        <img src="{{ $photo->url }}" class="fitimg">
                     </div>
                     <div class="flexv center tit">{{ $photo->name }}</div>
                 </a>

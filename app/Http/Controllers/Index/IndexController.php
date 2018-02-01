@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
-
     /**
      * @title 首页
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -32,8 +31,8 @@ class IndexController extends CommonController
         }
 
         $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
-        $article_type = ArticleType::where('id', '<>', 0)->get();
-        $type = ArticleType::get()->pluck('id');
+        $article_type = ArticleType::get();
+        $type = $article_type->pluck('id')->push(0);
         if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 0 ];
         $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
             ->when($user_brand, function ( $query ) use ( $user_brand ) {
@@ -50,7 +49,7 @@ class IndexController extends CommonController
      */
     public function brandList()
     {
-        $brand_list = Brand::select('id','name','domain')->orderBy('domain','asc')->get();
+        $brand_list = Brand::select('id','name','domain')->where('id', '<>', 0)->orderBy('domain','asc')->get();
         return response()->json(['state'=>0, 'brand_list'=>$brand_list->toArray()]);
     }
 
@@ -63,7 +62,8 @@ class IndexController extends CommonController
     public function perfectInformation(Request $request, User $user)
     {
         if($user->update($request->all())){
-            \Session::put('phone', $request->phone);
+            $brand = Brand::find($request->brand_id);
+            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
             return response()->json(['state' => 0, 'msg' => '完善资料成功']);
         } else {
             return response()->json(['state' => 500, 'msg' => '完善资料出错']);

@@ -15,6 +15,7 @@
             @endforeach
         </select>
         <select class="form-control" name="type" style="width: 100px">
+            <option value="0" @if(request()->type == 0) selected @endif>全品牌</option>
             @foreach($types as $type)
                 <option value="{{ $type->id }}" @if(request()->type == $type->id) selected @endif>{{ $type->name }}</option>
             @endforeach
@@ -46,10 +47,10 @@
             @foreach($list as $value)
             <tr>
                 <td>{{$value->title}}</td>
-                <td><img src="/uploads/{{$value->pic}}" width="100px"></td>
+                <td><img src="{{$value->pic}}" width="100px"></td>
                 <td>{{$value->read}}</td>
                 <td>{{$value->share}}</td>
-                <td>{{ $value->article_type->name }}</td>
+                <td>@if($value->article_type) {{ $value->article_type->name }}@else 全类型 @endif</td>
                 <td>@if($value->brand){{$value->brand['name']}}@else 全品牌 @endif</td>
                 <td>{{$value->created_at}}</td>
                 <td>{{$value->updated_at}}</td>

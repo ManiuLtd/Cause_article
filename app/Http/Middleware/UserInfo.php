@@ -25,7 +25,7 @@ class UserInfo
     {
         if(!\Session::has('user_id')) {
             $user = session('wechat.oauth_user'); // 拿到授权用户资料
-            $find_user = User::where('openid', $user['id'])->first();
+            $find_user = User::with('brand')->where('openid', $user['id'])->first();
             if ( !$find_user ) {
                 $app = new Application(config('wechat'));
                 $wechatUserInfo = $app->user->get($user->id);
@@ -33,6 +33,11 @@ class UserInfo
                 $add = User::create($data);
                 session(['user_id' => $add->id, 'head_pic' => $user[ 'avatar' ], 'nickname' => $user[ 'nickname' ]]);
             } else {
+                if($find_user->brand) {
+                    $brand_id = $find_user->brand->id;
+                    $brand_name = $find_user->brand->name;
+                    session(['brand_id' => $brand_id, 'brand_name' => $brand_name]);
+                }
                 session(['user_id' => $find_user[ 'id' ], 'phone' => $find_user[ 'phone' ], 'head_pic' => $find_user[ 'head' ], 'nickname' => $find_user[ 'wc_nickname' ]]);
             }
         }

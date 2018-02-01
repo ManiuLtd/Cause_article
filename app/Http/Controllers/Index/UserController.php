@@ -12,6 +12,7 @@ use App\Http\Controllers\TraitFunction\FunctionUser;
 use App\Jobs\extensionImage;
 use App\Model\Footprint;
 use App\Model\Order;
+use App\Model\Photo;
 use App\Model\User;
 use App\Model\UserArticles;
 use Illuminate\Http\Request;
@@ -64,21 +65,14 @@ class UserController extends CommonController
                     $content = file_get_contents(config('app.url').$head);
                     $head =  'data:image/jpeg;base64,' . base64_encode($content);
                 }
+
                 return $head;
             });
-//            $url = app(User::class)->createQrcode($uid);
-//            //二维码转base64位
-//            $arr = getimagesize($url);
-//            $pic = "data:{$arr['mime']};base64," . base64_encode(file_get_contents($url));
-            //头像转base64
-//            $head = \Session::get('head_pic');
-//            if(strstr(\Session::get('head_pic'), "wx.qlogo.cn", true) == 'http://') {
-//                $head = app(User::class)->curl_url($head, 2);
-//            } else {
-//                $head = app(User::class)->curl_url(config('app.url').$head, 2);
-//            }
         }
-        return view('index.user_center', compact('res', 'user_article', 'read_share', 'orders', 'pic', 'head'));
+        //美图列表
+        $photos = Photo::orderBy('created_at', 'desc')->limit(4)->get();
+
+        return view('index.user_center', compact('res', 'user_article', 'read_share', 'orders', 'pic', 'head', 'photos'));
     }
 
     /**

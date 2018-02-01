@@ -105,10 +105,9 @@
 				<a href="{{ route('extension_photo_list') }}" class="flex center more">更多 <i class="flex center bls bls-yjt"></i></a>
 			</div>
 			<div class="flex imgbox">
-				<img src="/poster.jpg">
-				<img src="/poster.jpg">
-				<img src="/poster.jpg">
-				<img src="/poster.jpg">
+				@foreach($photos as $photo)
+					<img src="{{ $photo->url }}">
+				@endforeach
 			</div>
 		</div>
 	</div>

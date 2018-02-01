@@ -79,7 +79,12 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('visitor_record', 'UserArticleController@visitorRecord')->name('visitor_record');
     //分享图片列表
     Route::get('extension_photo_list/{type?}', 'PhotoController@index')->name('extension_photo_list');
+    //分享图详情
     Route::get('extension_poster/{photo}', 'PhotoController@poster')->name('extension_poster');
+    //切换分享图
+    Route::get('rand_photo/{count}/{type}', 'PhotoController@randPhoto')->name('rand_photo');
+    //获取分享图片
+    Route::post('get_share_photo', 'PhotoController@photoShare')->name('get_share_photo');
     //举报文章页面（选择举报类型）
     Route::get('report/{article_id}/{atype}', 'IndexController@report')->name('report');
     //举报文章内容页面（显示填写举报信息）

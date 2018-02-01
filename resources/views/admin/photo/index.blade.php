@@ -23,7 +23,7 @@
             <tbody>
             @foreach($list as $value)
             <tr>
-                <td><img src="/uploads/{{ $value->url }}" width="110px"></td>
+                <td><img src="{{ $value->url }}" width="110px"></td>
                 <td>{{ $value->name }}</td>
                 <td>{{$value->type->name}}</td>
                 <td>{{$value->created_at}}</td>

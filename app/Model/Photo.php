@@ -15,6 +15,11 @@ class Photo extends Model
 {
     protected $fillable = ['type_id', 'url', 'name'];
 
+    public function getUrlAttribute( $value )
+    {
+        return "/uploads/{$value}";
+    }
+
     public function type()
     {
         return $this->belongsTo(PhotoType::class, 'type_id');

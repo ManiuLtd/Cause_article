@@ -10,30 +10,44 @@ namespace App\Http\Controllers\Index;
 
 
 use App\Http\Controllers\Controller;
+use App\Jobs\extensionphoto;
 use App\Model\Photo;
 use App\Model\PhotoType;
 use App\Model\User;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class PhotoController extends Controller
 {
-    public function index($tyep = '')
+    /**
+     * 美图列表
+     * @param string $type
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index($type = '')
     {
-        $type = PhotoType::orderBy('sort', 'desc')->get();
+        $types = PhotoType::orderBy('sort', 'desc')->get();
         if($type) {
-            $photos = Photo::where('type_id', $tyep)->get();
+            $photos = Photo::where('type_id', $type)->get();
         } else {
-            foreach ( $type as $value ) {
+            foreach ( $types as $value ) {
                 $photos = Photo::where('type_id', $value->id)->get();
-                continue;
+                break;
             }
         }
 
-        return view('index.extension_photo_list', compact('type', 'photos'));
+        return view('index.extension_photo_list', compact('types', 'photos'));
     }
 
+    /**
+     * 推广图
+     * @param Photo $photo
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function poster(Photo $photo)
     {
+        $user = User::with('brand')->where('id', session('user_id'))->first();
+
         $pic = Cache::remember('user_qrcode', 60 * 24 * 29, function () {
             $url = app(User::class)->createQrcode(session('user_id'));
             //二维码转base64位
@@ -55,6 +69,41 @@ class PhotoController extends Controller
             return $head;
         });
 
-        return view('index.extension_poster', compact('photo', 'pic', 'head'));
+        $rand_photo = $this->randPhoto(3, 1);
+
+        return view('index.extension_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo'));
+    }
+
+    /**
+     * 随机获取图片
+     * @param $count
+     * @param $type
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Throwable
+     */
+    public function randPhoto( $count, $type )
+    {
+        $photo = Photo::get()->random($count);
+        if($type == 1) {
+            return $photo->all();
+        } elseif ($type == 2) {
+            return response()->json(['photo'=>$photo[0]['url']]);
+        } elseif ($type == 3) {
+            $view = view('index.rand_photo_list', compact('photo'))->render();
+            return response()->json(['view'=>$view]);
+        }
+    }
+
+    /**
+     * 推送海报到公众号
+     * @param Request $request
+     * @return mixed
+     */
+    public function photoShare( Request $request )
+    {
+        $user = User::find(session('user_id'));
+        dispatch(new extensionphoto($user, $request->img));
+
+        return response()->json(['state' => '0']);
     }
 }

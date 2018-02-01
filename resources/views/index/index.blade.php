@@ -41,7 +41,7 @@
 				@foreach($list as $value)
 					<a href="{{route('article_details',['id'=>$value->id])}}" class="flex lists">
 						<div class="img">
-							<img class="fitimg" src="/uploads/{{$value->pic}}"/>
+							<img class="fitimg" src="{{$value->pic}}"/>
 							@if(request()->type == 3)
 								<i class="flex center bls bls-video"></i>
 							@endif
@@ -75,6 +75,34 @@
 	$('.submit').click(function(){
 	    $('#search').submit();
 	})
+
+    new checkForm({
+        form : '#form',
+        btn : '#submit',
+        error : function (ele,err){showMsg(err);},
+        complete : function (ele){
+            var url = $(ele).attr('action'),post = $(ele).serializeArray();
+            showProgress('正在提交');
+            console.log(post);
+            $.post(url,post,function (ret){
+                hideProgress();
+                if(ret.state == 0) {
+                    showMsg('完善资料成功', 1, 2000);
+                    if (ret.url) {
+                        setTimeout(function () {
+                            window.location.href = ret.url;
+                        }, 2000);
+                    }else{
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                } else {
+                    showMsg('完善资料失败');
+                }
+            },'json');
+        }
+    })
 </script>
 
 </html>
