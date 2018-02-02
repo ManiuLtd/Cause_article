@@ -37,7 +37,7 @@
 		
 		<div class="flexv centerv user">
 			<div class="userimg">
-				<img src="{{$res->user['head']}}" class="fitimg">
+				<img src="{{$res->user['head']}}" class="fitimg" style="border-radius: 50%">
 			</div>
 			<p class="flex center name">{{$res->user['wc_nickname']}}</p>
 			<div class="flex centerh mesg">
@@ -194,15 +194,8 @@
 		showMsg('该商家未开通此服务')
     });
 
-    var mySwiper = new Swiper ('.swiper-container', {
-        loop: true,
-        autoplay:1500,
-        pagination: '.swiper-pagination',
-        autoplayDisableOnInteraction:false
-    });
-
     $('#cut').click(function () {
-		@if(session()->get('phone') == '')
+		@if(session('phone') == '')
 			$(".alert").css({"display":"block"});
 			$(".alert").find(".content").addClass('trans');
 			//  品牌
@@ -385,7 +378,7 @@ function logTime() {
         wx.onMenuShareAppMessage({
             title: '{{$res->article['title']}}', // 分享标题1
             desc: '{!! subtext(preg_replace('/&[a-z]+;/i',"", str_replace("\n","",preg_replace('/<\/?[^>]+>/i',"",$res->article['details']))),80) !!}', // 分享描述
-            link: '{{route('user_article_details',['id'=>$res->id])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '{{route('user_article_details',['id'=>$res->id, 'ex_id'=>session('user_id')])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: head, // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
@@ -399,7 +392,7 @@ function logTime() {
         //分享朋友圈
         wx.onMenuShareTimeline({
             title: '{{$res->article['title']}}', // 分享标题
-            link: '{{route('user_article_details',['id'=>$res->id])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            link: '{{route('user_article_details',['id'=>$res->id, 'ex_id'=>session('user_id')])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: head, // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数

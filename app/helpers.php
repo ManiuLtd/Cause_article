@@ -145,7 +145,11 @@ function message($FromUserName,$type,$context)
             $message = new \EasyWeChat\Message\Image(['media_id' => $context]);
             break;
     }
-    $staff->message($message)->to($FromUserName)->send();
+    try {
+        $staff->message($message)->to($FromUserName)->send();
+    } catch (Exception $exception) {
+        Log::info('发送类型：' . $type. '；错误：' . $exception->getMessage() . '；发送超时有可能是长时间未跟公众号互动');
+    }
 }
 
 /**

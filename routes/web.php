@@ -32,7 +32,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //我的文章
     Route::get('user_article', 'UserArticleController@index')->name('user_article');
     //用户文章详情
-    Route::get('user_article_details/{articles}', 'UserArticleController@articleDetail')->name('user_article_details');
+    Route::get('user_article_details/{articles}/{et_id?}', 'UserArticleController@articleDetail')->name('user_article_details');
     //我的文章详情页上传二维码
     Route::post('upload_qrcode', 'UserArticleController@uploadQrcode')->name('upload_qrcode');
     //使公共文章成为我的文章

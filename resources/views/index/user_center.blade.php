@@ -106,7 +106,9 @@
 			</div>
 			<div class="flex imgbox">
 				@foreach($photos as $photo)
-					<img src="{{ $photo->url }}">
+					<a href="{{ route('extension_poster', $photo->id) }}" class="flex center" style="width:21.4%;height:11rem;padding-left:1rem;">
+						<img data-original="{{ $photo->url }}" class="lazy" src="/index/image/loading.gif" style="max-width: 100%">
+					</a>
 				@endforeach
 			</div>
 		</div>
@@ -129,7 +131,17 @@
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 <script type="text/javascript" src="/js/common/functions.js"></script>
+<script src="/index/js/lazyload.js"></script>
 <script type="text/javascript">
+    //图片延迟加载
+    $(".lazy").lazyload({
+        event: "scrollstop",
+		effect : "fadeIn",
+		load:function ($e) {
+			$e.css({"width":"100%","height":"100%"});
+        }
+    });
+
     //滚动广告
     setInterval(function roll() {
         var objh = $('.flip').height();

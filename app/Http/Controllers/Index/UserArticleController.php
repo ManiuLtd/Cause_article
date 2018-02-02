@@ -31,10 +31,11 @@ class UserArticleController extends CommonController
 
     /**
      * 我的文章详细页
-     * @param $id
+     * @param UserArticles $articles 用户文章id
+     * @param int $ex_id 分享人id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function articleDetail( UserArticles $articles )
+    public function articleDetail( UserArticles $articles, $ex_id = 0 )
     {
         $uid = session()->get('user_id');
         $addfootid = '';
@@ -63,7 +64,15 @@ class UserArticleController extends CommonController
                 $articles->update([ 'first_read' => 1 ]);
             }
             //记录访客足迹(停留时间处理)
-            $addfootid = Footprint::insertGetId([ 'uid' => $uarticle->uid, 'see_uid' => $uid, 'uaid' => $articles->id, 'created_at' => date('Y-m-d H:i:s', time()), 'type' => 1 ]);
+            $foot = [
+                'uid' => $uarticle->uid,
+                'see_uid' => $uid,
+                'uaid' => $articles->id,
+                'ex_id' => $ex_id,
+                'created_at' => date('Y-m-d H:i:s', time()),
+                'type' => 1
+            ];
+            $addfootid = Footprint::insertGetId($foot);
 
             //判断访客是否已拥有该文章
             $fkarticle = UserArticles::where([ 'aid' => $uarticle->article[ 'id' ], 'uid' => $uid ])->first();

@@ -28,8 +28,8 @@
             <ul class="fwrap list" id="rand_list">
                 @foreach($rand_photo as $value)
                     <li class="item">
-                        <a href="javascript:;" class="flex link">
-                            <img src="{{ $value->url }}" class="fitimg">
+                        <a href="javascript:;" class="flex link center" style="height: 15rem">
+                            <img data-original="{{ $value->url }}" src="/index/image/loading.gif" class="lazy">
                         </a>
                         <p class="flex center name">{{ $value->name }}</p>
                     </li>
@@ -59,7 +59,17 @@
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 @include('index.public.perfect_js')
 <script src="/index/js/canvas.js"></script>
+<script src="/index/js/lazyload.js"></script>
 <script type="text/javascript">
+    //图片延迟加载
+    $(".lazy").lazyload({
+        event: "scrollstop",
+        effect : "fadeIn",
+        load:function ($e) {
+            $e.css({"width":"100%","height":"100%"});
+        }
+    });
+
     @if(session('phone'))
         $('.content.user-info').prepend('<i class="flex center bls bls-cuo cuo"></i>');
     @else

@@ -14,7 +14,7 @@
 			@foreach($list as $value)
 			<div class="flex lists">
 				<div class="img">
-					<img class="fitimg" src="/uploads/{{$value->article['pic']}}"/>
+					<img class="fitimg" src="{{$value->article['pic']}}"/>
 				</div>
 				<div class="flexitemv cont">
 					<a href="{{route('user_article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->article['title']}}</a>

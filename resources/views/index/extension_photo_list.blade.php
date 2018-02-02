@@ -20,8 +20,8 @@
         <div class="fwrap listbox">
             @foreach($photos as $photo)
                 <a href="{{ route('extension_poster', $photo->id) }}" class="flexv imgbox">
-                    <div class="img">
-                        <img src="{{ $photo->url }}" class="fitimg">
+                    <div class="flex center" style="width: 9.1rem;height: 15rem">
+                        <img data-original="{{ $photo->url }}" src="/index/image/loading.gif" class="lazy">
                     </div>
                     <div class="flexv center tit">{{ $photo->name }}</div>
                 </a>
@@ -31,7 +31,14 @@
 </div>
 </body>
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="/index/js/lazyload.js"></script>
 <script type="text/javascript">
-
+    $(".lazy").lazyload({
+        event: "scrollstop",
+        effect : "fadeIn",
+        load:function ($e) {
+            $e.css({"width":"100%","height":"100%"});
+        }
+    });
 </script>
 </html>

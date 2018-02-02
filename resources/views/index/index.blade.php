@@ -40,8 +40,8 @@
 			<div class="listbox">
 				@foreach($list as $value)
 					<a href="{{route('article_details',['id'=>$value->id])}}" class="flex lists">
-						<div class="img">
-							<img class="fitimg" src="{{$value->pic}}"/>
+						<div class="img flex center">
+							<img class="lazy" data-original="{{$value->pic}}" src="/index/image/loading.gif" />
 							@if(request()->type == 3)
 								<i class="flex center bls bls-video"></i>
 							@endif
@@ -68,13 +68,28 @@
 </div>
 </body>
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
-
+<script src="/index/js/lazyload.js"></script>
 @include('index.public.perfect_js')
 
 <script>
+    $(".lazy").lazyload({
+        event: "scrollstop",
+		effect : "fadeIn",
+        load:function ($e) {
+            $e.css({"width":"100%","height":"100%"});
+        }
+    });
+
+    new Swiper ('.swiper-container', {
+        loop: true,
+        autoplay:1500,
+        pagination: '.swiper-pagination',
+        autoplayDisableOnInteraction:false
+    });
+
 	$('.submit').click(function(){
 	    $('#search').submit();
-	})
+	});
 
     new checkForm({
         form : '#form',

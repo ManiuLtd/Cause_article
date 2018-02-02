@@ -48,7 +48,7 @@ class PhotoController extends Controller
     {
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
-        $pic = Cache::remember('user_qrcode', 60 * 24 * 29, function () {
+        $pic = Cache::remember('user_qrcode'.$user->openid, 60 * 24 * 29, function () {
             $url = app(User::class)->createQrcode(session('user_id'));
             //二维码转base64位
             $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
@@ -56,7 +56,7 @@ class PhotoController extends Controller
             return $pic;
         });
 
-        $head = Cache::remember('user_head', 60 * 24 * 30, function () {
+        $head = Cache::remember('user_head'.$user->openid, 60 * 24 * 30, function () {
             //头像转base64
             $head = session('head_pic');
             if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {

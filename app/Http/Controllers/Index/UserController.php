@@ -30,7 +30,7 @@ class UserController extends CommonController
      */
     public function index($type = '', $dealer = '')
     {
-        $uid = \Session::get('user_id');
+        $uid = session('user_id');
         $res = User::where('id', $uid)->first();
         //未被员工推广的用户才可以关联
         if($res->admin_id == 0 && $res->admin_type == 0) {
@@ -48,14 +48,14 @@ class UserController extends CommonController
         $pic = '';
         $head = '';
         if ( $res->extension_image == '' ) {
-            $pic = Cache::remember('user_qrcode', 60 * 24 * 29, function () {
+            $pic = Cache::remember('user_qrcode'.$res->openid, 60 * 24 * 29, function () {
                 $url = app(User::class)->createQrcode(session('user_id'));
                 //二维码转base64位
                 $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
 
                 return $pic;
             });
-            $head = Cache::remember('user_head', 60 * 24 * 30, function () {
+            $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 30, function () {
                 //头像转base64
                 $head = session('head_pic');
                 if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
@@ -112,7 +112,7 @@ class UserController extends CommonController
                 return response()->json([ 'code' => 401, 'errormsg' => '修改资料失败' ]);
             }
         } else {
-            $user_id = \Session::get('user_id');
+            $user_id = session('user_id');
             $res = $user->with('brand')->where('id', $user_id)->first();
 
             return view('index.user_basic', compact('res'));

@@ -9,43 +9,63 @@
 </head>
 <body>
 <div id="visitor" class="flexv wrap">
-	@if(count($list) > 0)
 	<div class="flexitemv mainbox box">
-		@foreach($list as $value)
-		<div class="listbox">
-			<div class="flex lists">
-				<div class="img">
-					<img class="fitimg" src="/uploads/{{ $value['article']['pic'] }}"/>
-				</div>
-				<div class="flexitemv cont">
-					<a href="javascript:;" class="flexitemv">{{ $value['article']['title'] }}</a>
-					<div class="base">
-						<span><em>{{ $value['read'] }}</em>阅读</span>
-						<span style="color:#969696"><em>{{ $value['share'] }}</em>分享</span>
-						<span><em>{{ $value['new_count'] }}</em>新访问</span>
+        <p class="flex centerv explain">说明：使用事业爆文后，查看客户浏览记录。</p>
+        <div class="flexv centerv around front">
+            <a href="javascript:;" class="flexitemv center myfront">
+                <em class="flex">0</em>
+                <div class="flex">
+                    <span class="flex center">今日浏览</span>
+                </div>
+            </a>
+            <div class="flex line"></div>
+            <a href="prospect.html" class="flexitemv center myfront">
+                <em class="flex">0</em>
+                <div class="flex">
+                    <span class="flex center">准客户</span>
+                </div>
+            </a>
+        </div>
+		@if(count($list) > 0)
+			<div class="lists">
+				@foreach($list as $value)
+					<div class="listbox">
+						<div class="flex lists">
+							<div class="img">
+								<img class="fitimg" src="{{ $value['article']['pic'] }}"/>
+							</div>
+							<div class="flexitemv cont">
+								<h2 class="flexitemv">{{ $value['article']['title'] }}</h2>
+								<div class="between base">
+									<span><em>{{ \Carbon\Carbon::parse($value['created_at'])->toDateString() }}</em></span>
+									<span><em>{{ $value['read'] }}</em>浏览</span>
+									<span class="flex center"><em>{{ $value['new_count'] }}</em></span>
+								</div>
+							</div>
+							<a href="javascript:;" class="link"></a>
+						</div>
+						<div class="flex details">
+							<div class="flex center imgbox">
+								@foreach($value['user'] as $user)
+									<div class="flex center userimg"><img src="{{ $user['head'] }}" class="fitimg"></div>
+								@endforeach
+							</div>
+							<div class="flexitem endh lock">
+								<a href="{{ route('visitor_details', $value['id']) }}" class="flex center">谁看了？</a>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="flex details">
-				<div class="flex center imgbox">
-					@foreach($value['user'] as $user)
-						<div class="flex center userimg"><img src="{{$user['head']}}" class="fitimg"></div>
-					@endforeach
-				</div>
-				<div class="flexitem endh lock">
-					<a href="{{route('visitor_details',['id'=>$value['id']])}}" class="flex center">查看详情</a>
-				</div>
-			</div>
+			@endforeach
 		</div>
-		@endforeach
-	</div>
 	@else
 		<div class="flexitem center void">
-			<p style="font-size: 18px">暂无访客,快把文章分享给友好吧~</p>
+			<p style="font-size: 18px">暂无访客,快把文章分享给好友吧~</p>
 		</div>
 	@endif
 
 	@include('index.public.footer')
+
 </div>
 </body>
 </html>

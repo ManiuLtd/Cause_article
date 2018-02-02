@@ -3,50 +3,75 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-	<meta name="format-detection" content="telephone=no">
-	<title>头条阅读/分享详情</title>
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>最近看我的</title>
 	@include('index.public.css')
-</head>
 <body>
-<div id="detail" class="flexv wrap">
+<div id="lately" class="flexv wrap">
 	<div class="flexitemv mainbox">
-		<div class="listbox">
-			<div class="flex lists">
-				<div class="img">
-					<img class="fitimg" src="/uploads/{{$res->article['pic']}}"/>
-				</div>
-				<div class="flexitemv cont">
-					<a href="javascript:;" class="flexitemv">{{$res->article['title']}}</a>
-					<div class="base">
-						<span><em>{{$res->read}}</em>阅读</span>
-						<span><em>{{$res->share}}</em>分享</span>
-						<span><em>{{$res->created_at->diffForHumans()}}</em></span>
-					</div>
+		<p class="flex centerv explain">说明：文章未被阅读时，记得发给好友。</p>
+		<div class="flex lists">
+			<div class="img">
+				<img class="fitimg" src="{{ $res->article->pic }}">
+			</div>
+			<div class="flexitemv cont">
+				<h2 class="flexitem">{{ $res->article->title }}</h2>
+				<div class="between base">
+					<span><em>{{ $res->created_at->diffForHumans() }}</em></span>
+					<span><em>{{ $res->read }}</em>浏览</span>
 				</div>
 			</div>
-			<div class="particulars">
-				@foreach($footprint as $value)
-					<div class="flex centerv bottom">
-						<div class="headimg">
-							<img src="{{$value->user['head']}}" class="fitimg">
+			<a href="javascrit:;" class="link"></a>
+		</div>
+
+		<p class="flex center more">浏览 / 分享者</p>
+
+		<div class="sharerbox">
+			@foreach($footprint as $value)
+				<div class="sharer">
+					<div class="between info">
+						<div class="flex centerv kf">
+							<div class="flex center img">
+								<img src="{{ $value->user->head }}" class="fitimg">
+							</div>
+							<div class="flexv centerh text">
+								<div class="tex">{{ $value->user->wc_nickname }}</div>
+								<div class="data">
+									<span>{{ date('Y-m-d H:s', strtotime($value->created_at)) }}</span>
+								</div>
+							</div>
 						</div>
-						<div class="flexitemv info">
-							<p class="flex centerv">{{$value->user['wc_nickname']}}</p>
-							<p class="flex centerv">
-								@if($value->type == 1)
-									停留<em>{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</em>
-								@else
-									分享给朋友或微信群
-								@endif
-							</p>
+						<div class="flexv center time">
+							@if($value->type == 1)
+								<span class="flex"><em>{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</em></span>
+								<span class="flex">阅读时间</span>
+							@else
+								分享给朋友或微信群
+							@endif
 						</div>
-						<div class="flexv end right">
-							<p>{{$value->created_at}}</p>
-							<a href="{{route('connection',['uid'=>$value->see_uid])}}" class="flex center">找到他</a>
+						<a href="also-see.html" class="flex center also-btn">他还看了</a>
+					</div>
+					<div class="relation">
+						<p class="text">通过以下人脉关系链接传到-{{ $value->user->wc_nickname }}</p>
+						<div class="flex box">
+							<div class="flexv center img">
+								<img class="flex" src="../image/banner.jpg">
+								<span class="flex">sdah</span>
+							</div>
+							<i class="flex centerh bls bls-right"></i>
+							<div class="flexv center img">
+								<img class="flex" src="../image/banner.jpg">
+								<span class="flex">sdah</span>
+							</div>
+							<i class="flex centerh bls bls-right"></i>
+							<div class="flexv center img">
+								<img class="flex" src="../image/banner.jpg">
+								<span class="flex">售后客服</span>
+							</div>
 						</div>
 					</div>
-				@endforeach
-			</div>
+				</div>
+			@endforeach
 		</div>
 	</div>
 </div>

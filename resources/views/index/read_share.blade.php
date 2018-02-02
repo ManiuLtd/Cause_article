@@ -31,7 +31,7 @@
 				</div>
 				<div class="flex lists">
 					<div class="img">
-						<img class="fitimg" src="/uploads/{{$value->article['pic']}}"/>
+						<img class="fitimg" src="{{$value->article['pic']}}"/>
 					</div>
 					<div class="flexitemv cont">
 						<a href="{{route('visitor_details',['id'=>$value->uaid])}}" class="flexitemv">{{$value->article['title']}}</a>

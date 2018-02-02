@@ -36,7 +36,7 @@
 		
 		<div class="flexv centerv user">
 			<div class="userimg">
-				<img src="/kf_login.png" class="fitimg">
+				<img src="/kf_login.png" class="fitimg" style="border-radius: 50%">
 			</div>
 			<p class="flex center name">轩轩</p>
 			<div class="flex centerh mesg">
@@ -98,17 +98,9 @@
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
-
 <script type="text/javascript" src="/index/js/checkform.js"></script>
 <script type="text/javascript" src="/index/js/functions.js"></script>
 <script type="text/javascript">
-    var mySwiper = new Swiper ('.swiper-container', {
-        loop: true,
-        autoplay:1500,
-        pagination: '.swiper-pagination',
-        autoplayDisableOnInteraction:false
-    });
-
     $('#cut').click(function () {
         @if(session()->get('phone') == '')
 		$(".alert").css({"display":"block"});
