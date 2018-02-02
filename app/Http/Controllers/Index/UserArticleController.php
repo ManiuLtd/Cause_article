@@ -180,8 +180,8 @@ class UserArticleController extends CommonController
 
         $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
         foreach ( $list as $key => $value ) {
-            //统计新访客
-            $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
+            //统计新访客(2018-2-2注释-》显示多少个用户)
+//            $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
 
             //去除重复用户获取单个用户id
             $user_list = remove_duplicate($value[ 'footprint' ]);
@@ -214,6 +214,10 @@ class UserArticleController extends CommonController
         } ])->where('id', $id)->first();
         $footprint = $visitor_article->footprint;
         foreach ( $footprint as $key => $value ) {
+            if($value->ex_id) {
+                app(Footprint::class)->extension_user($value);
+            }
+
             Footprint::where('id', $value[ 'id' ])->update([ 'new' => 0 ]);
             $footprint[ $key ][ 'user' ] = User::where('id', $value[ 'see_uid' ])->select('head', 'wc_nickname')->first();
         }

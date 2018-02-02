@@ -39,7 +39,7 @@
 								<div class="between base">
 									<span><em>{{ \Carbon\Carbon::parse($value['created_at'])->toDateString() }}</em></span>
 									<span><em>{{ $value['read'] }}</em>浏览</span>
-									<span class="flex center"><em>{{ $value['new_count'] }}</em></span>
+									<span class="flex center"><em>{{ count($user_list) }}</em></span>
 								</div>
 							</div>
 							<a href="javascript:;" class="link"></a>

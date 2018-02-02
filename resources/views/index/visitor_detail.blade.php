@@ -46,7 +46,7 @@
 								<span class="flex"><em>{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</em></span>
 								<span class="flex">阅读时间</span>
 							@else
-								分享给朋友或微信群
+								<span style="font-size: 1.4rem;color: red">分享朋友</span>
 							@endif
 						</div>
 						<a href="also-see.html" class="flex center also-btn">他还看了</a>
