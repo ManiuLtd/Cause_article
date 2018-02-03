@@ -38,7 +38,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //使公共文章成为我的文章
     Route::get('become_my_article/{user_id}/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
     //别人分享我的文章
-    Route::get('user_article_share/{articles}', 'UserArticleController@userArticleShare')->name('user_article_share');
+    Route::get('user_article_share/{articles}/{et_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息

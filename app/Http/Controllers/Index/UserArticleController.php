@@ -107,8 +107,9 @@ class UserArticleController extends CommonController
     /**
      * @title 文章被其他用户分享时分享数+1
      * @param $articles UserArticles
+     * @param $et_id
      */
-    public function userArticleShare( UserArticles $articles )
+    public function userArticleShare( UserArticles $articles, $et_id )
     {
         if ( $articles->uid != session()->get('user_id') ) {
             if ( $articles->isrs == 0 ) $articles->update([ 'isrs' => 1 ]);
@@ -118,6 +119,7 @@ class UserArticleController extends CommonController
                 'uid'     => $articles->uid,
                 'see_uid' => session()->get('user_id'),
                 'uaid'    => $articles->id,
+                'et_id'   => $et_id,
                 'type'    => 2
             ];
             Footprint::create($data);
