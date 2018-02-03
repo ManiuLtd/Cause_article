@@ -10,16 +10,16 @@
     <div class="page-header">
         <h1>{{v('headtitle')}}</h1>
     </div>
-    <form class="form-horizontal" id="form" role="form" action="{{route('photo.update',$res->id)}}">
+    <form class="form-horizontal" id="form" role="form" action="{{route('photo.store')}}">
         {{csrf_field()}}
-        {{method_field('PUT')}}
 
         <div class="form-group">
-            <label class="col-sm-1 control-label no-padding-right"> 所属类型 </label>
+            <label class="col-sm-1 control-label no-padding-right"> 所属品牌 </label>
             <div class="col-sm-2">
-                <select name="type_id" class="form-control" id="form-field-select-1">
-                    @foreach($types as $type)
-                        <option value="{{ $type->id }}" @if($type->id == $res->type_id) selected @endif>{{ $type->name }}</option>
+                <select name="brand_id" class="form-control" id="form-field-select-1">
+                    <option value="0">全品牌</option>
+                    @foreach($brands as $brand)
+                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -28,7 +28,7 @@
         <div class="form-group">
             <label class="col-sm-1 control-label no-padding-right"> 名称 </label>
             <div class="col-sm-9">
-                <input type="text" name="name" value="{{ $res->name }}" class="col-xs-10 col-sm-5"/>
+                <input type="text" name="name" class="col-xs-10 col-sm-5"/>
                 <span class="help-inline col-xs-12 col-sm-7">
                     <span class="middle">不可为空</span>
                 </span>
@@ -41,8 +41,8 @@
             <div class="col-sm-9">
                 <div class="upload-list">
                     <div class="old">
-                        <input type="hidden" name="url" value="{{$res->url}}" />
-                        <img src="{{$res->url}}" width="100px" />
+                        <input type="hidden" name="url" />
+                        <img src="/default.jpg" width="100px" />
                         <span class="deleteImage">修改</span>
                     </div>
                 </div>
@@ -66,4 +66,5 @@
         </div>
     </form>
 </div>
+
 @endsection

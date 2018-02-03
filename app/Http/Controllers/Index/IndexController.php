@@ -64,6 +64,7 @@ class IndexController extends CommonController
         if($user->update($request->all())){
             $brand = Brand::find($request->brand_id);
             session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
+
             return response()->json(['state' => 0, 'msg' => '完善资料成功']);
         } else {
             return response()->json(['state' => 500, 'msg' => '完善资料出错']);

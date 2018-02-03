@@ -165,7 +165,7 @@
             var ch = brands[k].domain.substring(0, 1);
             if (char == ch) {
                 charlist[char].push(brands[k]);
-                listTpl.push('<div>' + brands[k].name + '</div>');
+                listTpl.push('<div data-id="' + brands[k].id + '">' + brands[k].name + '</div>');
             } else {
                 if (char != '') listTpl.push('</li>');
                 char = ch;

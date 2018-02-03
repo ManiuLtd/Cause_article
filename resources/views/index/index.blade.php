@@ -75,6 +75,7 @@
     $(".lazy").lazyload({
         event: "scrollstop",
 		effect : "fadeIn",
+        container: $(".flexitemv.box"),
         load:function ($e) {
             $e.css({"width":"100%","height":"100%"});
         }

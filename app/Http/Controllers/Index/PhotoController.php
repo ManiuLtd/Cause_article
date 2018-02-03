@@ -27,12 +27,20 @@ class PhotoController extends Controller
     public function index($type = '')
     {
         $types = PhotoType::orderBy('sort', 'desc')->get();
-        if($type) {
-            $photos = Photo::where('type_id', $type)->get();
+        if(session('brand_id')) {
+            if($type) {
+                $photos = Photo::where('type_id', $type)->get();
+            }else {
+                $photos = Photo::where('brand_id', session('brand_id'))->get();
+            }
         } else {
-            foreach ( $types as $value ) {
-                $photos = Photo::where('type_id', $value->id)->get();
-                break;
+            if ( $type ) {
+                $photos = Photo::where('type_id', $type)->get();
+            } else {
+                foreach ( $types as $value ) {
+                    $photos = Photo::where('type_id', $value->id)->get();
+                    break;
+                }
             }
         }
 

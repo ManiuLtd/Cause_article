@@ -15,11 +15,12 @@
         {{method_field('PUT')}}
 
         <div class="form-group">
-            <label class="col-sm-1 control-label no-padding-right"> 所属类型 </label>
+            <label class="col-sm-1 control-label no-padding-right"> 所属品牌 </label>
             <div class="col-sm-2">
-                <select name="type_id" class="form-control" id="form-field-select-1">
-                    @foreach($types as $type)
-                        <option value="{{ $type->id }}" @if($type->id == $res->type_id) selected @endif>{{ $type->name }}</option>
+                <select name="brand_id" class="form-control" id="form-field-select-1">
+                    <option value="0" @if($res->brand_id == 0) selected @endif>全品牌</option>
+                    @foreach($brands as $brand)
+                        <option value="{{ $brand->id }}" @if($brand->id == $res->brand_id) selected @endif>{{ $brand->name }}</option>
                     @endforeach
                 </select>
             </div>

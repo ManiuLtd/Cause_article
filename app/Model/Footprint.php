@@ -24,17 +24,17 @@ class Footprint extends Model
         return $this->belongsTo(User::class, 'see_uid');
     }
 
-    public function extension_user($footprint, $result = [], $deep = 0)
+    public function extension_user($footprint, &$result = [], $deep = 0)
     {
         $deep += 1;
         $et_user = Footprint::with('user')->where(['see_uid' => $footprint->ex_id, 'uaid' => $footprint->uaid])->first();
         if(isset($et_user->ex_id)) {
             if($et_user->ex_id != $et_user->uid) {
-                $result[$deep] = $et_user;
+                $result[$deep] = $et_user->toarray();
                 $this->extension_user($et_user, $result, $deep);
             }
         }
-        dd($result);
 
+        return array_reverse($result);
     }
 }

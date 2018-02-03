@@ -10,17 +10,30 @@
 <body>
 <div id="more" class="flexv wrap">
     <div class="flex tex-t">
-        @foreach($types as $value)
-            <a href="{{ route('extension_photo_list', $value->id) }}" class="flex center @if(request()->type) @if($value->id == request()->type) current @endif @else @if($loop->first) current @endif @endif">
-                {{ $value->name }}
+        @if(session('brand_id'))
+            <a href="{{ route('extension_photo_list') }}" class="flex center @if(!request()->type) current @endif">
+                {{ session('brand_name') }}
             </a>
-        @endforeach
+            @foreach($types as $value)
+                <a href="{{ route('extension_photo_list', $value->id) }}" class="flex center @if(request()->type) @if($value->id == request()->type) current @endif @endif">
+                    {{ $value->name }}
+                </a>
+            @endforeach
+        @else
+            @foreach($types as $value)
+                <a href="{{ route('extension_photo_list', $value->id) }}" class="flex center @if(request()->type) @if($value->id == request()->type) current @endif @else @if($loop->first) current @endif @endif">
+                    {{ $value->name }}
+                </a>
+            @endforeach
+        @endif
+
+
     </div>
     <div class="flexitemv mainbox">
         <div class="fwrap listbox">
             @foreach($photos as $photo)
                 <a href="{{ route('extension_poster', $photo->id) }}" class="flexv imgbox">
-                    <div class="flex center" style="width: 9.1rem;height: 15rem">
+                    <div class="flex center">
                         <img data-original="{{ $photo->url }}" src="/index/image/loading.gif" class="lazy">
                     </div>
                     <div class="flexv center tit">{{ $photo->name }}</div>
@@ -36,6 +49,7 @@
     $(".lazy").lazyload({
         event: "scrollstop",
         effect : "fadeIn",
+        container: $(".fwrap.listbox"),
         load:function ($e) {
             $e.css({"width":"100%","height":"100%"});
         }

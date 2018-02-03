@@ -13,14 +13,14 @@
         <p class="flex centerv explain">说明：使用事业爆文后，查看客户浏览记录。</p>
         <div class="flexv centerv around front">
             <a href="javascript:;" class="flexitemv center myfront">
-                <em class="flex">0</em>
+                <em class="flex">{{ $today_see }}</em>
                 <div class="flex">
                     <span class="flex center">今日浏览</span>
                 </div>
             </a>
             <div class="flex line"></div>
-            <a href="prospect.html" class="flexitemv center myfront">
-                <em class="flex">0</em>
+            <a href="{{ route('visitor_prospect') }}" class="flexitemv center myfront">
+                <em class="flex">{{ count($prospect) }}</em>
                 <div class="flex">
                     <span class="flex center">准客户</span>
                 </div>

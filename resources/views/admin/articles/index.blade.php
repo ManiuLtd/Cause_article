@@ -76,6 +76,9 @@
             @endforeach
             </tbody>
         </table>
+        <div style="text-align: center">
+            {{$list->appends(['brand'=>request()->brand,'type'=>request()->type,'key'=>request()->key,'value'=>request()->value])->links()}}
+        </div>
     </div><!-- /.table-responsive -->
 </div><!-- /span -->
 @endsection

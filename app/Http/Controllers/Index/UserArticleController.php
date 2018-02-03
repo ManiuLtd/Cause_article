@@ -37,7 +37,7 @@ class UserArticleController extends CommonController
      */
     public function articleDetail( UserArticles $articles, $ex_id = 0 )
     {
-        $uid = session()->get('user_id');
+        $uid = session('user_id');
         $addfootid = '';
         $fkarticle = '';
         $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
@@ -47,12 +47,13 @@ class UserArticleController extends CommonController
 
         if ( $uarticle->uid != $uid ) {
             //用户文章第一次阅读则推送文本消息给该文章拥有者
-            $cachename = $articles->id . $uarticle->user[ 'openid' ];
-            if ( !Cache::has("$cachename") ) {
+            $openid = User::where('id', $uid)->value('openid');
+            $cache_name = $articles->id . $openid;
+            if ( !Cache::has($cache_name) ) {
                 //推送消息
                 $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《{$uarticle->article[ 'title' ]}》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
                 message($uarticle->user[ 'openid' ], 'text', $context);
-                Cache::put("$cachename", 1, 60);
+                Cache::put($cache_name, 1, 60);
             }
             //公共文章浏览数+1
             Article::where('id', $uarticle->aid)->increment('read', 1);
@@ -180,7 +181,7 @@ class UserArticleController extends CommonController
 
         $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
         foreach ( $list as $key => $value ) {
-            //统计新访客(2018-2-2注释-》显示多少个用户)
+            //统计新访客(2018-2-2注释-》更改为显示多少个用户)
 //            $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
 
             //去除重复用户获取单个用户id
@@ -197,7 +198,13 @@ class UserArticleController extends CommonController
             }
         }
 
-        return view('index.visitor_record', compact('list', 'user_list'));
+        //准客户数量
+        $prospect = remove_duplicate(Footprint::where('uid', $uid)->get());
+
+        //个人文章今日浏览数
+        $today_see = Footprint::where('uid', $uid)->whereDate('created_at', date('Y-m-d', time()))->count();
+
+        return view('index.visitor_record', compact('list', 'user_list', 'today_see', 'prospect'));
     }
 
     /**
@@ -211,18 +218,22 @@ class UserArticleController extends CommonController
             $query->select('id', 'title', 'pic');
         }, 'footprint'                                    => function ( $query ) {
             $query->orderBy('created_at', 'desc');
-        } ])->where('id', $id)->first();
+        }, 'user' ])->where('id', $id)->first();
         $footprint = $visitor_article->footprint;
         foreach ( $footprint as $key => $value ) {
+
+            //用户分享层级关系
             if($value->ex_id) {
-                app(Footprint::class)->extension_user($value);
+                $footprint[$key]['extension'] = app(Footprint::class)->extension_user($value);
             }
 
             Footprint::where('id', $value[ 'id' ])->update([ 'new' => 0 ]);
             $footprint[ $key ][ 'user' ] = User::where('id', $value[ 'see_uid' ])->select('head', 'wc_nickname')->first();
         }
 
-        return view('index.visitor_detail', [ 'res' => $visitor_article, 'footprint' => $footprint ]);
+        $res = $visitor_article;
+
+        return view('index.visitor_detail', compact('res', 'footprint'));
     }
 
     /**
@@ -310,20 +321,26 @@ class UserArticleController extends CommonController
 
     /**
      * @title 访客记录统计页
-     * @param $uid  '查找的用户id'
+     * @param $aid
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function connection( $uid )
+    public function connection( $aid )
     {
-        //阅读
-        $read = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 1 ])->count();
-        //分享
-        $share = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 2 ])->count();
-        //最近访问的时间
-        $res = Footprint::with([ 'user' => function ( $query ) {
-            $query->select('id', 'head', 'wc_nickname');
-        } ])->where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid ])->orderBy('created_at', 'desc')->limit(1)->get()->toArray();
+        $foot = Footprint::with('user')->where('id', $aid)->first();
 
-        return view('index.connection', compact('read', 'share', 'res'));
+        $foot_list = Footprint::with('userArticle.article')->where(['see_uid'=>$foot->user->id, 'uid'=>session('user_id')])->orderBy('created_at', 'desc')->get();
+
+        return view('index.visitor_record_see', compact('foot', 'foot_list'));
+    }
+
+    /**
+     * 准客户
+     */
+    public function prospect()
+    {
+        //准客户数量
+        $prospect = remove_duplicate(Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get());
+
+        return view('index.visitor_prospect', compact('prospect'));
     }
 }

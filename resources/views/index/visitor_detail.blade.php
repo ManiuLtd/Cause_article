@@ -49,24 +49,28 @@
 								<span style="font-size: 1.4rem;color: red">分享朋友</span>
 							@endif
 						</div>
-						<a href="also-see.html" class="flex center also-btn">他还看了</a>
+						<a href="{{ route('visitor_record_see', $value->id) }}" class="flex center also-btn">他还看了</a>
 					</div>
 					<div class="relation">
 						<p class="text">通过以下人脉关系链接传到-{{ $value->user->wc_nickname }}</p>
 						<div class="flex box">
 							<div class="flexv center img">
-								<img class="flex" src="../image/banner.jpg">
-								<span class="flex">sdah</span>
+								<img class="flex" src="{{ $res->user->head }}">
+								<span class="flex">{{ $res->user->wc_nickname }}</span>
 							</div>
+							@if(count($value->extension))
+								@foreach($value->extension as $user)
+									<i class="flex centerh bls bls-right"></i>
+									<div class="flexv center img">
+										<img class="flex" src="{{ $user['user']['head'] }}">
+										<span class="flex">{{ $user['user']['wc_nickname'] }}</span>
+									</div>
+								@endforeach
+							@endif
 							<i class="flex centerh bls bls-right"></i>
 							<div class="flexv center img">
-								<img class="flex" src="../image/banner.jpg">
-								<span class="flex">sdah</span>
-							</div>
-							<i class="flex centerh bls bls-right"></i>
-							<div class="flexv center img">
-								<img class="flex" src="../image/banner.jpg">
-								<span class="flex">售后客服</span>
+								<img class="flex" src="{{ $value->user->head }}">
+								<span class="flex">{{ $value->user->wc_nickname }}</span>
 							</div>
 						</div>
 					</div>

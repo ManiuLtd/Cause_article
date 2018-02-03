@@ -14,7 +14,7 @@ class PhotoTypeController extends CommonController
      */
     public function index(PhotoType $photoType)
     {
-        $list = $photoType->get();
+        $list = $photoType->orderBy('created_at', 'desc')->paginate(20);
         $menu = $this->menu;
         $active = $this->active;
         return view('admin.photo_type.index',compact('list','menu','active'));

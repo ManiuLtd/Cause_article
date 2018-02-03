@@ -98,7 +98,11 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
         //用户文章访客记录详情
         Route::get('visitor_details/{id}','UserArticleController@visitorDetails')->name('visitor_details');
         //找到访客
-        Route::get('connection/{uid}','UserArticleController@connection')->name('connection');
+//        Route::get('connection/{uid}','UserArticleController@connection')->name('connection');
+        //访客还看了
+        Route::get('visitor_record_see/{aid}', 'UserArticleController@connection')->name('visitor_record_see');
+        //准客户
+        Route::get('visitor_prospect', 'UserArticleController@prospect')->name('visitor_prospect');
     });
 });
 
@@ -130,8 +134,10 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::resource('article_type', 'ArticleTypeController');
         //美图类型资源路由
         Route::resource('photo_type', 'PhotoTypeController');
-        //美图资源路由
+        //普通美图资源路由
         Route::resource('photo', 'PhotoController');
+        //品牌美图资源路由
+        Route::resource('photo_brand', 'PhotoBrandController');
         //显示和修改网站信息
         Route::match(['get','post'],'web_config','IndexController@webConfig')->name('web_config');
         //查看佣金

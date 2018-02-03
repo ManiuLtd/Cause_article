@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\TraitFunction\FunctionUser;
 use App\Jobs\extensionImage;
+use App\Model\Brand;
 use App\Model\Footprint;
 use App\Model\Order;
 use App\Model\Photo;
@@ -103,8 +104,12 @@ class UserController extends CommonController
 
             //如果有变更名称或头像则需清空推广图片
             if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
-              $data['extension_image'] = '';
+                $data['extension_image'] = '';
             }
+
+            //更新用户session
+            $brand = Brand::find($request->brand_id);
+            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
 
             if ( $user->update($data) ) {
                 return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);
