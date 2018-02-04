@@ -175,7 +175,7 @@ class WechatController extends Controller
                 "keyword2"  => date('Y-m-d H:i:s',time()),
                 "remark"    => "感谢您的推荐。"
             ];
-            template_message($app, $FromUserName, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+            template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
             //推广奖励操作
             $this->extension($eventkey);
         }

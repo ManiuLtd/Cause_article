@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
+use App\Model\Integral;
 use App\Model\User;
 use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
@@ -113,9 +114,10 @@ class PayController extends Controller
                     $data = [
                         'user_id'   =>  $pay_user->dealer_id,
                         'price' =>  number_format($order->price * 0.3),
-                        'created_at'  => date('Y-m-d H:i:s',time())
+                        'order_id' => $order->id
                     ];
-                    DB::table('integral')->insert($data);
+                    Integral::create($data);
+//                    DB::table('integral')->insert($data);
                     $pdealer = User::where('id',$pay_user->dealer_id)->first();
                     //所属员工和员工部门
                     if($pdealer->admin_id && $pdealer->admin_type) {
@@ -126,9 +128,10 @@ class PayController extends Controller
                         $dealer_data = [
                             'user_id'   =>  $pdealer->dealer_id,
                             'price' =>  number_format($order->price * 0.1),
-                            'created_at'  => date('Y-m-d H:i:s',time())
+                            'order_id' => $order->id
                         ];
-                        DB::table('integral')->insert($dealer_data);
+                        Integral::create($dealer_data);
+//                        DB::table('integral')->insert($dealer_data);
                         $ppdealer = User::where('id',$pdealer->dealer_id)->first();
                         //所属员工和员工部门
                         if($ppdealer->admin_id && $ppdealer->admin_type) {

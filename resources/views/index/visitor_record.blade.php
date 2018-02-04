@@ -35,14 +35,14 @@
 								<img class="fitimg" src="{{ $value['article']['pic'] }}"/>
 							</div>
 							<div class="flexitemv cont">
-								<h2 class="flexitemv">{{ $value['article']['title'] }}</h2>
+								<h2 class="flexv">{{ $value['article']['title'] }}</h2>
 								<div class="between base">
 									<span><em>{{ \Carbon\Carbon::parse($value['created_at'])->toDateString() }}</em></span>
 									<span><em>{{ $value['read'] }}</em>浏览</span>
 									<span class="flex center"><em>{{ count($user_list) }}</em></span>
 								</div>
 							</div>
-							<a href="javascript:;" class="link"></a>
+							<a href="{{ route('article_details', $value['article']['id']) }}" class="link"></a>
 						</div>
 						<div class="flex details">
 							<div class="flex center imgbox">
@@ -55,8 +55,8 @@
 							</div>
 						</div>
 					</div>
-				</div>
-			@endforeach
+				@endforeach
+			</div>
 		</div>
 	@else
 		<div class="flexitem center void">

@@ -27,7 +27,7 @@
                         <img class="fitimg" src="{{ $value->userArticle->article->pic }}">
                     </div>
                     <div class="flexitemv cont">
-                        <h2 class="flexitem">{{ $value->userArticle->article->title }}</h2>
+                        <h2 class="flexv">{{ $value->userArticle->article->title }}</h2>
                         <div class="between base">
                             <span><em>{{ $value->created_at->toDateString() }}</em></span>
                             <span>阅读时间：{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</span>

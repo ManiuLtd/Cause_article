@@ -4,6 +4,7 @@ namespace App\Http\Controllers\TraitFunction;
 
 
 use App\Model\User;
+use Carbon\Carbon;
 
 trait FunctionUser
 {

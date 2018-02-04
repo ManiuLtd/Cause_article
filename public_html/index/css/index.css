@@ -38,11 +38,12 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .tabbars .item i.fk:after{content: '';position: absolute;top:0;right:0;width: 0.6rem;height:0.6rem;border-radius:50%; background: #fff;}
 /****************************** 首页 ********************************/
 #home{background: #fff;}
-#home .nav{padding: 0 14px;}
-#home .nav .item{height: 4rem;color:#515151;border-bottom: 2px solid transparent;}
-#home .nav .item span{height: 2rem;font-size: 1.2rem;}
-#home .nav .more{width:3rem;font-size: 1.5rem;}
-#home .nav .item.current{border-bottom-color:#f73c39;color:#f73c39;}
+#home .nav{overflow-x:auto;white-space:nowrap;}
+#home .nav::-webkit-scrollbar{display:none;}/*清除滚动条*/
+#home .nav .item{padding:0 .7rem;}
+#home .nav .item span{height:4rem;font-size: 1.2rem;border-bottom: 2px solid transparent;}
+#home .nav .more{width:3rem;font-size:1.5rem;}
+#home .nav .item.current span{border-bottom-color:#f73c39;color:#f73c39;}
 #home .banner{width:100%; height:14rem;}
 #home .banner .swiper-container{width:100%;height:14rem;}
 #home .search{padding: 10px 8px;border-bottom: 1px solid #f2f2f2;}
@@ -81,7 +82,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #brand.dialog_box .company{position: relative;height:100%;overflow-y:auto;}
 #brand.dialog_box .company li>p{background: #edeeed;color: #b3b3b3;padding-left: 10px;font-size: 1.5rem;}
 #brand.dialog_box .company li>div{line-height: 40px;border-bottom: 1px solid #f5f5f5;padding-left: 10px;font-size: 1.5rem;}
-#brand.dialog_box .lettrt{position: fixed;top:6.2rem;right:0;height:88%;width:30px;overflow-y: auto}
+#brand.dialog_box .lettrt{position: fixed;top:6.2rem;right:0;height:88%;width:30px;overflow-y: auto;z-index:2;}
 #brand.dialog_box .lettrt li>a{display: block;color:#84c2b2;text-align: center;font-size: 1.39rem;}
 #brand.show{transform: translateX(0);}
 /******************************* 留言管理 **********************************/
@@ -113,7 +114,6 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #basic .user .button a{height: 4rem;background: -webkit-linear-gradient(#f95e48, #f7403c);color:#fdebea;border-radius: 6rem;font-size: 1.8rem;}
 #basic .bottom{height:5rem;font-size: 1.2rem;}
 /************************************ 访客记录 ********************************/
-#visitor .box{padding:1.2rem;}
 #visitor .mainbox .listbox {padding:1rem; background: #fff;border-radius: 6px;margin-bottom: 1rem;}
 #visitor .mainbox .listbox .lists .img{width:8rem;height:7rem;}
 #visitor .mainbox .listbox .lists .cont{height: 7rem;margin-left:10px;}
@@ -141,7 +141,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #lately .lists .link{position:absolute;top:0;right:0;bottom:0;left:0;}
 #lately .lists .img{width:8rem;height:7rem;}
 #lately .lists .cont{height: 7rem;padding-left:10px;}
-#lately .lists .cont h2{font-weight:normal;font-size: 1.5rem;color:#424242;overflow: hidden;-webkit-box-orient: vertical; -webkit-line-clamp: 2;}
+#lately .lists .cont h2{font-weight:normal;height:4.2rem;font-size: 1.5rem;color:#424242;overflow: hidden;-webkit-box-orient: vertical; -webkit-line-clamp: 2;}
 #lately .lists .cont .base{padding: 0.7rem 0;font-size: 1.2rem;color:#969696;}
 #lately .more{padding:1rem 0;color:#7f7f7f;position: relative;font-size: 1rem;}
 #lately .more:before{content: "";width:12rem;height:1px;background: -webkit-linear-gradient(0deg, #f2f2f2, #dadada);position: absolute;top:1.5rem;left: 0.5rem; }
@@ -211,7 +211,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #focus .front .line{width: 1px;height: 4rem;margin-top: 0.5rem; background: #cacaca;}
 #focus .flipbox{height:3rem;overflow:hidden;position:relative;}
 #focus .flipbox .bor{position:absolute;bottom:-3rem;left:1rem;font-size:1.2rem;color:#f58d84;}
-#focus .flipbox .flip{padding:0.4rem 0;}
+#focus .flipbox .flip{height:3rem;}
 #focus .flipbox .flip i{font-size:2rem;}
 #focus .func{background: #fff;color:#393939;}
 #focus .func a{height:4rem;font-size: 1.3rem;border-bottom:1px solid #f2f2f2;}

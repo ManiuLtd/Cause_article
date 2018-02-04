@@ -21,7 +21,7 @@
 					<span><em>{{ $res->read }}</em>浏览</span>
 				</div>
 			</div>
-			<a href="javascrit:;" class="link"></a>
+			<a href="{{ route('article_details', $res->article->id) }}" class="link"></a>
 		</div>
 
 		<p class="flex center more">浏览 / 分享者</p>

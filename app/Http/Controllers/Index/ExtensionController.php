@@ -31,8 +31,9 @@ class ExtensionController extends CommonController
         $tomorrow = Carbon::tomorrow();
         $today = Carbon::today();
         $today_integral = Integral::where($where)->whereBetween('created_at',[$today,$tomorrow])->sum('price');
-        $tot_integral = Integral::where($where)->sum('price');
         $use_integral = IntegralUse::where($where)->sum('integral');
+        $where = array_merge($where, ['state'=>1]);
+        $tot_integral = Integral::where($where)->sum('price');
         $nu_integral = $tot_integral - $use_integral;
 
         return view('index.extension', compact('today_integral','tot_integral','use_integral','nu_integral'));
@@ -46,8 +47,9 @@ class ExtensionController extends CommonController
     {
         $user = User::with('user_account')->where('id', \Session::get('user_id'))->first();
         $where = ['user_id' => \Session::get('user_id')];
-        $tot_integral = Integral::where($where)->sum('price');
         $use_integral = IntegralUse::where($where)->sum('integral');
+        $where = array_merge($where, ['state'=>1]);
+        $tot_integral = Integral::where($where)->sum('price');
         $nu_integral = $tot_integral - $use_integral;
 
         return view('index.cash', compact('user','nu_integral'));
@@ -144,7 +146,7 @@ class ExtensionController extends CommonController
      */
     public function getMoneyRecord( IntegralUse $integralUse )
     {
-        $lists = $integralUse->get();
+        $lists = $integralUse->where('user_id', session('user_id'))->get();
         return view('index.record', compact('lists'));
     }
 }

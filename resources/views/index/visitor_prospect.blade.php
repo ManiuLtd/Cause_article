@@ -33,7 +33,7 @@
                             <img class="fitimg" src="{{ $value->userArticle->article->pic }}">
                         </div>
                         <div class="flexitemv cont">
-                            <h2 class="flexitem">{{ $value->userArticle->article->title }}</h2>
+                            <h2 class="flexv">{{ $value->userArticle->article->title }}</h2>
                             <div class="between base">
                                 {{--<span><em>{{ $value->created_at->toDateString() }}</em></span>--}}
                                 <span><em>{{ $value->userArticle->read }}</em>浏览</span>

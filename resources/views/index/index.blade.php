@@ -11,9 +11,9 @@
 <div id="home" class="flexv wrap">
 	<div class="flexitemv box">
 		<div class="flex nav">
-			<a href="{{route('index.index')}}" class="flexitem center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>
+			<a href="{{route('index.index')}}" class="flex center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>
 			@foreach($article_type as $type)
-				<a href="{{route('index.index',['type'=>$type->id])}}" class="flexitem center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
+				<a href="{{route('index.index',['type'=>$type->id])}}" class="flex center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
 			@endforeach
 			<a href="javascript:;" class="flex center bls bls-yjt more"></a>
 		</div>
@@ -47,7 +47,7 @@
 							@endif
 						</div>
 						<div class="flexitemv cont">
-							<h1 class="flexitemv">{{$value->title}}</h1>
+							<h1 class="flexv">{{$value->title}}</h1>
 							<div class="flex base">
 								<span class="flex center">
 									<i class="flex center bls bls-listen"></i>

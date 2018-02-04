@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Model\Admin;
 use App\Model\AdminDistribution;
 use App\Model\Brand;
+use App\Model\Integral;
 use App\Model\Order;
 use App\Model\User;
 use Carbon\Carbon;
@@ -214,6 +215,8 @@ class OrderController extends CommonController
                 $user->membership_time = Carbon::parse($user->membership_time)->subYear();
             }
             $user->save();
+
+            Integral::where('order_id', $order->id)->update(['state' => 2]);
 
             return response()->json(['state' => 200, 'message' => '退款成功']);
         } else {
