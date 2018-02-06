@@ -19,6 +19,17 @@
         </div>
         <div class="space-4"></div>
 
+        <div class="form-group">
+            <label class="col-sm-1 control-label no-padding-right"> 排序 </label>
+            <div class="col-sm-9">
+                <input type="text" name="sort" class="col-xs-10 col-sm-5"/>
+                <span class="help-inline col-xs-12 col-sm-7">
+                    <span class="middle">越小越前</span>
+                </span>
+            </div>
+        </div>
+        <div class="space-4"></div>
+
         <div class="col-md-offset-1 col-md-9">
             <button class="btn btn-info" type="button" id="submit">
                 <i class="icon-ok bigger-110"></i>

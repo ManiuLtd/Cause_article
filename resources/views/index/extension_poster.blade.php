@@ -12,7 +12,7 @@
     <div class="flexitemv mainbox">
         <div class="flex centerv edit"><i class="flex center bls bls-amend"></i><span>修改个人信息</span></div>
         <div class="flexv posterbox">
-            <p class="flex center">图片已生成，长安保存后即可分享到朋友圈</p>
+            <p class="flex center">图片已生成，长按保存后即可分享到朋友圈</p>
             <div class="flex poster">
                 <i class="flex center bls bls-zjt_"></i>
                 <img class="img" src="" style="width: 23rem;">
@@ -28,7 +28,7 @@
             <ul class="fwrap list" id="rand_list">
                 @foreach($rand_photo as $value)
                     <li class="item">
-                        <a href="javascript:;" class="flex link center" style="height: 15rem">
+                        <a href="{{ route('extension_poster', $value->id) }}" class="flex link center" style="height: 15rem">
                             <img data-original="{{ $value->url }}" src="/index/image/loading.gif" class="lazy">
                         </a>
                         <p class="flex center name">{{ $value->name }}</p>
@@ -117,7 +117,7 @@
     //换一批
     $(".change").click(function () {
         showProgress('切换中..');
-        var url = "{{ route('rand_photo', ['count'=>3, 'type'=>3]) }}";
+        var url = "{{ route('rand_photo', ['count'=>6, 'type'=>3]) }}";
         $.get(url, function (ret) {
             hideProgress();
             $('#rand_list').html(ret.view);
@@ -181,6 +181,10 @@
         $.post(url, {img:base64,_token:"{{ csrf_token() }}"}, function (ret) {
             $(".win").show();
         });
+    });
+
+    $('.flex.center.know-btn').click(function () {
+        $(".win").hide();
     });
 
 </script>

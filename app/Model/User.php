@@ -54,6 +54,15 @@ class User extends Model
         return $this->hasMany(UserArticles::class, 'uid');
     }
 
+    /**
+     * @title  谁查看我的头条
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function user_foot()
+    {
+        return $this->hasMany(Footprint::class, 'uid');
+    }
+
     public function user_account()
     {
         return $this->hasOne(UserAccount::class, 'user_id');

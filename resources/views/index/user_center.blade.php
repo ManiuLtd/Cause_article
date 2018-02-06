@@ -56,7 +56,7 @@
 				@foreach($orders as $order)
 					<div class="flex centerv flip">
 						<i class="flex center bls bls-horn"></i>
-						<div class="text"> 恭喜“<span>{{ $order->user->wc_nickname }}</span>”成功开通图保进行获客展示</div>
+						<div class="text"> 恭喜“<span>{{ $order->user->wc_nickname }}</span>”成功开通事业爆文进行获客展示</div>
 					</div>
 				@endforeach
 			</div>

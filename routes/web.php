@@ -30,7 +30,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //分享公共文章成功
     Route::get('article_share/{article}', 'ArticleController@articleShare')->name('article_share');
     //我的文章
-    Route::get('user_article', 'UserArticleController@index')->name('user_article');
+    Route::get('user_article/{uid?}', 'UserArticleController@index')->name('user_article');
     //用户文章详情
     Route::get('user_article_details/{articles}/{et_id?}', 'UserArticleController@articleDetail')->name('user_article_details');
     //我的文章详情页上传二维码
@@ -38,7 +38,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //使公共文章成为我的文章
     Route::get('become_my_article/{user_id}/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
     //别人分享我的文章
-    Route::get('user_article_share/{articles}/{et_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
+    Route::get('user_article_share/{articles}/{ex_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
     //查看用户基础信息

@@ -13,4 +13,5 @@
     <script src="/admin/js/ace-extra.min.js"></script>
     <script src="/admin/js/html5shiv.js"></script>
     <script src="/admin/js/respond.min.js"></script>
+    <link rel="stylesheet" href="/index/css/reset.css">
 </head>

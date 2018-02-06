@@ -9,45 +9,78 @@
 </head>
 <body>
 <div id="open" class="flexv wrap">
-	<div class="flexitemv mainbox" style="background: #f7403c;">
+	<div class="flexitemv mainbox">
 		@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($shiptime->membership_time)))
 			<div class="state">状态：<span>未开通</span></div>
 		@else
 			<div class="state">有效期至：<span>{{\Carbon\Carbon::parse($shiptime->membership_time)->toDateString()}}</span></div>
 		@endif
 		<div class="bjimg">
-			<div class="userimg">
-				<img src="/kf_login.png" class="fitimg">
-			</div>
-			<div class="option">
-				<div class="discount">
-					<div class="flex sale">
-						<div class="flexv">
-							<div class="price">
-								<span>12个月</span>
-								<em>&yen; 99</em>
+			<img src="/index/image/dredge1.jpg" class="fitimg">
+			<img src="/index/image/dredge2.jpg" class="fitimg">
+			<img src="/index/image/dredge3.jpg" class="fitimg">
+
+			<div class="flex center optionbox">
+				<div class="flex center option">
+					<div class="discount">
+						<div class="flex list">
+							<div class="flexv">
+								<div class="flex centerv price">
+									<span class="flex">12个月</span>
+									<em>&yen;99</em>
+								</div>
+								<div class="cost">
+									<i class="original">原价 199元</i>
+									<span>立省100元</span>
+								</div>
 							</div>
-							<div class="cost">
-								<i class="original">原价 199元</i>
-								<span>立省100元</span>
+							<div class="flexitem endh">
+								<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session()->get('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>
 							</div>
 							<div class="flex center cornu">优惠</div>
 						</div>
-						<div class="flexitem endh ">
-							<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session()->get('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>
-						</div>
-					</div>
-					<div class="flex month">
-						<div class="flexv center price">
-							<span>1个月</span>
-							<em>&yen; 19.9</em>
-						</div>
-						<div class="flexitem endh">
-							<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session()->get('user_id')}}" data-title="爆文1个月会员">开通</a>
+						<div class="flex list">
+							<div class="flex centerv price">
+								<span class="flex">1个月</span>
+								<em>&yen;19.9</em>
+							</div>
+							<div class="flexitem endh ">
+								<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session()->get('user_id')}}" data-title="爆文1个月会员">购买</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			{{--<div class="option">--}}
+				{{--<div class="discount">--}}
+					{{--<div class="flex sale">--}}
+						{{--<div class="flexv">--}}
+							{{--<div class="price">--}}
+								{{--<span>12个月</span>--}}
+								{{--<em>&yen; 99</em>--}}
+							{{--</div>--}}
+							{{--<div class="cost">--}}
+								{{--<i class="original">原价 199元</i>--}}
+								{{--<span>立省100元</span>--}}
+							{{--</div>--}}
+							{{--<div class="flex center cornu">优惠</div>--}}
+						{{--</div>--}}
+						{{--<div class="flexitem endh ">--}}
+							{{--<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session()->get('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>--}}
+						{{--</div>--}}
+					{{--</div>--}}
+					{{--<div class="flex month">--}}
+						{{--<div class="flexv center price">--}}
+							{{--<span>1个月</span>--}}
+							{{--<em>&yen; 19.9</em>--}}
+						{{--</div>--}}
+						{{--<div class="flexitem endh">--}}
+							{{--<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session()->get('user_id')}}" data-title="爆文1个月会员">开通</a>--}}
+						{{--</div>--}}
+					{{--</div>--}}
+				{{--</div>--}}
+			{{--</div>--}}
 		</div>
 	</div>
 	<div class="flex center once">

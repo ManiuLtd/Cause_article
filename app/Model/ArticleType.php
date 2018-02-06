@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ArticleType extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'sort'];
 
     use SoftDeletes;
 }

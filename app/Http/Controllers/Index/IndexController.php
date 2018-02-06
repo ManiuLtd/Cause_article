@@ -30,9 +30,9 @@ class IndexController extends CommonController
             Cache::put('banner', $banner_list, 30);
         }
 
-        $user_brand = User::where('id', session()->get('user_id'))->value('brand_id');
-        $article_type = ArticleType::get();
-        $type = $article_type->pluck('id')->push(0);
+        $user_brand = User::where('id', session('user_id'))->value('brand_id');
+        $article_type = ArticleType::orderBy('sort', 'asc')->get();
+        $type = [$article_type->first()->id, 0];
         if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 0 ];
         $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
             ->when($user_brand, function ( $query ) use ( $user_brand ) {

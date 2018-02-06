@@ -41,7 +41,7 @@ class BannerController extends CommonController
     public function store(Request $request, Banner $banner)
     {
         $banner->fill($request->all());
-        if($brand->save()){
+        if($banner->save()){
             return json_encode(['state'=>0, 'msg'=>'添加banner图完成', 'url'=>route('banner.index')]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'添加banner图失败，请联系管理员']);

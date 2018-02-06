@@ -27,9 +27,9 @@
         <div class="form-group">
             <label class="col-sm-1 control-label no-padding-right"> 排序 </label>
             <div class="col-sm-9">
-                <input type="text" name="sort" class="col-xs-10 col-sm-5" data-rule="*" data-errmsg="排序不可为空"/>
+                <input type="text" name="sort" class="col-xs-10 col-sm-5"/>
                 <span class="help-inline col-xs-12 col-sm-7">
-                    <span class="middle">不可为空</span>
+                    <span class="middle">越小越前</span>
                 </span>
             </div>
         </div>

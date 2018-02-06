@@ -71,7 +71,7 @@ class UserController extends CommonController
             });
         }
         //美图列表
-        $photos = Photo::orderBy('created_at', 'desc')->limit(4)->get();
+        $photos = Photo::orderBy('id', 'desc')->limit(4)->get();
 
         return view('index.user_center', compact('res', 'user_article', 'read_share', 'orders', 'pic', 'head', 'photos'));
     }

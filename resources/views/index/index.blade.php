@@ -11,7 +11,7 @@
 <div id="home" class="flexv wrap">
 	<div class="flexitemv box">
 		<div class="flex nav">
-			<a href="{{route('index.index')}}" class="flex center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>
+			{{--<a href="{{route('index.index')}}" class="flex center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>--}}
 			@foreach($article_type as $type)
 				<a href="{{route('index.index',['type'=>$type->id])}}" class="flex center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
 			@endforeach
@@ -41,16 +41,18 @@
 				@foreach($list as $value)
 					<a href="{{route('article_details',['id'=>$value->id])}}" class="flex lists">
 						<div class="img flex center">
-							<img class="lazy" data-original="{{$value->pic}}" src="/index/image/loading.gif" />
 							@if(request()->type == 3)
+								<img class="lazy" data-original="/index/image/night.jpg" src="/index/image/loading.gif" />
 								<i class="flex center bls bls-video"></i>
+							@else
+								<img class="lazy" data-original="{{$value->pic}}" src="/index/image/loading.gif" />
 							@endif
 						</div>
 						<div class="flexitemv cont">
-							<h1 class="flexv">{{$value->title}}</h1>
+							<h2 class="flexv">{{$value->title}}</h2>
 							<div class="flex base">
 								<span class="flex center">
-									<i class="flex center bls bls-listen"></i>
+									<i class="flex center bls @if(request()->type == 3) bls-listen @else bls-ck @endif"></i>
 									{{$value->read}}
 								</span>
 								<span class="flex center"><i class="flex center bls bls-time"></i>{{ $value->created_at->toDateString() }}</span>
@@ -69,6 +71,7 @@
 </body>
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script src="/index/js/lazyload.js"></script>
+
 @include('index.public.perfect_js')
 
 <script>
@@ -80,6 +83,11 @@
             $e.css({"width":"100%","height":"100%"});
         }
     });
+
+    //给分类第一个标签加上选中状态
+	@if(request()->type == '')
+		$('.flex.center.item').eq(0).addClass('current');
+	@endif
 
     new Swiper ('.swiper-container', {
         loop: true,

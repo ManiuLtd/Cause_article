@@ -86,9 +86,9 @@
 				@endif
 			</div>
 			<p>马上加我微信沟通</p>
-			{{--@if(session()->get('user_id') != $res->uid)--}}
+
 			<a href="{{route('chatroom',['id'=>$res->id])}}" class="flex center bls bls-kefu service"></a>
-			{{--@endif--}}
+
 		</div>
 		
 		<div class="flexv center text">
@@ -111,7 +111,7 @@
 		<div class='content'>
 			<h3 class="flex center">更多免费<span>@if(!empty($brand)){{ $brand->name }}@else爆文@endif</span>资讯</h3>
 			<div class="qrcode">
-				<img src="@if(!empty($brand)) /uploads/{{ $brand->qrcode }} @else /qrcode.jpg @endif" class="fitimg">
+				<img src="@if($brand) @if($brand->qrcode) /uploads/{{ $brand->qrcode }} @else /qrcode.jpg @endif @else /qrcode.jpg @endif" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>

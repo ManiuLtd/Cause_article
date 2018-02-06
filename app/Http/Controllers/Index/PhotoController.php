@@ -26,24 +26,28 @@ class PhotoController extends Controller
      */
     public function index($type = '')
     {
-        $types = PhotoType::orderBy('sort', 'desc')->get();
+        $types = PhotoType::orderBy('sort', 'asc')->get();
+
         if(session('brand_id')) {
             if($type) {
-                $photos = Photo::where('type_id', $type)->get();
+                $photos = Photo::where('type_id', $type)->paginate(12);
             }else {
-                $photos = Photo::where('brand_id', session('brand_id'))->get();
+                $photos = Photo::where('brand_id', session('brand_id'))->paginate(12);
             }
         } else {
             if ( $type ) {
-                $photos = Photo::where('type_id', $type)->get();
+                $photos = Photo::where('type_id', $type)->paginate(12);
             } else {
                 foreach ( $types as $value ) {
-                    $photos = Photo::where('type_id', $value->id)->get();
+                    $photos = Photo::where('type_id', $value->id)->paginate(12);
                     break;
                 }
             }
         }
-
+        if(\request()->ajax()) {
+            $view = view('index.photo_list_template', compact('photos'))->render();
+            return response()->json(['html'=>$view]);
+        }
         return view('index.extension_photo_list', compact('types', 'photos'));
     }
 
@@ -77,7 +81,7 @@ class PhotoController extends Controller
             return $head;
         });
 
-        $rand_photo = $this->randPhoto(3, 1);
+        $rand_photo = $this->randPhoto(6, 1);
 
         return view('index.extension_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo'));
     }

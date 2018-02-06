@@ -22,11 +22,18 @@ use Illuminate\Support\Facades\Cache;
 class UserArticleController extends CommonController
 {
     //我的头条列表
-    public function index()
+    public function index($uid = 0)
     {
-        $list = UserArticles::with('article')->where('uid', \Session::get('user_id'))->orderBy('created_at', 'desc')->get();
+        if($uid) {
+            $list = UserArticles::with('article')->where('uid', $uid)->orderBy('created_at', 'desc')->get();
+        } else {
+            $list = UserArticles::with('article')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get();
+        }
 
-        return view('index.user_article', [ 'list' => $list ]);
+        //微信分享配置
+        $package = wecahtPackage();
+
+        return view('index.user_article', compact('list', 'package'));
     }
 
     /**
@@ -107,9 +114,9 @@ class UserArticleController extends CommonController
     /**
      * @title 文章被其他用户分享时分享数+1
      * @param $articles UserArticles
-     * @param $et_id
+     * @param $ex_id
      */
-    public function userArticleShare( UserArticles $articles, $et_id )
+    public function userArticleShare( UserArticles $articles, $ex_id )
     {
         if ( $articles->uid != session()->get('user_id') ) {
             if ( $articles->isrs == 0 ) $articles->update([ 'isrs' => 1 ]);
@@ -119,7 +126,7 @@ class UserArticleController extends CommonController
                 'uid'     => $articles->uid,
                 'see_uid' => session()->get('user_id'),
                 'uaid'    => $articles->id,
-                'et_id'   => $et_id,
+                'ex_id'   => $ex_id,
                 'type'    => 2
             ];
             Footprint::create($data);

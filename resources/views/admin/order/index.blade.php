@@ -97,6 +97,7 @@
             max_price = $(this).attr('data-price'),
             nickname = $(this).attr('data-name');
         var content = '退款金额<input class="bootbox-input form-control money" type="text">';
+        showProgress('正在退款中...');
         bootbox.dialog({
             title: '填写退款金额(退款人：'+nickname+')：',
             message: content,
@@ -113,6 +114,7 @@
                             showMsg('退款金额不可为空或0')
                         }
                         $.post(url, { money:money, _token:'{{csrf_token()}}' }, function (ret) {
+                            hideProgress();
                             if(ret.state == 200) {
                                 showMsg(ret.message, 1, 2000);
                                 setTimeout(function () {

@@ -17,9 +17,9 @@
         <div class="form-group">
             <label class="col-sm-1 control-label no-padding-right"> 类型名称 </label>
             <div class="col-sm-9">
-                <input type="text" name="name" class="col-xs-10 col-sm-5" value="{{$res->name}}" data-rule="*" data-errmsg="类型名称不可为空"/>
+                <input type="text" name="name" class="col-xs-10 col-sm-5" value="{{$res->name}}"/>
                 <span class="help-inline col-xs-12 col-sm-7">
-                    <span class="middle">不可为空</span>
+                    <span class="middle">越小越前</span>
                 </span>
             </div>
         </div>

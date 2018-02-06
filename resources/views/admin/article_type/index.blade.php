@@ -13,6 +13,7 @@
             <tr>
                 <th>id</th>
                 <th>文章类型名称</th>
+                <th>排序</th>
                 <th>创建时间</th>
                 <th>修改时间</th>
                 <th>操作</th>
@@ -22,10 +23,11 @@
             <tbody>
             @foreach($list as $value)
             <tr>
-                <td>{{$value->id}}</td>
-                <td>{{$value->name}}</td>
-                <td>{{$value->created_at}}</td>
-                <td>{{$value->updated_at}}</td>
+                <td>{{ $value->id }}</td>
+                <td>{{ $value->name }}</td>
+                <td>{{ $value->sort }}</td>
+                <td>{{ $value->created_at }}</td>
+                <td>{{ $value->updated_at }}</td>
                 <td>
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
 
