@@ -30,14 +30,14 @@ class IndexController extends CommonController
             Cache::put('banner', $banner_list, 30);
         }
 
-        $user_brand = User::where('id', session('user_id'))->value('brand_id');
+        $user = User::with('brand')->where('id', session('user_id'))->first();
         $article_type = ArticleType::orderBy('sort', 'asc')->get();
         $type = [$article_type->first()->id, 0];
         if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 0 ];
         $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
-            ->when($user_brand, function ( $query ) use ( $user_brand ) {
+            ->when($user->brand_id, function ( $query ) use ( $user ) {
             //根据用户选择的品牌显示文章
-            return $query->whereIn('brand_id', [ 0, $user_brand ]);
+            return $query->whereIn('brand_id', [ 0, $user->brand_id ]);
         })->get();
 
         return view('index.index', compact('banner_list', 'article_type', 'list', 'user'));
@@ -62,8 +62,7 @@ class IndexController extends CommonController
     public function perfectInformation(Request $request, User $user)
     {
         if($user->update($request->all())){
-            $brand = Brand::find($request->brand_id);
-            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
+//            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname]);
 
             return response()->json(['state' => 0, 'msg' => '完善资料成功']);
         } else {

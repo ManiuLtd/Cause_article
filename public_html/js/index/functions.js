@@ -24,7 +24,7 @@ function hideProgress (){
  * @param timeout 隐藏时间
  * @param dom 要插入到的元素
  */
-function showMsg (msg,state,dom,timeout){
+function showMsg (msg,state,timeout,dom){
 	hideProgress();
 	var state = state || 0,timeout = timeout || 1000,dom = dom || 'body';
 	var icon = '',bgColor = '',pos = dom == 'body' ? 'fixed' : 'absolute';

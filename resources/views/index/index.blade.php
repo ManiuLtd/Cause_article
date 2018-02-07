@@ -65,14 +65,15 @@
 	</div>
 	@include('index.public.footer')
 
-	@include('index.public.perfect_information')
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 	
 </div>
 </body>
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script src="/index/js/lazyload.js"></script>
+<script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 
-@include('index.public.perfect_js')
+@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 
 <script>
     $(".lazy").lazyload({
@@ -100,33 +101,29 @@
 	    $('#search').submit();
 	});
 
-    new checkForm({
-        form : '#form',
-        btn : '#submit',
-        error : function (ele,err){showMsg(err);},
-        complete : function (ele){
-            var url = $(ele).attr('action'),post = $(ele).serializeArray();
-            showProgress('正在提交');
-            console.log(post);
-            $.post(url,post,function (ret){
-                hideProgress();
-                if(ret.state == 0) {
-                    showMsg('完善资料成功', 1, 2000);
-                    if (ret.url) {
+	@if(!$user->brand_id && !$user->phone)
+        new checkForm({
+            form : '#form',
+            btn : '#submit',
+            error : function (ele,err){showMsg(err);},
+            complete : function (ele){
+                var url = $(ele).attr('action'),post = $(ele).serializeArray();
+                showProgress('正在提交');
+                console.log(post);
+                $.post(url,post,function (ret){
+                    hideProgress();
+                    if(ret.state == 0) {
+                        showMsg('完善资料成功', 1, 1500);
                         setTimeout(function () {
-                            window.location.href = ret.url;
-                        }, 2000);
-                    }else{
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 2000);
+                            window.location.href = "{{ route('index.index') }}" + '?' + Math.random();
+                        }, 1500);
+                    } else {
+                        showMsg('完善资料失败');
                     }
-                } else {
-                    showMsg('完善资料失败');
-                }
-            },'json');
-        }
-    })
+                },'json');
+            }
+        });
+    @endif
 </script>
 
 </html>

@@ -34,7 +34,7 @@
 
 			<div class="flexv centerv around front">
 				<a href="{{route('user_article')}}" class="flexitemv center myfront">
-					<em class="flex">{{ $user_article }}</em>
+					<em class="flex">{{ $res->user_article_count }}</em>
 					<div class="flex">
 						<span class="flex center">我的头条</span>
 						<i class="flex center bls bls-yjt"></i>
@@ -42,7 +42,7 @@
 				</a>
 				<div class="flex line"></div>
 				<a href="{{route('read_share')}}" class="flexitemv center myfront">
-					<em class="flex">{{ $read_share }}</em>
+					<em class="flex">{{ $res->user_foot_count }}</em>
 					<div class="flex">
 						<span class="flex center">谁查看我的头条 </span>
 						<i class="flex center bls bls-yjt"></i>
@@ -88,8 +88,8 @@
 						邀请好友
 					@endif
 				</span>
-				<img id="code" src="{{ $pic }}" alt="" style="display: none">
-				<img src="{{ $head }}" id="userImg" alt="" style="display: none;">
+				{{--<img id="code" src="{{ $pic }}" alt="" style="display: none">--}}
+				{{--<img src="{{ $head }}" id="userImg" alt="" style="display: none;">--}}
 			</a>
 			@if($res['type'] == 2)
 			<a href="{{ route('index.extension') }}" class="flexitem centerv tg">
@@ -142,6 +142,15 @@
         }
     });
 
+    $(".mask").click(function () {
+        $(".hint").css({"display":"none"});
+        window.location.reload();
+    });
+
+    $("#close").click(function () {
+        WeixinJSBridge.call('closeWindow');
+    })
+
     //滚动广告
     setInterval(function roll() {
         var objh = $('.flip').height();
@@ -162,58 +171,96 @@
 					}
 				});
 			@else
-				showProgress('正在发送海报');
-				//canvas画图
-				var image = document.querySelector('#background');
-				var userimg = document.querySelector('#userImg');
-				var c=document.getElementById("myCanvas");
-				var ctx=c.getContext("2d");
-				c.width = image.width;
-				c.height = image.height;
-				ctx.drawImage(image,0,0);
-				ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）
-				ctx.beginPath();
-				ctx.strokeStyle = '#fff';
-				userBorderSize = 50;
-				userBorderX = image.width/2;
-				userBorderY = 100;
-				ctx.font="25px Arial";
-				ctx.textAlign = 'center';
-				ctx.fillStyle = '#fff';
-				ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);
-				ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
-				ctx.stroke();
-				ctx.clip();
-				ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);
-				ctx.restore();
-				var qrcode = document.getElementById('code');
-				ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);
-				try {
-					var data = c.toDataURL('image/jpeg');
-				} catch (e) {
-					alert(e);
-				}
-				$.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {
-					if(ret.state == 0) {
-						hideProgress();
-						$(".hint").css({"display":"block"});
-						$(".hint").find(".content").addClass('trans');
-					} else {
-						showMsg(ret.errormsg);
-					}
-				});
+                showProgress('正在发送海报');
+                $.get("{{ route('head_qrcode_base64') }}", function (ret) {
+                    //canvas画图
+                    var image = document.querySelector('#background');
+                    var userimg = new Image();
+                    var qrcode = new Image();
+                    userimg.src = ret.head;
+                    qrcode.src = ret.qrcode;
+                    qrcode.onload = function (ev) {
+                        var c=document.getElementById("myCanvas");
+                        var ctx=c.getContext("2d");
+                        c.width = image.width;
+                        c.height = image.height;
+                        ctx.drawImage(image,0,0);
+                        ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#fff';
+                        userBorderSize = 50;
+                        userBorderX = image.width/2;
+                        userBorderY = 100;
+                        ctx.font="25px Arial";
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#fff';
+                        ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,180);
+                        ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
+                        ctx.stroke();
+                        ctx.clip();
+                        ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);
+                        ctx.restore();
+                        ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);
+                        try {
+                            var data = c.toDataURL('image/jpeg');
+                        } catch (e) {
+                            alert(e);
+                        }
+                        $.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {
+                            if(ret.state == 0) {
+                                hideProgress();
+                                $(".hint").css({"display":"block"});
+                                $(".hint").find(".content").addClass('trans');
+                            } else {
+                                showMsg(ret.errormsg);
+                            }
+                        });
+					};
+
+                });
+				{{--showProgress('正在发送海报');--}}
+				{{--//canvas画图--}}
+				{{--var image = document.querySelector('#background');--}}
+				{{--var userimg = document.querySelector('#userImg');--}}
+				{{--var c=document.getElementById("myCanvas");--}}
+				{{--var ctx=c.getContext("2d");--}}
+				{{--c.width = image.width;--}}
+				{{--c.height = image.height;--}}
+				{{--ctx.drawImage(image,0,0);--}}
+				{{--ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）--}}
+				{{--ctx.beginPath();--}}
+				{{--ctx.strokeStyle = '#fff';--}}
+				{{--userBorderSize = 50;--}}
+				{{--userBorderX = image.width/2;--}}
+				{{--userBorderY = 100;--}}
+				{{--ctx.font="25px Arial";--}}
+				{{--ctx.textAlign = 'center';--}}
+				{{--ctx.fillStyle = '#fff';--}}
+				{{--ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);--}}
+				{{--ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);--}}
+				{{--ctx.stroke();--}}
+				{{--ctx.clip();--}}
+				{{--ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);--}}
+				{{--ctx.restore();--}}
+				{{--var qrcode = document.getElementById('code');--}}
+				{{--ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);--}}
+				{{--try {--}}
+					{{--var data = c.toDataURL('image/jpeg');--}}
+				{{--} catch (e) {--}}
+					{{--alert(e);--}}
+				{{--}--}}
+				{{--$.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {--}}
+					{{--if(ret.state == 0) {--}}
+						{{--hideProgress();--}}
+						{{--$(".hint").css({"display":"block"});--}}
+						{{--$(".hint").find(".content").addClass('trans');--}}
+					{{--} else {--}}
+						{{--showMsg(ret.errormsg);--}}
+					{{--}--}}
+				{{--});--}}
 			@endif
 		});
-
-		$(".mask").click(function () {
-			$(".hint").css({"display":"none"});
-			window.location.reload();
-		});
-
-		$("#close").click(function () {
-            WeixinJSBridge.call('closeWindow');
-        })
-    })
+    });
 
     //img转base64
     function convertImgToBase64(url, callback) {

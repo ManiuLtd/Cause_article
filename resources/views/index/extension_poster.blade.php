@@ -50,7 +50,7 @@
     </div>
 
     <!--提示-->
-    @include('index.public.perfect_information')
+    @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 
     <img src="{{ $head }}" class="hidden user">
     <img src="{{ $pic }}" class="hidden qrcode">
@@ -70,7 +70,7 @@
         }
     });
 
-    @if(session('phone'))
+    @if($user->brand_id && $user->phone)
         $('.content.user-info').prepend('<i class="flex center bls bls-cuo cuo"></i>');
     @else
         $(".alert").show();
@@ -83,9 +83,14 @@
         user = document.querySelector(".user"),
         qrcode = document.querySelector(".qrcode"),
         src = "{{ $photo->url }}",
-        brand = "{{ $user->brand->name }}",
         name = "{{ $user->wc_nickname }}",
         phone = "{{ $user->phone }}";
+
+    @if($user->brand)
+        var brand = "{{ $user->brand->name }}";
+    @else
+        var brand = "";
+    @endif
 
     poster(src,brand,name,phone,qrcode);
 

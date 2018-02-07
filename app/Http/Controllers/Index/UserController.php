@@ -32,48 +32,53 @@ class UserController extends CommonController
     public function index($type = '', $dealer = '')
     {
         $uid = session('user_id');
-        $res = User::where('id', $uid)->first();
+        $res = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if($res->admin_id == 0 && $res->admin_type == 0) {
+        if($res->admin_id && $res->admin_type) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
         }
 
-        $user_article = UserArticles::where('uid', $res->id)->count();
-        $read_share = Footprint::where('uid', $res->id)->count();
         $orders = Order::with(['user'=>function($query){
             $query->select('id','wc_nickname');
         }])->where('state', 1)->orderBy('pay_time')->limit(10)->get();
-        $pic = '';
-        $head = '';
-        if ( $res->extension_image == '' ) {
-            $pic = Cache::remember('user_qrcode'.$res->openid, 60 * 24 * 29, function () {
-                $url = app(User::class)->createQrcode(session('user_id'));
-                //二维码转base64位
-                $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
-
-                return $pic;
-            });
-            $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 30, function () {
-                //头像转base64
-                $head = session('head_pic');
-                if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
-                    $content = file_get_contents($head);
-                    $head =  'data:image/jpeg;base64,' . base64_encode($content);
-                } else {
-                    $content = file_get_contents(config('app.url').$head);
-                    $head =  'data:image/jpeg;base64,' . base64_encode($content);
-                }
-
-                return $head;
-            });
-        }
         //美图列表
         $photos = Photo::orderBy('id', 'desc')->limit(4)->get();
 
-        return view('index.user_center', compact('res', 'user_article', 'read_share', 'orders', 'pic', 'head', 'photos'));
+        return view('index.user_center', compact('res', 'orders', 'photos'));
+    }
+
+    /**
+     * 用户头像和二维码转base64
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function headQrcodeBase64()
+    {
+        $res = User::where('id', session('user_id'))->first();
+        $qrcode = Cache::remember('user_qrcode'.$res->openid, 60 * 24 * 29, function () {
+            $url = app(User::class)->createQrcode(session('user_id'));
+            //二维码转base64位
+            $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
+
+            return $pic;
+        });
+        $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 30, function () {
+            //头像转base64
+            $head = session('head_pic');
+            if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+                $content = file_get_contents($head);
+                $head =  'data:image/jpeg;base64,' . base64_encode($content);
+            } else {
+                $content = file_get_contents(config('app.url').$head);
+                $head =  'data:image/jpeg;base64,' . base64_encode($content);
+            }
+
+            return $head;
+        });
+
+        return response()->json(['qrcode'=> $qrcode, 'head' => $head]);
     }
 
     /**
@@ -91,7 +96,9 @@ class UserController extends CommonController
                 $upload = base64ToImage($request->head, 'user_head');
                 $data[ 'head' ] = $upload[ 'path' ];
 
+                //更新头像session
                 session(['head_pic'=>$data[ 'head' ]]);
+                //删除头像base64位缓存，以便下次重新转换
                 Cache::forget('user_head');
             }
 

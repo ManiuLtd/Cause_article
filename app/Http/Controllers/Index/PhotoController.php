@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\extensionphoto;
+use App\Model\Brand;
 use App\Model\Photo;
 use App\Model\PhotoType;
 use App\Model\User;
@@ -28,11 +29,13 @@ class PhotoController extends Controller
     {
         $types = PhotoType::orderBy('sort', 'asc')->get();
 
-        if(session('brand_id')) {
+        $user = User::with('brand')->where('id', session('user_id'))->first();
+
+        if($user->brand_id) {
             if($type) {
                 $photos = Photo::where('type_id', $type)->paginate(12);
             }else {
-                $photos = Photo::where('brand_id', session('brand_id'))->paginate(12);
+                $photos = Photo::where('brand_id', $user->brand_id)->paginate(12);
             }
         } else {
             if ( $type ) {
@@ -45,10 +48,11 @@ class PhotoController extends Controller
             }
         }
         if(\request()->ajax()) {
-            $view = view('index.photo_list_template', compact('photos'))->render();
+            $view = view('index._photo_list_template', compact('photos'))->render();
             return response()->json(['html'=>$view]);
         }
-        return view('index.extension_photo_list', compact('types', 'photos'));
+
+        return view('index.extension_photo_list', compact('types', 'user', 'photos'));
     }
 
     /**
@@ -83,7 +87,10 @@ class PhotoController extends Controller
 
         $rand_photo = $this->randPhoto(6, 1);
 
-        return view('index.extension_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo'));
+        //弹窗显示品牌信息
+        $brand = Brand::find($user->brand_id);
+
+        return view('index.extension_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo', 'brand'));
     }
 
     /**

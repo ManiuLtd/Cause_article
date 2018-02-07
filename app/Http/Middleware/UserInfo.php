@@ -23,7 +23,7 @@ class UserInfo
      */
     public function handle($request, Closure $next)
     {
-        if(!\Session::has('user_id')) {
+        if(!session('user_id')) {
             $user = session('wechat.oauth_user'); // 拿到授权用户资料
             $find_user = User::with('brand')->where('openid', $user['id'])->first();
             if ( !$find_user ) {

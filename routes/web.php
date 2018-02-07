@@ -23,7 +23,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('brand_list', 'IndexController@brandList')->name('brand_list');
     //完善弹窗信息
     Route::post('perfect_information/{user}', 'IndexController@perfectInformation')->name('perfect_information');
-    //搜索文章1
+    //搜索文章
     Route::get('article_search/{key?}', 'ArticleController@searchArticle')->name('article_search');
     //公共文章详情
     Route::get('article_details/{article}/{share?}', 'ArticleController@articleDetails')->name('article_details');
@@ -41,6 +41,8 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('user_article_share/{articles}/{ex_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
+    //获取用户的base64头像和base64二维码
+    Route::get('head_qrcode_base64', 'UserController@headQrcodeBase64')->name('head_qrcode_base64');
     //查看用户基础信息
     Route::any('user_basic/{user?}', 'UserController@userBasic')->name('user_basic');
     //查看获取个人二维码帮助页面

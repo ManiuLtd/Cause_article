@@ -24,7 +24,7 @@
 			@foreach($list as $value)
 			<div class="flex lists">
 				<div class="img">
-					<img class="fitimg" src="/uploads/{{$value->pic}}"/>
+					<img class="fitimg" src="{{$value->pic}}"/>
 				</div>
 				<div class="flexitemv cont">
 					<a href="{{route('article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->title}}</a>
@@ -46,9 +46,9 @@
 	</div>
 	@endif
 
-	@include('index.public.footer')
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.footer')
 
-	@include('index.public.perfect_information')
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 </div>
 </body>
 <script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
@@ -66,7 +66,31 @@
      $(".empty").click(function () {
          $('.home-sea input').val("");
          $(".empty").css({"display":"none"})
-     })
+     });
+
+	 @if(!$user->brand_id && !$user->phone)
+		 new checkForm({
+			 form : '#form',
+			 btn : '#submit',
+			 error : function (ele,err){showMsg(err);},
+			 complete : function (ele){
+				 var url = $(ele).attr('action'),post = $(ele).serializeArray();
+				 showProgress('正在提交');
+				 console.log(post);
+				 $.post(url,post,function (ret){
+					 hideProgress();
+					 if(ret.state == 0) {
+						 showMsg('完善资料成功', 1, 1500);
+						 setTimeout(function () {
+							 window.location.href = "{{ route('article_search', request()->key) }}" + '?' + Math.random();
+						 }, 1500);
+					 } else {
+						 showMsg('完善资料失败');
+					 }
+				 },'json');
+			 }
+		 });
+	@endif
 
 </script>
 </html>

@@ -23,7 +23,10 @@ class ArticleController extends CommonController
     {
         $key = request()->key;
         $list = Article::where('title','like',"%$key%")->orderBy('created_at','desc')->get();
-        return view('index.article_search',['list'=>$list]);
+
+        $user = User::with('brand')->where('id', session('user_id'))->first();
+
+        return view('index.article_search',compact('list', 'user'));
     }
 
     /**
@@ -40,7 +43,10 @@ class ArticleController extends CommonController
 //        $user_article = UserArticles::where(['uid'=>session()->get('user_id'),'aid'=>$id])->first();
         //微信分享配置
         $package = wecahtPackage();
-        return view('index.article_details',compact('res','package','user_article'));
+
+        $user = User::with('brand')->where('id', session('user_id'))->first();
+
+        return view('index.article_details',compact('res','package','user_article', 'user'));
     }
 
     /**

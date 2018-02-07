@@ -10,9 +10,9 @@
 <body>
 <div id="more" class="flexv wrap">
     <div class="flex tex-t">
-        @if(session('brand_id'))
+        @if($user->brand_id)
             <a href="{{ route('extension_photo_list') }}" class="flex center @if(!request()->type) current @endif">
-                <span class="flex center">{{ session('brand_name') }}</span>
+                <span class="flex center">{{ $user->brand->name }}</span>
             </a>
             @foreach($types as $value)
                 <a href="{{ route('extension_photo_list', $value->id) }}" class="flex center @if(request()->type) @if($value->id == request()->type) current @endif @endif">

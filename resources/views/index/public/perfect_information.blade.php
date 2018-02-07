@@ -9,16 +9,16 @@
         <p class="flex center tis">立刻完善资料，让客户找到您</p>
         <div class="flex center input">
             <span class="flex centerv">姓名</span>
-            <input type="text" name="wc_nickname" class="flexitem" value="{{ session('nickname') }}" data-rule="*" data-errmsg="请填写您的姓名">
+            <input type="text" name="wc_nickname" class="flexitem" value="{{ $user->wc_nickname }}" data-rule="*" data-errmsg="请填写您的姓名">
         </div>
         <div class="flex center input">
             <span class="flex centerv">手机号</span>
-            <input type="text" name="phone" class="flexitem" value="{{ session('phone') }}" data-rule="m" data-errmsg="手机号码格式错误">
+            <input type="text" name="phone" class="flexitem" @if($user->phone) value="{{ $user->phone }}" @endif data-rule="m" data-errmsg="手机号码格式错误">
         </div>
         <div class="flex centerv input brands">
             <span class="flex centerv">品牌</span>
-            <input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" value="{{ session('brand_name') }}" data-rule="*" data-errmsg="请选择您的品牌">
-            <input type="hidden" name="brand_id" class="brand_id" value="{{ session('brand_id') }}">
+            <input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" @if($user->brand_id) value="{{ $user->brand->name }}" @endif data-rule="*" data-errmsg="请选择您的品牌">
+            <input type="hidden" name="brand_id" class="brand_id" @if($user->brand_id) value="{{ $user->brand->id }}" @endif>
             <i class="flex smtxt"></i>
             <i class="flex center bls bls-xia brand"></i>
         </div>

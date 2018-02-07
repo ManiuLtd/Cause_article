@@ -45,6 +45,7 @@ class UserArticleController extends CommonController
     public function articleDetail( UserArticles $articles, $ex_id = 0 )
     {
         $uid = session('user_id');
+        $user = User::find($uid);
         $addfootid = '';
         $fkarticle = '';
         $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
@@ -94,7 +95,7 @@ class UserArticleController extends CommonController
         //判断是否是会员或会员已过期
         $member_time = Carbon::parse($uarticle->user[ 'membership_time' ])->gt(Carbon::parse('now'));
 
-        return view('index.user_article_details', [ 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'package' => $package, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
+        return view('index.user_article_details', [ 'user' => $user, 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'package' => $package, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
     }
 
     /**
