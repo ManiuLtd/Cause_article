@@ -22,10 +22,15 @@ class ArticleController extends CommonController
     public function searchArticle()
     {
         $key = request()->key;
-        $list = Article::where('title','like',"%$key%")->orderBy('created_at','desc')->get();
+        $list = Article::where('title','like',"%$key%")->orderBy('created_at','desc')->paginate(7);
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
+        if(request()->ajax()) {
+            $html = view('index._article_search_template', compact('list'))->render();
+
+            return response()->json(['html' => $html]);
+        }
         return view('index.article_search',compact('list', 'user'));
     }
 

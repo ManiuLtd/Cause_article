@@ -18,7 +18,7 @@ Route::any('out_trade_no','Index\PayController@outTradeNo');
 Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
     Route::get('test', 'IndexController@test');
     //首页
-    Route::get('/', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
+    Route::get('/{type?}', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
     //品牌接口
     Route::get('brand_list', 'IndexController@brandList')->name('brand_list');
     //完善弹窗信息

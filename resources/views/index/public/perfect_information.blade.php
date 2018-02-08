@@ -17,7 +17,7 @@
         </div>
         <div class="flex centerv input brands">
             <span class="flex centerv">品牌</span>
-            <input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" @if($user->brand_id) value="{{ $user->brand->name }}" @endif data-rule="*" data-errmsg="请选择您的品牌">
+            <input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" @if($user->brand_id) value="{{ $user->brand->name }}" @endif data-rule="*" data-errmsg="请选择您的品牌" onfocus="this.blur()">
             <input type="hidden" name="brand_id" class="brand_id" @if($user->brand_id) value="{{ $user->brand->id }}" @endif>
             <i class="flex smtxt"></i>
             <i class="flex center bls bls-xia brand"></i>

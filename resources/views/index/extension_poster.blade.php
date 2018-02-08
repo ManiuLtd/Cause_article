@@ -42,9 +42,9 @@
     <div class="flex center win">
         <div class="flexv center content">
             <i class="flex center bls bls-win"></i>
-            <p class="tex1">邀请海报已通过公众号发送</p>
-            <p class="tex2">马上分享朋友圈，邀请好友打卡</p>
-            <p class="tex3">一起做优秀直销人</p>
+            <p class="tex1">美图海报已通过公众号发送</p>
+            <p class="tex2">马上分享朋友圈</p>
+            <p class="tex3">让更多人了解您的事业</p>
             <button class="flex center know-btn" type="button">知道了</button>
         </div>
     </div>
@@ -60,6 +60,7 @@
 @include('index.public.perfect_js')
 <script src="/index/js/canvas.js"></script>
 <script src="/index/js/lazyload.js"></script>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
 <script type="text/javascript">
     //图片延迟加载
     $(".lazy").lazyload({
@@ -165,28 +166,28 @@
         form : '#form',
         btn : '#submit',
         error : function (ele,err){showMsg(err);},
-        complete : function (ele){
+        complete : _.throttle(function (ele){
             var url = $(ele).attr('action'),post = $(ele).serializeArray(),
                 brand = $('input[readonly=readonly]').val(),
                 name = $('input[name=wc_nickname]').val(),
                 phone = $('input[name=phone]').val();
             showProgress('正在提交');
             console.log(post);
-            $.post(url,post,function (ret){
+            $.post(url,post,function (){
                 hideProgress();
                 $(".alert").css({"display":"none"});
                 poster(src,brand,name,phone,qrcode);
             },'json');
-        }
+        }, 3000, { 'trailing': false })
     });
 
-    $('#share').click(function () {
+    $('#share').click(_.throttle(function () {
         var base64 = $('.img').attr('src'),
-             url = "{{ route('get_share_photo') }}";
-        $.post(url, {img:base64,_token:"{{ csrf_token() }}"}, function (ret) {
+            url = "{{ route('get_share_photo') }}";
+        $.post(url, {img: base64, _token: "{{ csrf_token() }}"}, function (ret) {
             $(".win").show();
         });
-    });
+    }, 3000, { 'trailing': false }));
 
     $('.flex.center.know-btn').click(function () {
         $(".win").hide();

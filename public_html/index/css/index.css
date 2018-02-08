@@ -536,19 +536,13 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #basic .bottom{height:5rem;font-size: 1.2rem;}
 #basic .user .userimg img{width:100%;height:100%;}
 /*图片裁剪*/
-#basic #conWrap{width:100%;height:100%;background:#DFDFDF;position:fixed;top:0;left:0;transform:translateY(100%);}
-#basic #conWrap #picture{height:100%;background-color:#DFDFDF;position:relative;overflow:hidden;}
-#basic #conWrap #bg{position:absolute;left:0;top:0;width:100%;height:100%;background-repeat:no-repeat;background-position:center;-webkit-background-size:contain;background-size:contain}
-#basic #conWrap #mask{width:86vw;height:48vh;position:absolute;left:50%;top:50%;transform:translateX(-50%) translateY(-50%);border:2px dashed #EFEFF4;box-shadow:0 0 0 1000px rgba(0,0,0,.5)}
-#basic #conWrap #pictureUpload-help{clear:both;margin:0 auto}
-#basic #conWrap #pictureUpload-help p{font-size:14px;color:#666;line-height:22px}
-#basic #conWrap #select{background-color:#ccc}
-#basic #conWrap #button{display:-moz-box;display:-webkit-box;margin-bottom:20px;width:100%;position:fixed;bottom:5px;left:0}
-#basic #conWrap #button>div{-moz-box-flex:1;-webkit-box-flex:1;height:31px;line-height:31px;background-color:#ccc;color:#fff;font-size:14px;border-radius:2px;text-align:center;margin-right:10px}
-#basic #conWrap #button>div:nth-child(4){margin-right:0}
-#basic #conWrap #button>div.active{background-color:#FE8B2E}
-#basic #conWrap #canvasWrap{text-align:center;margin-bottom:20px;display:none;}
-#basic #conWrap #canvasWrap canvas{display:block;margin:0 auto 20px}
+.cliper{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;z-index:-1;transition: opacity 0.5s linear;-webkit-transition: opacity 0.5s linear;}
+.cliper .header{position:absolute;top:0;left:0;right:0;height:5.2rem;line-height:5.2rem;background:#fdfdfd;border-bottom: 1px solid #eee;padding: 0 6rem;font-size:1.4rem}
+.cliper .header .side{position:absolute;top:0;width:6rem;text-align:center;bottom:0;}
+.cliper .header .cancel{left:0;color:#f00;}
+.cliper .header .confirm{right:0;color: #27e;}
+.cliper .header .title{text-align:center;}
+.cliper .cliperbox{position:absolute;top:5.2rem;left:0;right:0;bottom:0;}
 
 #article .unfold .unfoldbox{margin:1rem;padding:0.5rem 1rem;font-size: 1.4rem;border-radius:0.5rem;border:1.5px solid #eb6060;color:#eb6060;}
 

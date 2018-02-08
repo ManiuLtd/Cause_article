@@ -25,7 +25,8 @@
 						</div>
 						<i class="flex center bls bls-yjt"></i>
 					</div>
-					<input type="file" class="fileElem" accept="image/jpg,image/png,image/jpeg">
+					<input type="file" id="userimg" class="fileElem" accept="image/jpg,image/png,image/jpeg">
+					<input type="hidden" name="head" value="{{ $res->head }}">
 				</div>
 				<div class="item name">
 					<span class="flex centerv">姓名</span>
@@ -42,12 +43,11 @@
 					</div>
 				</div>
 			</div>
-			<input type="hidden" name="head" value="{{ $res->head }}">
 			<div class="users">
 				<div class="item brand">
 					<span class="flex centerv">我的品牌</span>
 					<div class="flex centerv right">
-						<input readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" @if($res->brand != null) value="{{$res->brand['name']}} @endif" data-rule="*" data-errmsg="请选择您的品牌">
+						<input readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" @if($res->brand != null) value="{{$res->brand['name']}} @endif" data-rule="*" data-errmsg="请选择您的品牌" unselectable="on" onfocus="this.blur()">
 						<input type="hidden" name="brand_id" class="brand_id" value="{{  $res->brand_id }}">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
@@ -55,7 +55,7 @@
 				<div class="item area">
 					<span class="flex centerv">从业地区</span>
 					<div class="flex centerv right">
-						<input id="sel_city" name="employed_area" readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" value="{{$res->employed_area}}" data-rule="*" data-errmsg="请填写您的从业地区">
+						<input id="sel_city" name="employed_area" readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" value="{{$res->employed_area}}" data-rule="*" data-errmsg="请填写您的从业地区" unselectable="on" onfocus="this.blur()">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
 				</div>
@@ -64,19 +64,20 @@
 				<div class="item qrcode">
 					<span class="flex centerv">个人微信二维码</span>
 					<div class="flex centerv right">
-						<div class="flex center userimg">
-							@if($res->qrcode)
+						@if($res->qrcode)
+							<div class="flex center userimg">
 								<img src="{{ $res->qrcode }}" class="fitimg">
-							@else
-								请上传
-							@endif
-						</div>
-						<i class="flex center bls bls-yjt"></i>
+							</div>
+							<i class="flex center bls bls-yjt"></i>
+						@else
+							<img src="/index/image/upload_qrcode.jpg" class="flex center userimg">
+							<i class="flex center bls bls-yjt"></i>
+						@endif
 					</div>
-					<input type="file" class="fileElem" accept="image/jpg,image/png,image/jpeg">
+				<input type="file" id="qrcodeimg" class="fileElem" accept="image/jpg,image/png,image/jpeg">
+				<input type="hidden" name="qrcode" value="{{ $res->qrcode }}">
 				</div>
 			</div>
-			<input type="hidden" name="qrcode" value="{{ $res->qrcode }}">
 			<a href="{{route('qecode_help')}}" class='clook'>查看如何获取二维码？</a>
 			<div class="button">
 				<a href="javascript:;" class="flex center" id="submit">保存</a>
@@ -85,23 +86,23 @@
 	</form>
 
 	<!-- 二维码上传 -->
-	<div id="conWrap" class='mainbox'>
-		<!--拖动选择层-->
-		<div id="picture">
-			<div id="bg"></div>
-			<div id="mask"></div>
-		</div>
-		<!--操作按钮-->
-		<div id="button">
-			<div id="select" class="active">取消</div>
-			<div id="preview">确定</div>
-		</div>
-		<!--用于生成和预览-->
-		<div id="canvasWrap">
-			<canvas id="canvas"></canvas>
-		</div>
-	</div>
-	<!-- 二维码上传END -->
+	{{--<div id="conWrap" class='mainbox'>--}}
+		{{--<!--拖动选择层-->--}}
+		{{--<div id="picture">--}}
+			{{--<div id="bg"></div>--}}
+			{{--<div id="mask"></div>--}}
+		{{--</div>--}}
+		{{--<!--操作按钮-->--}}
+		{{--<div id="button">--}}
+			{{--<div id="select" class="active">取消</div>--}}
+			{{--<div id="preview">确定</div>--}}
+		{{--</div>--}}
+		{{--<!--用于生成和预览-->--}}
+		{{--<div id="canvasWrap">--}}
+			{{--<canvas id="canvas"></canvas>--}}
+		{{--</div>--}}
+	{{--</div>--}}
+	{{--<!-- 二维码上传END -->--}}
 	
 	{{--<div class="flex center bottom">&copy;&ensp;2017&ensp;事业头条&ensp;版权所有</div>--}}
 	<!--品牌-->
@@ -146,7 +147,10 @@
 	
 </div>
 </body>
-<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/hammer.js/2.0.4/hammer.min.js"></script>
+<script src="https://cdn.bootcss.com/iScroll/5.1.3/iscroll-zoom.min.js"></script>
+<script src="/index/js/jquery.cliper.js"></script>
 <script src="/index/js/city.js"></script>
 <script src="/index/js/picker.min.js"></script>
 <script src="/index/js/city-js.js"></script>
@@ -191,56 +195,94 @@
             })
         });
     });
-	//   头像上传
-    $(".portrait").click(function () {
-        $("#bg").attr('style',"");
-        $("#conWrap").css("transform","translateY(0)");
-        Elem($(this).find("input"));
-    });
 
-//  上传二维码
-    $(".qrcode").click(function () {
-        $("#bg").attr('style',"");
-        $("#conWrap").css("transform","translateY(0)");
-        Elem($(this).find("input"));
-    });
-
-    function Elem(file) {
-        var options = {
-            containerId: "#picture",
-            uploadBgId: "#bg",
-            fileId: file,
-            canvasId: "#canvas",
-            //容器尺寸
-            container: {
-                width: $("#picture").width(),
-                height: $("#picture").height()
-            },
-            //裁剪区域尺寸
-            clip: {
-                width: $("#mask").width(),
-                height: $("#mask").height()
-            },
-            //图片质量0-1
-            imgQuality: 1
-        };
-        //获取操作对象
-        var txUpload = avatarUpload(options);
-
-        //文件 onchange事件
-        file.on("change", function () {
-            txUpload.handleFiles(function () {
-                //当用户选择文件后 按钮active
-                $("#preview").addClass('active');
-            })
+    function showCliper (id,cid,title,callback){
+        var template = '<div id="' + id.replace('#','') + '" class="cliper">' +
+            '<div class="header">' +
+            '<a href="javascript:;" class="side cancel">取消</a>' +
+            '<div class="title">' + title + '</div>' +
+            '<a href="javascript:;" class="side confirm">确定</a>' +
+            '</div>' +
+            '<div class="cliperbox" id="' + cid.replace('#','') + '"></div>' +
+            '</div>';
+        $(template).appendTo($('body'));
+        if(typeof callback == 'function') callback(id,cid,id +' .confirm');
+        $(id).find('.cancel').click(function (){
+            $(id).css('opacity',0);
+            setTimeout(function (){$(id).css('z-index',-1);},500);
         });
-        //选择文件
-        $("#select").click(function () {
-            $("#conWrap").css("transform", "translateY(100%)");
-        });
-        //预览
-        $("#preview").click(txUpload.createImg);
     }
+
+    //   头像上传
+    $(".portrait").click(function () {
+        showCliper('#headclip','#headbox','裁剪头像',function (id,cid,ok){
+            var hammer = '',currentIndex = 0,name = '',box = 200,scale = 0.5;
+            $(cid).cliper({
+                width : box,
+                height : box,
+                file: '#userimg',
+                ok : ok,
+                strictSize : scale,
+                pickError : function (){
+                    showMsg('图片格式错误！');
+                },
+                loadStart: function (file) {
+                    showProgress('照片读取中');
+                    name = file.name
+
+                    ;
+                },
+                loadError : function (err){
+                    showMsg('图片读取失败');
+                },
+                loadComplete: function () {
+                    hideProgress();
+                    $(id).css({'z-index':99,'opacity':1});
+                },
+                clipFinish: function (data) {
+                    $(".portrait img").attr("src",data);
+                    $("input[name=head]").val(data);
+                    $("#headclip").remove();
+                }
+            });
+        });
+    })
+
+
+    //  上传二维码
+    $(".qrcode").click(function(){
+        showCliper('#headclip', '#headbox', '裁剪头像', function (id, cid, ok) {
+            var hammer = '', currentIndex = 0, name = '', box = 200, scale = 0.5;
+            $(cid).cliper({
+                width: box,
+                height: box,
+                file: '#qrcodeimg',
+                ok: ok,
+                strictSize: scale,
+                pickError: function () {
+                    showMsg('图片格式错误！');
+                },
+                loadStart: function (file) {
+                    showProgress('照片读取中');
+                    name = file.name
+
+                    ;
+                },
+                loadError: function (err) {
+                    showMsg('图片读取失败');
+                },
+                loadComplete: function () {
+                    hideProgress();
+                    $(id).css({'z-index': 99, 'opacity': 1});
+                },
+                clipFinish: function (data) {
+                    $(".qrcode img").attr("src", data);
+                    $("input[name=qrcode]").val(data);
+                    $("#headclip").remove();
+                }
+            });
+        });
+    })
 
     new checkForm({
         form : '#form',

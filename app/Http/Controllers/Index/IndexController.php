@@ -20,7 +20,7 @@ class IndexController extends CommonController
      * @title 首页
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index(Request $request, $type = 0)
     {
         //banner图
         if(Cache::has('banner')) {
@@ -32,13 +32,18 @@ class IndexController extends CommonController
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
         $article_type = ArticleType::orderBy('sort', 'asc')->get();
-        $type = [$article_type->first()->id, 0];
-        if ( !empty($request->input('type')) ) $type = [ $request->input('type'), 0 ];
-        $list = Article::orderBy('created_at', 'desc')->whereIn('type', $type)
+        $types = [$article_type->first()->id, 0];
+        if ($type) $types = [ $type, 0 ];
+        $list = Article::orderBy('id', 'desc')->whereIn('type', $types)
             ->when($user->brand_id, function ( $query ) use ( $user ) {
             //根据用户选择的品牌显示文章
             return $query->whereIn('brand_id', [ 0, $user->brand_id ]);
-        })->get();
+        })->paginate(7);
+
+        if(\request()->ajax()) {
+            $html = view('index._index_template', compact('list'))->render();
+            return response()->json(['html' => $html]);
+        }
 
         return view('index.index', compact('banner_list', 'article_type', 'list', 'user'));
     }

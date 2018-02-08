@@ -6,6 +6,9 @@
 	<meta name="format-detection" content="telephone=no">
 	<title>搜索</title>
 	@include('index.public.css')
+	<style>
+		.hide{display: none;}
+	</style>
 </head>
 <body>
 <div id="seek" class="flexv wrap">
@@ -19,31 +22,32 @@
 	</form>
 
 	@if(count($list) > 0)
-	<div class="flexitemv mainbox result">
-		<div class="listbox">
-			@foreach($list as $value)
-			<div class="flex lists">
-				<div class="img">
-					<img class="fitimg" src="{{$value->pic}}"/>
-				</div>
-				<div class="flexitemv cont">
-					<a href="{{route('article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->title}}</a>
-					<div class="base">
-						<span><em>{{$value->read}}</em>阅读</span>
-						<span><em>{{$value->share}}</em>分享</span>
-						<span>于建华</span>
-						<span>首创</span>
+		<div class="flexitemv mainbox result">
+			<div class="listbox">
+				@foreach($list as $value)
+					<div class="flex lists">
+						<div class="img">
+							<img class="fitimg" src="{{$value->pic}}"/>
+						</div>
+						<div class="flexitemv cont">
+							<a href="{{route('article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->title}}</a>
+							<div class="base">
+								<span><em>{{$value->read}}</em>阅读</span>
+								<span><em>{{$value->share}}</em>分享</span>
+								<span>轩轩</span>
+								<span>首创</span>
+							</div>
+						</div>
 					</div>
-				</div>
+				@endforeach
 			</div>
-			@endforeach
+			<p class="flex center loading hide">正在加载中~</p>
+			<p class="flex center ending hide">已全部加载~</p>
 		</div>
-		<p class="flex center ">没有更多了~</p>
-	</div>
 	@else
-	<div class="flexitem center void">
-		<p>找不到“<span>{{request()->key}}</span>”，换个关键词试试吧~</p>
-	</div>
+		<div class="flexitem center void">
+			<p>找不到“<span>{{request()->key}}</span>”，换个关键词试试吧~</p>
+		</div>
 	@endif
 
 	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.footer')
@@ -91,6 +95,26 @@
 			 }
 		 });
 	@endif
+
+     var page = 1;
+     $(".mainbox.result").scroll(function() {
+         var scrollTop = Math.ceil($(this).scrollTop()),thisHeight = $(this).height(),boxHeight = $(".listbox").height();
+         console.log(scrollTop,thisHeight,boxHeight);
+         if((scrollTop + thisHeight) > boxHeight -10) {
+             page++;
+             if(page < {{ $list->lastPage() }}) {
+                 $(".loding").removeClass("hide");
+                 var url = "{{ route('article_search', request()->key) }}" + "?page=" + page;
+                 $.get(url, function (ret) {
+                     console.log(ret);
+                     $(".listbox").append(ret.html);
+                     $(".loding").addClass("hide");
+                 });
+             } else {
+                 $(".ending").removeClass("hide");
+             }
+         }
+     });
 
 </script>
 </html>

@@ -6,6 +6,14 @@
 	<meta name="format-detection" content="telephone=no">
 	<title>首页</title>
 	@include('index.public.css')
+	<style>
+		.loading, .ending{
+			font-size: 1.3rem;
+			color: #888888;
+			padding: 10px 0;
+		}
+		.hide {display: none;}
+	</style>
 </head>
 <body>
 <div id="home" class="flexv wrap">
@@ -13,7 +21,7 @@
 		<div class="flex nav">
 			{{--<a href="{{route('index.index')}}" class="flex center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>--}}
 			@foreach($article_type as $type)
-				<a href="{{route('index.index',['type'=>$type->id])}}" class="flex center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
+				<a href="{{ route('index.index',['type'=>$type->id]) }}" class="flex center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
 			@endforeach
 			<a href="javascript:;" class="flex center bls bls-yjt more"></a>
 		</div>
@@ -61,6 +69,8 @@
 					</a>
 				@endforeach
 			</div>
+			<p class="flex center loading hide">正在加载中~</p>
+			<p class="flex center ending hide">已全部加载~</p>
 		</div>
 	</div>
 	@include('index.public.footer')
@@ -72,6 +82,7 @@
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script src="/index/js/lazyload.js"></script>
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
+<script type="text/javascript" src="/index/js/checkform.js"></script>
 
 @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 
@@ -124,6 +135,49 @@
             }
         });
     @endif
+
+    // 简单的防抖动函数
+    function debounce(func, wait) {
+        // 定时器变量
+        var timeout;
+        return function() {
+            // 每次触发 scroll handler 时先清除定时器
+            clearTimeout(timeout);
+            // 指定 xx ms 后触发真正想进行的操作 handler
+            timeout = setTimeout(func, wait);
+        };
+    };
+    // 实际想绑定在 scroll 事件上的 handler
+    function realFunc(){
+		var scrollTop = Math.ceil(scroll.scrollTop()),thisHeight = scroll.height(),boxHeight = $(".listbox").height();
+		console.log(scrollTop,thisHeight,boxHeight);
+		if((scrollTop + thisHeight) > boxHeight - 10) {
+			page++;
+			if(page < {{ $list->lastPage() }}) {
+				$(".loding").removeClass("hide");
+				var url = "{{ route('index.index', request()->type) }}" + "?page=" + page;
+				$.get(url, function (ret) {
+					console.log(ret);
+					$(".listbox").append(ret.html);
+					$(".loding").addClass("hide");
+                    $(".lazy").lazyload({
+                        event: "scrollstop",
+                        effect : "fadeIn",
+                        container: $(".listbox"),
+                        load:function ($e) {
+                            $e.css({"width":"100%","height":"100%"});
+                        }
+                    });
+				});
+			} else {
+				$(".ending").removeClass("hide");
+			}
+		}
+    }
+    // 采用了防抖动
+    var page = 1;
+	var scroll = $(".flexitemv.mainbox");
+    $(".flexitemv.mainbox").scroll(debounce(realFunc,50));
 </script>
 
 </html>
