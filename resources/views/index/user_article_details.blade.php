@@ -60,7 +60,7 @@
 		
 		<div class="flexv centerv user-info">
 			<div class="userimg">
-				<img src="{{$res->user['head']}}" class="fitimg" style="border-radius: 50%">
+				<img src="{{$res->user['head']}}" class="fitimg" style="border-radius: 50%;overflow: hidden;">
 			</div>
 			<p class="flex center name">{{$res->user['wc_nickname']}}</p>
 			<div class="flex centerh mesg">
