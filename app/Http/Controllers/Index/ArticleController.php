@@ -22,7 +22,7 @@ class ArticleController extends CommonController
     public function searchArticle()
     {
         $key = request()->key;
-        $list = Article::where('title','like',"%$key%")->orderBy('created_at','desc')->paginate(7);
+        $list = Article::where('title','like',"%$key%")->orderBy('id','desc')->paginate(7);
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
@@ -36,12 +36,13 @@ class ArticleController extends CommonController
 
     /**
      * @title 公共文章详情
-     * @param $id
+     * @param $article
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function articleDetails(Article $article)
     {
         $res = Article::with('brand')->where('id', $article->id)->first();
+//        dd($res);
         //文章浏览数+1
         $article->increment('read',1);
         //判断用户是否已拥有该文章
@@ -56,6 +57,7 @@ class ArticleController extends CommonController
 
     /**
      * @title 公共文章分享数+1
+     * @param $article
      */
     public function articleShare(Article $article)
     {
@@ -64,31 +66,31 @@ class ArticleController extends CommonController
 
     /**
      * 使公共文章变为我的文章
-     * @param $user_id      '当前用户id'
      * @param $article_id   '分享文章id'
      * @param $pid          '分享用户id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function becomeMyArticle($user_id, $article_id, $pid = 0)
+    public function becomeMyArticle($article_id, $pid = 0)
     {
-        $userinfo = User::find($user_id);
-        if($userinfo['subscribe'] == 1){
-            if ($uarticle = UserArticles::where(['uid'=>$user_id,'aid'=>$article_id])->first()) {
+        $user_id = session('user_id');
+        $subscribe = User::where('id', $user_id)->value('subscribe');
+        if($subscribe == 1) {
+            if ($uarticle = UserArticles::where(['uid' => $user_id, 'aid' => $article_id])->first()) {
                 return redirect(route('user_article_details', ['id' => $uarticle->id]));//跳到个人此文章详细页
             } else {
-                $id = UserArticles::insertGetId(['uid' => $user_id, 'aid' => $article_id]);
-                return redirect(route('user_article_details', ['id' => $id]));//跳到个人此文章详细页
+                $add = UserArticles::create(['uid' => $user_id, 'aid' => $article_id]);
+
+                return redirect(route('user_article_details', ['id' => $add->id]));//跳到个人此文章详细页
             }
-        }else{
+        } else {
             //创建临时二维码（参数为str类型）
-            $options = config('wechat');
-            $app = new Application($options);
+            $app = new Application(config('wechat'));
             $qrcode = $app->qrcode;
             $result = $qrcode->temporary("$user_id|$article_id|$pid");
             $url = $qrcode->url($result->ticket);
+
             return view('index.become_my_article',['imgurl'=>$url]);//显示扫二维码关注公众号才能使文章变成自己的页面
         }
     }
-
 
 }

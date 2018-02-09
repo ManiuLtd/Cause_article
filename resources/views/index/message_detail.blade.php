@@ -50,7 +50,11 @@
 	<!--end-->
 	<div class="flexv center qrcode">
 		<div class="img">
-			<img src="/uploads/{{$message->brand->qrcode}}" />
+			@if($message->brand->qrcode)
+				<img src="/uploads/{{$message->brand->qrcode}}" />
+			@else
+				<img src="/qrcode.jpg" />
+			@endif
 		</div>
 		<p>长按识别二维码</p>
 		<p>联系客服咨询</p>

@@ -17,11 +17,12 @@ class CommonController extends Controller
     {
         $this->middleware(function ($request, $next) {
             //是否有新访客
-            if ( Footprint::where([ 'uid' => session()->get('user_id'), 'new' => 1 ])->first() ) {
+            if ( Footprint::where([ 'uid' => session('user_id'), 'new' => 1 ])->first() ) {
                 \Session::put('newkf', 1);
             } else {
                 \Session::forget('newkf');
             }
+
             return $next($request);
         });
     }

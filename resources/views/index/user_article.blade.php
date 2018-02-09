@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 	<meta name="format-detection" content="telephone=no">
-	<title>我的头条</title>
+	<title>@if($user->id != session('user_id')) {{ $user->wc_nickname }}的头条 @else 我的头条 @endif</title>
 	@include('index.public.css')
 </head>
 <body>
@@ -13,7 +13,7 @@
 		<div class="listbox">
 			@foreach($list as $value)
 				<a href="{{route('user_article_details',['id'=>$value->id])}}" class="flex">
-					<div class="flex lists">
+					<div class="flexitem lists">
 						<div class="img">
 							<img class="fitimg" src="{{$value->article['pic']}}"/>
 						</div>
@@ -31,11 +31,73 @@
 		</div>
 		<p class="flex center more">没有更多了~</p>
 	</div>
+
+	@if($user->id != session('user_id'))
+		<div class="flex tabbars">
+			<div class="flexitem center middle">
+				<a href="/" class="flexv center user">
+					<span class="flex userimg">
+						<img class="fitimg" src="{{ $user->head }}"/>
+					</span>
+					<em class="flex center">首页</em>
+				</a>
+			</div>
+			<a @if(\Carbon\Carbon::parse($user->membership_time)->gt(\Carbon\Carbon::now())) href="tel:{{ $user->phone }}" @else href='javascript:;' id='phone' @endif" class="flexv center item">
+				<i class="flex center bls bls-dh"></i>
+				<em class="flex center">拨手机</em>
+			</a>
+			<a href="javascript:;" class="flexv center item wx">
+				<i class="flex center bls bls-weixin"></i>
+				<em class="flex center">加微信</em>
+			</a>
+			<a href="{{ route('chatroom', $user->id) }}" id="data" class="flexv center item"  id="data">
+				<i class="flex center bls bls-zx-ing"></i>
+				<em class="flex center">在线资询</em>
+			</a>
+		</div>
+	@endif
+
+	<!--提示-->
+	<div class="flex center hint">
+		<div class="mask"></div>
+		<div class='content'>
+			<h3 class="flex center">加我免费咨询</h3>
+			<div class="qrcode">
+				<img src="" class="fitimg">
+			</div>
+			<p class="flex center">长按识别二维码</p>
+		</div>
+	</div>
+
 </div>
 </body>
-
+<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript" src="/index/js/functions.js"></script>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
 <script>
+
+    $('#phone').click(function () {
+        showMsg('该商家未开通此服务')
+    });
+
+    //	加微信
+	@if($user->qrcode)
+		$(".wx").click(function () {
+			$(".hint").show();
+			$(".hint").find(".content").addClass('trans');
+		});
+    @else
+		$(".wx").click(_.throttle(function () {
+			showMsg('该用户尚未上传二维码', 0, 1500);
+			$.get("{{ route('tip_user_qrcode', $user->id) }}", function () {});
+		}, 4000, { 'trailing': false }));
+	@endif
+    $(".mask").click(function(){
+        $(".hint").hide();
+    });
+
+
     wx.config({
         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
         appId: '{{ $package['appId'] }}', // 必填，公众号的唯一标识

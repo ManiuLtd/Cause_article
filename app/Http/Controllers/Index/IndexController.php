@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Jobs\mondaySlug;
 use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
 use App\Model\ArticleType;
 use Illuminate\Http\Request;
@@ -17,26 +16,34 @@ use Illuminate\Support\Facades\Cache;
 class IndexController extends CommonController
 {
     /**
-     * @title 首页
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * 首页
+     * @param int $type
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \Throwable
      */
-    public function index(Request $request, $type = 0)
+    public function index($type = 0)
     {
         //banner图
-        if(Cache::has('banner')) {
-            $banner_list = Cache::get('banner');
-        } else {
-            $banner_list = Banner::all();
-            Cache::put('banner', $banner_list, 30);
-        }
+        $banner_list = Cache::remember('banner', 30, function (){
+            $ret = Banner::all();
+            return $ret;
+        });
+
+        //文章分类
+        $article_type = Cache::remember('article_type', 30, function () {
+            $ret = ArticleType::orderBy('sort', 'asc')->get();
+
+            return $ret;
+        });
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
-        $article_type = ArticleType::orderBy('sort', 'asc')->get();
+
         $types = [$article_type->first()->id, 0];
         if ($type) $types = [ $type, 0 ];
+
         $list = Article::orderBy('id', 'desc')->whereIn('type', $types)
             ->when($user->brand_id, function ( $query ) use ( $user ) {
-            //根据用户选择的品牌显示文章
+            //根据用户选择的品牌显示该品牌文章
             return $query->whereIn('brand_id', [ 0, $user->brand_id ]);
         })->paginate(7);
 
@@ -45,7 +52,10 @@ class IndexController extends CommonController
             return response()->json(['html' => $html]);
         }
 
-        return view('index.index', compact('banner_list', 'article_type', 'list', 'user'));
+        //微信分享配置
+        $package = wecahtPackage();
+
+        return view('index.index', compact('banner_list', 'article_type', 'list', 'user', 'package'));
     }
 
     /**

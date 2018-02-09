@@ -26,14 +26,18 @@ class UserArticleController extends CommonController
     {
         if($uid) {
             $list = UserArticles::with('article')->where('uid', $uid)->orderBy('created_at', 'desc')->get();
+
+            $user = User::find($uid);
         } else {
             $list = UserArticles::with('article')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get();
+
+            $user = User::find(session('user_id'));
         }
 
         //微信分享配置
         $package = wecahtPackage();
 
-        return view('index.user_article', compact('list', 'package'));
+        return view('index.user_article', compact('list', 'user', 'package'));
     }
 
     /**
@@ -146,26 +150,6 @@ class UserArticleController extends CommonController
     }
 
     /**
-     * @title 用户在用户文章详细页停留的时间
-     * @param Request $request
-     */
-//    public function userArticleTime(Request $request)
-//    {
-//        if($request->uid != session()->get('user_id')){
-//            $farticle = UserArticles::find($request->id);
-//            if($farticle->isrs == 0) UserArticles::where('id',$request->id)->update(['isrs'=>1]);
-//            $data = [
-//                'uid'      =>  $request->uid,
-//                'see_uid'  =>  session()->get('user_id'),
-//                'uaid'     =>  $request->id,
-//                'residence_time'  =>  $request->time,
-//                'type'     =>  1
-//            ];
-//            Footprint::create($data);
-//        }
-//    }
-
-    /**
      * @title  分享和阅读列表
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -187,7 +171,7 @@ class UserArticleController extends CommonController
     {
         $uid = session()->get('user_id');
         //判断用户会员是否过期
-        $member_time = User::where('id', $uid)->select('membership_time')->first();
+        $member_time = User::where('id', $uid)->value('membership_time');
 
         $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
         foreach ( $list as $key => $value ) {
@@ -196,15 +180,9 @@ class UserArticleController extends CommonController
 
             //去除重复用户获取单个用户id
             $user_list = remove_duplicate($value[ 'footprint' ]);
+            $list[$key]['user_count'] = count($user_list);
             foreach ( $user_list as $k => $v ) {
-                //获取用户头像
-                if ( Carbon::parse($member_time->membership_time)->gt(Carbon::parse('now')) ) {
-                    //已开通会员
-                    $list[ $key ][ 'user' ][ $k ] = User::where('id', $v[ 'see_uid' ])->select('head')->first();
-                } else {
-                    //未开通会员
-                    $list[ $key ][ 'user' ][ $k ][ 'head' ] = '/head.png';
-                }
+                $list[ $key ][ 'user' ][ $k ] = User::where('id', $v[ 'see_uid' ])->select('head')->first();
             }
         }
 
@@ -214,7 +192,7 @@ class UserArticleController extends CommonController
         //个人文章今日浏览数
         $today_see = Footprint::where('uid', $uid)->whereDate('created_at', date('Y-m-d', time()))->count();
 
-        return view('index.visitor_record', compact('list', 'user_list', 'today_see', 'prospect'));
+        return view('index.visitor_record', compact('list', 'today_see', 'prospect', 'member_time'));
     }
 
     /**
@@ -251,11 +229,11 @@ class UserArticleController extends CommonController
      * @param $id '用户文章表id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function chatroom( $id )
+    public function chatroom( User $user )
     {
-        $res = UserArticles::with('user')->where('id', $id)->first();
+//        $res = UserArticles::with('user')->where('id', $id)->first();
 
-        return view('index.chatroom', compact('res'));
+        return view('index.chatroom', compact('user'));
     }
 
     /**
@@ -265,7 +243,7 @@ class UserArticleController extends CommonController
      */
     public function submitMessage( Request $request )
     {
-        $data = $request->except('_token', 'uaid');
+        $data = $request->except('_token');
         $data[ 'sub_uid' ] = session()->get('user_id');
         $data[ 'order_id' ] = date('YmdHis') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
         $data[ 'created_at' ] = date('Y-m-d H:i:s');
@@ -300,7 +278,7 @@ class UserArticleController extends CommonController
             $app = new Application(config('wechat'));
             template_message($app, $openid->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add_id ]));
 
-            return redirect(route('user_article_details', [ 'id' => request()->uaid ]));
+            return redirect()->back();
         }
     }
 
@@ -311,7 +289,7 @@ class UserArticleController extends CommonController
      */
     public function messageList(Message $message)
     {
-        $list = $message->with('user')->where('uid', \Session::get('user_id'))->get();
+        $list = $message->with('user')->where('uid', session('user_id'))->get();
 
         return view('index.message', compact('list'));
     }
@@ -352,5 +330,15 @@ class UserArticleController extends CommonController
         $prospect = remove_duplicate(Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get());
 
         return view('index.visitor_prospect', compact('prospect'));
+    }
+
+    /**
+     * 提醒用户有人对他的文章感兴趣，但未上传自己的二维码
+     * @param $user
+     */
+    public function tipUserQrcode(User $user)
+    {
+        $content = '有人对你的文章有兴趣并想加你微信，但你尚未上传微信二维码';
+        \message($user->openid, 'text', $content);
     }
 }

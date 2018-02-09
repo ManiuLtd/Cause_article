@@ -41,9 +41,11 @@ class UserController extends CommonController
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
         }
 
+        //订单轮播展示
         $orders = Order::with(['user'=>function($query){
             $query->select('id','wc_nickname');
-        }])->where('state', 1)->orderBy('pay_time')->limit(10)->get();
+        }])->where('state', 1)->orderBy('pay_time', 'desc')->limit(10)->get();
+
         //美图列表
         $photos = Photo::orderBy('id', 'desc')->limit(4)->get();
 

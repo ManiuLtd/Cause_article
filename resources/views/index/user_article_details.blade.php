@@ -13,28 +13,52 @@
 	</style>
 </head>
 <body>
-<div id="article" class="flexv wrap">
-	<div class="flexitemv mainbox contents">
-		<div class="title max">
-			<h2 class="flex">{{$res->article['title']}}</h2>
-			<div class="flex subhead">
-				<span class="date">{{$res->created_at->toDateString()}}</span>
-				<span class="name">{{$res->user['wc_nickname']}}</span>
-				<a href="{{route('index.index')}}" class="site">事业头条</a>
+<div @if($res->article->type == 3) id="listen" @else id="article" @endif class="flexv wrap">
+	<div class="flexitemv mainbox contents" @if($res->article->type == 3) style="padding:1.2rem" @endif>
+		@if($res->article->type == 3)
+			<div class="info">
+				<h1>{{ $res->article->title }}</h1>
+				<div class="bottom"><span>{{\Carbon\Carbon::parse($res->article->created_at)->toDateString()}}</span><a href="javascript:;">轩轩</a></div>
 			</div>
-			<div class="box">
-				{!! $res->article['details'] !!}
+			<div id="audio">
+				<div class="flex centerv inner">
+					<div class="flex center icon" data-src="https://res.wx.qq.com/voice/getvoice?mediaid=MzUzNTY0OTQ2OV8yMjQ3NDgzNzcz"></div>
+					<div class="flexitemv media">
+						<h3 class="flexv centerh">{{ json_decode($res->article->audio, true)['title'] }}</h3>
+						<p class="flexv centerh">{{ json_decode($res->article->audio, true)['desc'] }}</p>
+						<div class="flex progress"><em></em><span class="flex"></span></div>
+						<div class="flex centerv duration">
+							<span class="flexitem">00:00</span>
+							<em class="flex">00:00</em>
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
+			<div class="body">
+				{!! $res->article->details !!}
+			</div>
+		@else
+			<div class="title max">
+				<h2 class="flex">{{$res->article['title']}}</h2>
+				<div class="flex subhead">
+					<span class="date">{{$res->created_at->toDateString()}}</span>
+					<span class="name">{{$res->user['wc_nickname']}}</span>
+					<a href="{{route('index.index')}}" class="site">事业头条</a>
+				</div>
+				<div class="box">
+					{!! $res->article['details'] !!}
+				</div>
+			</div>
 
-		<div class="flex center unfold">
-			<div class="flex center unfoldbox">
-				<p>展开全文</p>
-				<i class="flex center bls bls-bottom"></i>
+			<div class="flex center unfold">
+				<div class="flex center unfoldbox">
+					<p>展开全文</p>
+					<i class="flex center bls bls-bottom"></i>
+				</div>
 			</div>
-		</div>
+		@endif
 		
-		<div class="flexv centerv user">
+		<div class="flexv centerv user-info">
 			<div class="userimg">
 				<img src="{{$res->user['head']}}" class="fitimg" style="border-radius: 50%">
 			</div>
@@ -48,9 +72,9 @@
 					<i class="flex center bls bls-dh"></i>
 					<span>给我电话</span>
 				</a>
-				<a href="javascript:;" class="flex center book">
-					<i class="flex center bls bls-bd"></i>
-					<span>事业宝典</span>
+				<a href="javascript:;" class="flex center book" style="background:#07BD13">
+					<i class="flex center bls bls-weixin"></i>
+					<span>加微信</span>
 				</a>
 			</div>
 			<span class="row"></span>
@@ -59,38 +83,38 @@
 			<span class="col last"></span>
 		</div>
 		
-		<div class="flexv center qrcode">
-			<div class="img">
-				@if($member_time)
-					@if($res->user['id'] == session()->get('user_id'))
-						@if($res->user['qrcode'] != '')
-						<img src="{{$res->user['qrcode']}}" class="fitimg">
-						@else
-						<img src="/index/image/upload_qrcode.jpg" class="fitimg">
-						<input type="file" accept="image/jpg,image/png,image/jpeg" id="put">
-						@endif
-					@else
-						@if($res->user['qrcode'] != '')
-							<img src="{{$res->user['qrcode']}}" class="fitimg">
-						@else
-							<a href="{{route('chatroom',['id'=>$res->id])}}">
-								<img src="/index/image/callme.jpg" class="fitimg">
-							</a>
-						@endif
-					@endif
-				@else
-					<a href="{{route('chatroom',['id'=>$res->id])}}">
-						<img src="/index/image/callme.jpg" class="fitimg">
-					</a>
-				@endif
-			</div>
-			<p>马上加我微信沟通</p>
+		{{--<div class="flexv center qrcode">--}}
+			{{--<div class="img">--}}
+				{{--@if($member_time)--}}
+					{{--@if($res->user['id'] == session()->get('user_id'))--}}
+						{{--@if($res->user['qrcode'] != '')--}}
+						{{--<img src="{{$res->user['qrcode']}}" class="fitimg">--}}
+						{{--@else--}}
+						{{--<img src="/index/image/upload_qrcode.jpg" class="fitimg">--}}
+						{{--<input type="file" accept="image/jpg,image/png,image/jpeg" id="put">--}}
+						{{--@endif--}}
+					{{--@else--}}
+						{{--@if($res->user['qrcode'] != '')--}}
+							{{--<img src="{{$res->user['qrcode']}}" class="fitimg">--}}
+						{{--@else--}}
+							{{--<a href="{{route('chatroom',['id'=>$res->id])}}">--}}
+								{{--<img src="/index/image/callme.jpg" class="fitimg">--}}
+							{{--</a>--}}
+						{{--@endif--}}
+					{{--@endif--}}
+				{{--@else--}}
+					{{--<a href="{{route('chatroom',['id'=>$res->id])}}">--}}
+						{{--<img src="/index/image/callme.jpg" class="fitimg">--}}
+					{{--</a>--}}
+				{{--@endif--}}
+			{{--</div>--}}
+			{{--<p>马上加我微信沟通</p>--}}
 
-			<a href="{{route('chatroom',['id'=>$res->id])}}" class="flex center bls bls-kefu service"></a>
+		{{--</div>--}}
 
-		</div>
+		<a href="{{ route('chatroom', $res->user->id) }}" class="flex center bls bls-kefu service"></a>
 		
-		<div class="flexv center text">
+		<div class="flexv center text-box">
 			<p>本文为 <span>{{$res->user['wc_nickname']}}</span> 发布，不代表事业头条立场</p>
 			<p>若内容不规范或涉及违规，可立即 <a href="{{ route('report',['article_id'=>$res->id,'type'=>2]) }}">举报/报错</a></p>
 		</div>
@@ -99,18 +123,18 @@
 	</div>
 
 	@if(session()->get('user_id') != $res->uid)
-	<div class="flex center fixed">
-		<a href="javascript:;" id="cut" class="flex center cut">免费换成我的名片 >></a>
-	</div>
+		<div class="flex center fixed-btn">
+			<a href="javascript:;" id="cut" class="flex center cut">免费换成我的名片 >></a>
+		</div>
 	@endif
 	
 	<!--提示-->
 	<div class="flex center hint">
 		<div class="mask"></div>
 		<div class='content'>
-			<h3 class="flex center">更多免费<span>@if(!empty($brand)){{ $brand->name }}@else爆文@endif</span>资讯</h3>
+			<h3 class="flex center">加我免费咨询</h3>
 			<div class="qrcode">
-				<img src="@if($brand) @if($brand->qrcode) /uploads/{{ $brand->qrcode }} @else /qrcode.jpg @endif @else /qrcode.jpg @endif" class="fitimg">
+				<img src="" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>
@@ -189,6 +213,9 @@
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 <script type="text/javascript" src="/index/js/checkform.js"></script>
 <script type="text/javascript" src="/index/js/functions.js"></script>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/1.5.15/clipboard.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
 	$('#phone').click(function () {
 		showMsg('该商家未开通此服务')
@@ -236,19 +263,34 @@
 </script>
 
 <script type="text/javascript">
-//  展示全部
+	//  展示全部
 	$(".unfold").click(function () {
         $(".title").removeClass('max');
         $(".unfold").text('');
     });
-//	事业宝典
-	$(".book").click(function () {
-		$(".hint").css({"display":"block"});
-		$(".hint").find(".content").addClass('trans');
-	});
+
+	//	事业宝典
+	@if($res->user->qrcode)
+		$(".book").click(function () {
+			$(".hint").css({"display":"block"});
+			$(".hint").find(".content").addClass('trans');
+		});
+	@else
+		@if($res->uid == session('user_id'))
+    		$(".book").click(function () {
+        		showMsg('您尚未上传二维码', 0, 1500);
+			});
+		@else
+			$(".book").click(_.throttle(function () {
+				showMsg('该用户尚未上传二维码', 0, 1500);
+				$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
+			}, 4000, { 'trailing': false }));
+		@endif
+	@endif
 	$(".mask").click(function(){
 		$(".hint").css({"display":"none"});
 	});
+
 	//上传个人二维码
 	$("#put").change(function (event) {
 		var file = event.target.files[0];
@@ -370,5 +412,7 @@ function logTime() {
             }
         });
     });
+
+	@includeWhen($res->article->type == 3, 'index.public._audi')
 </script>
 </html>

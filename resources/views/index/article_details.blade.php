@@ -13,28 +13,52 @@
 	</style>
 </head>
 <body>
-<div id="article" class="flexv wrap">
-	<div class="flexitemv mainbox contents">
-		<div class="title max">
-			<h2 class="flex">{{$res->title}}</h2>
-			<div class="flex subhead">
-				<span class="date">{{\Carbon\Carbon::parse($res->created_at)->toDateString()}}</span>
-				<span class="name">轩轩</span>
-				<a href="{{route('index.index')}}" class="site">事业头条</a>
+<div @if($res->type == 3) id="listen" @else id="article" @endif class="flexv wrap">
+	<div class="flexitemv mainbox contents" @if($res->type == 3) style="padding:1.2rem" @endif>
+		@if($res->type == 3)
+			<div class="info">
+				<h1>{{ $res->title }}</h1>
+				<div class="bottom"><span>{{\Carbon\Carbon::parse($res->created_at)->toDateString()}}</span><a href="javascript:;">轩轩</a></div>
 			</div>
-			<div class="box">
+			<div id="audio">
+				<div class="flex centerv inner">
+					<div class="flex center icon" data-src="{{ json_decode($res->audio, true)['src'] }}"></div>
+					<div class="flexitemv media">
+						<h3 class="flexv centerh">{{ json_decode($res->audio, true)['title'] }}</h3>
+						<p class="flexv centerh">{{ json_decode($res->audio, true)['desc'] }}</p>
+						<div class="flex progress"><em></em><span class="flex"></span></div>
+						<div class="flex centerv duration">
+							<span class="flexitem">00:00</span>
+							<em class="flex">00:00</em>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="body">
 				{!! $res->details !!}
 			</div>
-		</div>
-
-		<div class="flex center unfold">
-			<div class="flex center unfoldbox">
-				<p>展开全文</p>
-				<i class="flex center bls bls-bottom"></i>
+		@else
+			<div class="title max">
+				<h2 class="flex">{{ $res->title }}</h2>
+				<div class="flex subhead">
+					<span class="date">{{\Carbon\Carbon::parse($res->created_at)->toDateString()}}</span>
+					<span class="name">轩轩</span>
+					<a href="{{route('index.index')}}" class="site">事业头条</a>
+				</div>
+				<div class="box">
+					{!! $res->details !!}
+				</div>
 			</div>
-		</div>
+
+			<div class="flex center unfold">
+				<div class="flex center unfoldbox">
+					<p>展开全文</p>
+					<i class="flex center bls bls-bottom"></i>
+				</div>
+			</div>
+		@endif
 		
-		<div class="flexv centerv user">
+		<div class="flexv centerv user-info">
 			<div class="userimg">
 				<img src="/kf_login.png" class="fitimg" style="border-radius: 50%">
 			</div>
@@ -46,11 +70,11 @@
 			<div class="button">
 				<a href="javascript:;" class="flex center phone">
 					<i class="flex center bls bls-dh"></i>
-					<span>给我电话</span>
+					<span>打电话</span>
 				</a>
-				<a href="javascript:;" class="flex center book">
-					<i class="flex center bls bls-bd"></i>
-					<span>事业宝典</span>
+				<a href="javascript:;" class="flex center book" style="background:#07BD13">
+					<i class="flex center bls bls-weixin"></i>
+					<span>加微信</span>
 				</a>
 			</div>
 			<span class="row"></span>
@@ -59,15 +83,15 @@
 			<span class="col last"></span>
 		</div>
 		
-		<div class="flexv center qrcode">
-			<div class="img">
-				<img src="/qrcode.jpg" class="fitimg">
-			</div>
-			<p>马上加我微信沟通</p>
+		{{--<div class="flexv center qrcode">--}}
+			{{--<div class="img">--}}
+				{{--<img src="/qrcode.jpg" class="fitimg">--}}
+			{{--</div>--}}
+			{{--<p>马上加我微信沟通</p>--}}
 			{{--<a href="javascript:;" class="flex center bls bls-kefu service"></a>--}}
-		</div>
+		{{--</div>--}}
 		
-		<div class="flexv center text">
+		<div class="flexv center text-box">
 			<p>本文为 <span>轩轩</span> 发布，不代表事业头条立场</p>
 			<p>若内容不规范或涉及违规，可立即 <a href="{{ route('report',['article_id'=>$res->id, 'type'=>1]) }}">举报/报错</a></p>
 		</div>
@@ -75,7 +99,7 @@
 		{{--<a href="javascript:;" id="cut" class="flex center cut">免费换成我的名片 >></a>--}}
 	</div>
 
-	<div class="flex center fixed">
+	<div class="flex center fixed-btn">
 		<a href="javascript:;" id="cut" class="flex center cut">免费换成我的名片 >></a>
 	</div>
 	
@@ -83,9 +107,9 @@
 	<div class="flex center hint">
 		<div class="mask"></div>
 		<div class='content'>
-			<h3 class="flex center">更多免费<span>@if(!empty($res->brand)){{$res->brand['name']}}@else爆文@endif</span>资讯</h3>
+			<h3 class="flex center">加我免费咨询</h3>
 			<div class="qrcode">
-				<img src="@if($res->brand) @if($res->brand->qrcode) /uploads/{{ $res->brand['qrcode'] }} @else /qrcode.jpg @endif @else /qrcode.jpg @endif" class="fitimg">
+				<img src="/" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>
@@ -100,6 +124,8 @@
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script type="text/javascript" src="/index/js/checkform.js"></script>
 <script type="text/javascript" src="/index/js/functions.js"></script>
+<script src="https://cdn.bootcss.com/clipboard.js/1.5.15/clipboard.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
     $('#cut').click(function () {
         @if(!$user->brand_id && !$user->phone)
@@ -108,7 +134,7 @@
             //  品牌
             @include('index.public._brand_list')
 		@else
-            window.location.href = "{{route('become_my_article',['user_id'=>session('user_id'),'article_id'=>$res->id])}}";
+            window.location.href = "{{route('become_my_article',['article_id'=>$res->id])}}";
 		@endif
     });
 
@@ -143,12 +169,13 @@
 </script>
 
 <script type="text/javascript">
-//  展示全部
+	//  展示全部
 	$(".unfold").click(function () {
         $(".title").removeClass('max');
         $(".unfold").text('');
     });
-//	事业宝典
+
+	//	事业宝典
 	$(".book").click(function () {
 		$(".hint").css({"display":"block"});
 		$(".hint").find(".content").addClass('trans');
@@ -169,9 +196,9 @@
         //分享微信好友
         wx.onMenuShareAppMessage({
             title: '{{$res->title}}', // 分享标题
-            desc: '说点什么吧', // 分享描述
+            desc: '{!! subtext(preg_replace('/&[a-z]+;/i',"", str_replace("\n","",preg_replace('/<\/?[^>]+>/i',"",$res->details))),80) !!}', // 分享描述
             link: '{{route('article_details',['id'=>$res->id])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'http://bw.eyooh.com/uploads/{{$res->pic}}', // 分享图标
+            imgUrl: '{{$res->pic}}', // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
 				$.get("{{route('article_share',['id'=>$res->id])}}",function (ret) {
@@ -183,7 +210,7 @@
         wx.onMenuShareTimeline({
             title: '{{$res->title}}', // 分享标题
             link: '{{route('article_details',['id'=>$res->id])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-            imgUrl: 'http://bw.eyooh.com/uploads/{{$res->pic}}', // 分享图标
+            imgUrl: '{{$res->pic}}', // 分享图标
             success: function () {
                 // 用户确认分享后执行的回调函数
                 $.get("{{route('article_share',['id'=>$res->id])}}",function (ret) {
@@ -192,5 +219,6 @@
             }
         });
     });
+	@includeWhen($res->type == 3, 'index.public._audi')
 </script>
 </html>

@@ -35,8 +35,10 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('user_article_details/{articles}/{et_id?}', 'UserArticleController@articleDetail')->name('user_article_details');
     //我的文章详情页上传二维码
     Route::post('upload_qrcode', 'UserArticleController@uploadQrcode')->name('upload_qrcode');
+    //提醒用户有人对他的文章感兴趣，但未上传自己的二维码
+    Route::get('tip_user_qrcode/{user}', 'UserArticleController@tipUserQrcode')->name('tip_user_qrcode');
     //使公共文章成为我的文章
-    Route::get('become_my_article/{user_id}/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
+    Route::get('become_my_article/{article_id}/{pid?}', 'ArticleController@becomeMyArticle')->name('become_my_article');
     //别人分享我的文章
     Route::get('user_article_share/{articles}/{ex_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
@@ -66,7 +68,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //获取用户在个人文章页面停留时间
     Route::post('user_article_time', 'UserArticleController@userArticleTime')->name('user_article_time');
     //在线咨询
-    Route::get('chatroom/{id}','UserArticleController@chatroom')->name('chatroom');
+    Route::get('chatroom/{user}','UserArticleController@chatroom')->name('chatroom');
     //提交在线咨询
     Route::post('submit_message','UserArticleController@submitMessage')->name('submit_message');
     //咨询列表

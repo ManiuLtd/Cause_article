@@ -63,7 +63,7 @@
                 <div class="upload-list">
                     <div class="old">
                         <input type="hidden" name="pic" value="{{$res->pic}}"/>
-                        <img src="@if($res->pic == '') /default.jpg @else /uploads/{{$res->pic}} @endif" width="100px"/>
+                        <img src="@if($res->pic == '') /default.jpg @else {{$res->pic}} @endif" width="100px"/>
                         <span class="deleteImage">修改</span>
                     </div>
                 </div>

@@ -11,18 +11,18 @@
   <div class="p1 hide clear" name="p1" rel="button" style="display:block;">
     <dl class="clear" style="padding-top:15px;">
       <dt>
-      <div class="avatar"><img src="{{$res->user['head']}}" /></div>
+      <div class="avatar"><img src="{{$user->head}}" /></div>
       </dt>
       <dd>
         <div class="content">
-          <p class="text">您好，我是{{$res->user['wc_nickname']}}，请问您想了解什么呢？</p>
+          <p class="text">您好，我是{{$user->wc_nickname}}，请问您想了解什么呢？</p>
           <div class="arrow"></div>
         </div>
       </dd>
     </dl>
     <dl class="right clear">
       <dt>
-      <div class="avatar"><img src="{{session()->get('head_pic')}}" /></div>
+      <div class="avatar"><img src="{{ session('head_pic') }}" /></div>
       </dt>
       <dd>
         <div class="content button">
@@ -39,7 +39,7 @@
   <div class="p2 hide clear" name="p2" rel="button">
     <dl class="clear">
       <dt>
-      <div class="avatar"><img src="{{$res->user['head']}}" /></div>
+      <div class="avatar"><img src="{{$user->head}}" /></div>
       </dt>
       <dd>
         <div class="content">
@@ -50,7 +50,7 @@
     </dl>
     <dl class="right clear">
       <dt>
-      <div class="avatar"><img src="{{session()->get('head_pic')}}" /></div>
+      <div class="avatar"><img src="{{session('head_pic')}}" /></div>
       </dt>
       <dd>
         <div class="content button">
@@ -69,7 +69,7 @@
   <div class="p3 hide clear" name="p3" rel="textarea">
     <dl class="clear">
       <dt>
-      <div class="avatar"><img src="{{$res->user['head']}}" /></div>
+      <div class="avatar"><img src="{{$user->head}}" /></div>
       </dt>
       <dd>
         <div class="content">
@@ -80,7 +80,7 @@
     </dl>
     <dl class="right clear">
       <dt>
-      <div class="avatar"><img src="{{session()->get('head_pic')}}" /></div>
+      <div class="avatar"><img src="{{session('head_pic')}}" /></div>
       </dt>
       <dd>
         <div class="content button">
@@ -97,7 +97,7 @@
   <div class="p4 hide clear" name="p4" rel="textarea">
     <dl class="clear">
       <dt>
-      <div class="avatar"><img src="{{$res->user['head']}}" /></div>
+      <div class="avatar"><img src="{{$user->head}}" /></div>
       </dt>
       <dd>
         <div class="content">
@@ -108,7 +108,7 @@
     </dl>
     <dl class="right clear">
       <dt>
-      <div class="avatar"><img src="{{session()->get('head_pic')}}" /></div>
+      <div class="avatar"><img src="{{session('head_pic')}}" /></div>
       </dt>
       <dd>
         <div class="content button">
@@ -124,7 +124,7 @@
   <div class="p5 hide clear" name="p5" rel="end">
     <dl class="clear">
       <dt>
-      <div class="avatar"><img src="{{$res->user['head']}}" /></div>
+      <div class="avatar"><img src="{{$user->head}}" /></div>
       </dt>
       <dd>
         <div class="content">
@@ -135,7 +135,7 @@
     </dl>
     <dl class="right clear">
       <dt>
-      <div class="avatar"><img src="{{session()->get('head_pic')}}" /></div>
+      <div class="avatar"><img src="{{session('head_pic')}}" /></div>
       </dt>
       <dd>
         <div class="content button">
@@ -154,8 +154,8 @@
     <input type="hidden" name="name" id="p3" value="" />
     <input type="hidden" name="phone" id="p4" value="" />
     <input type="hidden" name="gender" id="p5" value="" />
-    <input type="hidden" name="uid" value="{{$res->uid}}" />
-    <input type="hidden" name="uaid" value="{{$res->id}}" />
+    <input type="hidden" name="uid" value="{{$user->id}}" />
+    {{--<input type="hidden" name="uaid" value="{{$res->id}}" />--}}
   </form>
   
   <div id="fill" style="clear: both; float: left; visibility: hidden;"></div>

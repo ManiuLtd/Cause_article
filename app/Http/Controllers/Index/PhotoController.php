@@ -23,10 +23,12 @@ class PhotoController extends Controller
     /**
      * 美图列表
      * @param string $type
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \Throwable
      */
     public function index($type = '')
     {
+        //美图类型
         $types = PhotoType::orderBy('sort', 'asc')->get();
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
