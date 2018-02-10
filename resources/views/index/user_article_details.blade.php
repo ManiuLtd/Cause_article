@@ -18,11 +18,11 @@
 		@if($res->article->type == 3)
 			<div class="info">
 				<h1>{{ $res->article->title }}</h1>
-				<div class="bottom"><span>{{\Carbon\Carbon::parse($res->article->created_at)->toDateString()}}</span><a href="javascript:;">轩轩</a></div>
+				<div class="bottom"><span>{{$res->created_at->toDateString()}}</span><a href="javascript:;">{{$res->user['wc_nickname']}}</a></div>
 			</div>
 			<div id="audio">
 				<div class="flex centerv inner">
-					<div class="flex center icon" data-src="https://res.wx.qq.com/voice/getvoice?mediaid=MzUzNTY0OTQ2OV8yMjQ3NDgzNzcz"></div>
+					<div class="flex center icon" data-src="{{ json_decode($res->article->audio, true)['src'] }}"></div>
 					<div class="flexitemv media">
 						<h3 class="flexv centerh">{{ json_decode($res->article->audio, true)['title'] }}</h3>
 						<p class="flexv centerh">{{ json_decode($res->article->audio, true)['desc'] }}</p>
@@ -134,7 +134,7 @@
 		<div class='content'>
 			<h3 class="flex center">加我免费咨询</h3>
 			<div class="qrcode">
-				<img src="" class="fitimg">
+				<img src="{{ $res->user->qrcode }}" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>
@@ -217,10 +217,6 @@
 <script src="https://cdn.bootcss.com/clipboard.js/1.5.15/clipboard.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
-	$('#phone').click(function () {
-		showMsg('该商家未开通此服务')
-    });
-
     $('#cut').click(function () {
 		@if(!$user->brand_id && !$user->phone)
 			$(".alert").css({"display":"block"});
@@ -269,27 +265,41 @@
         $(".unfold").text('');
     });
 
-	//	事业宝典
-	@if($res->user->qrcode)
-		$(".book").click(function () {
-			$(".hint").css({"display":"block"});
-			$(".hint").find(".content").addClass('trans');
-		});
-	@else
-		@if($res->uid == session('user_id'))
-    		$(".book").click(function () {
-        		showMsg('您尚未上传二维码', 0, 1500);
+    $('#phone').click(_.throttle(function () {
+        showMsg('该用户未开通此服务');
+        $.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
+    }, 3000, { 'trailing': false }));
+
+	//	加微信
+	@if(\Carbon\Carbon::parse($res->user->membership_time)->gt(\Carbon\Carbon::now()))
+		@if($res->user->qrcode)
+			$(".book").click(function () {
+				$(".hint").css({"display":"block"});
+				$(".hint").find(".content").addClass('trans');
 			});
 		@else
-			$(".book").click(_.throttle(function () {
-				showMsg('该用户尚未上传二维码', 0, 1500);
-				$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
-			}, 4000, { 'trailing': false }));
+			@if($res->uid == session('user_id'))
+				$(".book").click(function () {
+					showMsg('您尚未上传二维码', 0, 1500);
+				});
+			@else
+				$(".book").click(function () {
+					showMsg('该用户尚未上传二维码', 0, 1500);
+				});
+			@endif
 		@endif
+        $(".mask").click(function(){
+            $(".hint").css({"display":"none"});
+        });
+	@else
+		$(".book").click(_.throttle(function () {
+			showMsg('该用户未开通此服务');
+			$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
+		}, 3000, { 'trailing': false }));
 	@endif
-	$(".mask").click(function(){
-		$(".hint").css({"display":"none"});
-	});
+
+
+
 
 	//上传个人二维码
 	$("#put").change(function (event) {

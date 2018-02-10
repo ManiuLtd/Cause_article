@@ -139,12 +139,8 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #visitor .front{width:100%;background:#fff;margin-bottom:.5rem;padding:.5rem 0;}
 #visitor .front .myfront{color:#333;}
 #visitor .front .myfront em{font-size:2rem;color:red;}
-#visitor .mainbox .details .userimg i{font-size:3rem;}
-#visitor .mainbox .details .userimg:nth-child(1) i{color:#0099cd;}
-#visitor .mainbox .details .userimg:nth-child(2) i{color:#ff6666;}
-#visitor .mainbox .details .userimg:nth-child(3) i{color:#099;}
-#visitor .mainbox .details .userimg:nth-child(4) i{color:#ffcd32;}
-#visitor .mainbox .details .userimg:nth-child(5) i{color:#cd0066;}
+#visitor .mainbox .details .userimg{width:3rem;height:3rem;border-radius:50%;overflow:hidden;margin-right:1rem;font-size:2.5rem;border: 1px solid #ddd;}
+#visitor .mainbox .details .userimg .sc{width:100%;height:100%;font-size:3rem;}
 
 /************************************* 最近看我的 *******************************/
 #lately .explain{padding:.5rem 1.5rem;font-size:1.2rem;color:#999;}

@@ -132,6 +132,7 @@
 <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 <script type="text/javascript" src="/js/common/functions.js"></script>
 <script src="/index/js/lazyload.js"></script>
+<script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
 <script type="text/javascript">
     //图片延迟加载
     $(".lazy").lazyload({
@@ -149,7 +150,7 @@
 
     $("#close").click(function () {
         WeixinJSBridge.call('closeWindow');
-    })
+    });
 
     //滚动广告
     setInterval(function roll() {
@@ -158,7 +159,7 @@
     },2000);
 
 	$(function () {
-		$(".hy").click(function () {
+		$(".hy").click(_.throttle(function () {
 			@if($res['extension_image'] != '')
 				showProgress('正在发送海报');
 				$.post("{{route('inviting')}}",{url:"{{$res['extension_image']}}", type:1, _token:"{{csrf_token()}}"},function (ret) {
@@ -216,50 +217,9 @@
                             }
                         });
 					};
-
                 });
-				{{--showProgress('正在发送海报');--}}
-				{{--//canvas画图--}}
-				{{--var image = document.querySelector('#background');--}}
-				{{--var userimg = document.querySelector('#userImg');--}}
-				{{--var c=document.getElementById("myCanvas");--}}
-				{{--var ctx=c.getContext("2d");--}}
-				{{--c.width = image.width;--}}
-				{{--c.height = image.height;--}}
-				{{--ctx.drawImage(image,0,0);--}}
-				{{--ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）--}}
-				{{--ctx.beginPath();--}}
-				{{--ctx.strokeStyle = '#fff';--}}
-				{{--userBorderSize = 50;--}}
-				{{--userBorderX = image.width/2;--}}
-				{{--userBorderY = 100;--}}
-				{{--ctx.font="25px Arial";--}}
-				{{--ctx.textAlign = 'center';--}}
-				{{--ctx.fillStyle = '#fff';--}}
-				{{--ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,200);--}}
-				{{--ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);--}}
-				{{--ctx.stroke();--}}
-				{{--ctx.clip();--}}
-				{{--ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);--}}
-				{{--ctx.restore();--}}
-				{{--var qrcode = document.getElementById('code');--}}
-				{{--ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);--}}
-				{{--try {--}}
-					{{--var data = c.toDataURL('image/jpeg');--}}
-				{{--} catch (e) {--}}
-					{{--alert(e);--}}
-				{{--}--}}
-				{{--$.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {--}}
-					{{--if(ret.state == 0) {--}}
-						{{--hideProgress();--}}
-						{{--$(".hint").css({"display":"block"});--}}
-						{{--$(".hint").find(".content").addClass('trans');--}}
-					{{--} else {--}}
-						{{--showMsg(ret.errormsg);--}}
-					{{--}--}}
-				{{--});--}}
 			@endif
-		});
+		}, 5000, { 'trailing': false }));
     });
 
     //img转base64

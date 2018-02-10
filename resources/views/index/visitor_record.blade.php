@@ -44,23 +44,31 @@
 							<div class="flexitemv cont">
 								<h2 class="flexitemv">{{ $value['article']['title'] }}</h2>
 								<div class="between base">
-									<span><em>{{ \Carbon\Carbon::parse($value['created_at'])->toDateString() }}</em></span>
+									<span><em>{{ \Carbon\Carbon::parse($value['updated_at'])->toDateString() }}</em></span>
 									<span><em>{{ $value['read'] }}</em>浏览</span>
 									<span class="flex center"><em>{{ $value['user_count'] }}</em></span>
 								</div>
 							</div>
-							<a href="{{ route('article_details', $value['article']['id']) }}" class="link"></a>
+							<a href="{{ route('user_article_details', $value['id']) }}" class="link"></a>
 						</div>
 						<div class="flex details">
 
 								<div class="flex center imgbox">
 									@if(\Carbon\Carbon::parse($member_time)->gt(\Carbon\Carbon::parse('now')))
 										@foreach($value['user'] as $user)
-											<div class="flex center userimg"><img src="{{ $user['head'] }}" class="fitimg"></div>
+											<div class="flex center userimg"><img src="{{ $user['user_list']['head'] }}" class="fitimg"></div>
 										@endforeach
 									@else
-										@foreach($value['user'] as $user)
-											<div class="flex center userimg"><i class="flex center bls bls-gr"></i></div>
+										@foreach($value['user'] as $key => $user)
+											@if($key == 0)
+												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr"></use></svg></div>
+											@elseif($key == 1)
+												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr1"></use></svg></div>
+											@elseif($key == 2)
+												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr2"></use></svg></div>
+											@else
+												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr"></use></svg></div>
+											@endif
 										@endforeach
 									@endif
 								</div>
@@ -83,6 +91,7 @@
 </div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://at.alicdn.com/t/font_568864_xyn4a976gw7mn29.js"></script>
 <script>
     //滚动提示
     var num = 0;

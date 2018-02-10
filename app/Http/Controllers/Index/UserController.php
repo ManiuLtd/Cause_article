@@ -44,10 +44,12 @@ class UserController extends CommonController
         //订单轮播展示
         $orders = Order::with(['user'=>function($query){
             $query->select('id','wc_nickname');
-        }])->where('state', 1)->orderBy('pay_time', 'desc')->limit(10)->get();
+        }])->where(['state' => 1, 'refund_state' => 0])->orderBy('pay_time', 'desc')->limit(10)->get();
 
         //美图列表
-        $photos = Photo::orderBy('id', 'desc')->limit(4)->get();
+        $photos = Cache::remember('user_photo_list', 30, function () {
+           return Photo::orderBy('id', 'desc')->limit(4)->get();
+        });
 
         return view('index.user_center', compact('res', 'orders', 'photos'));
     }
@@ -101,7 +103,7 @@ class UserController extends CommonController
                 //更新头像session
                 session(['head_pic'=>$data[ 'head' ]]);
                 //删除头像base64位缓存，以便下次重新转换
-                Cache::forget('user_head');
+                Cache::forget('user_head' . $user->openid);
             }
 
             //是否上传个人二维码

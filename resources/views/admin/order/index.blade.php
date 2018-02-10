@@ -97,7 +97,6 @@
             max_price = $(this).attr('data-price'),
             nickname = $(this).attr('data-name');
         var content = '退款金额<input class="bootbox-input form-control money" type="text">';
-        showProgress('正在退款中...');
         bootbox.dialog({
             title: '填写退款金额(退款人：'+nickname+')：',
             message: content,
@@ -106,12 +105,15 @@
                     "label" : "确认退款",
                     "className" : "btn-success",
                     "callback": function() {
+                        showProgress('正在退款中...');
                         var money = $('.money').val();
                         if(parseInt(money) > parseInt(max_price)) {
-                            showMsg('退款金额不可大于支付金额')
+                            showMsg('退款金额不可大于支付金额');
+                            return;
                         }
-                        if(money == '' || money == 0){
-                            showMsg('退款金额不可为空或0')
+                        if(money == 0){
+                            showMsg('退款金额不可为0');
+                            return;
                         }
                         $.post(url, { money:money, _token:'{{csrf_token()}}' }, function (ret) {
                             hideProgress();

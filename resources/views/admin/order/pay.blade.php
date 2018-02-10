@@ -81,7 +81,7 @@
                     <td>{{ $value->created_at }}</td>
                     <td>
                         @if($value->state == 1 && $value->refund_state != 1)
-                            <a class="btn btn-xs btn-danger wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
+                            <a class="btn btn-xs btn-danger wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
                         @endif
                     </td>
                 </tr>
@@ -119,9 +119,6 @@
 
     //提交分配
     $('.distribution').click(function(){
-        // if($('.order_id').checked){
-        //     alert(111);
-        // }
         $('#form').submit();
     });
 
@@ -152,13 +149,50 @@
         });
     });
 
-    //删除订单
-    $('.delete-order').click(function () {
-        //询问框
-        layer.confirm('您是如何看待前端开发？', {
-            btn: ['确定','取消'] //按钮
-        }, function(){
-            $('#delform').submit();
+    $('.wx-refund').click(function () {
+        var url = $(this).attr('data-url'),
+            max_price = $(this).attr('data-price'),
+            nickname = $(this).attr('data-name');
+        var content = '退款金额(不填金额点确认退款即全额退款)<input class="bootbox-input form-control money" type="text">';
+        bootbox.dialog({
+            title: '填写退款金额(退款人：'+nickname+')：',
+            message: content,
+            buttons: {
+                "success" : {
+                    "label" : "确认退款",
+                    "className" : "btn-success",
+                    "callback": function() {
+                        showProgress('正在退款中...');
+                        var money = $('.money').val();
+                        if(parseInt(money) > parseInt(max_price)) {
+                            showMsg('退款金额不可大于支付金额');
+                            return;
+                        }
+                        if(money == 0){
+                            showMsg('退款金额不可为0');
+                            return;
+                        }
+                        $.post(url, { money:money, _token:'{{csrf_token()}}' }, function (ret) {
+                            hideProgress();
+                            if(ret.state == 200) {
+                                showMsg(ret.message, 1, 2000);
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 2000);
+                            } else {
+                                showMsg(ret.message, 0, 2000);
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 2000);
+                            }
+                        })
+                    }
+                },
+                "close" : {
+                    "label" : "取消",
+                    "className" : "btn"
+                }
+            }
         });
     });
 </script>

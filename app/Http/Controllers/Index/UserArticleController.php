@@ -82,10 +82,10 @@ class UserArticleController extends CommonController
                 'see_uid' => $uid,
                 'uaid' => $articles->id,
                 'ex_id' => $ex_id,
-                'created_at' => date('Y-m-d H:i:s', time()),
                 'type' => 1
             ];
-            $addfootid = Footprint::insertGetId($foot);
+            $add = Footprint::Create($foot);
+            $addfootid = $add->id;
 
             //判断访客是否已拥有该文章
             $fkarticle = UserArticles::where([ 'aid' => $uarticle->article[ 'id' ], 'uid' => $uid ])->first();
@@ -155,12 +155,17 @@ class UserArticleController extends CommonController
      */
     public function readShare()
     {
-        $list = Footprint::with('userArticle', 'user')->where([ 'uid' => session()->get('user_id') ])->orderBy('created_at', 'desc')->get();
-        foreach ( $list->toArray() as $key => $value ) {
-            $list[ $key ][ 'article' ] = Article::where('id', $value[ 'user_article' ][ 'aid' ])->first();
-        }
+        $list_read = Footprint::with('userArticle', 'user')->where([ 'uid' => session('user_id'), 'type' =>1 ])->orderBy('created_at', 'desc')->get();
+        $list_read->transform(function ($value){
+            return collect($value)->put('article', Article::where('id', $value->userArticle->aid)->first());
+        });
 
-        return view('index.read_share', compact('list'));
+        $list_share = Footprint::with('userArticle', 'user')->where([ 'uid' => session('user_id'), 'type' =>2 ])->orderBy('created_at', 'desc')->get();
+        $list_share->transform(function ($value){
+            return collect($value)->put('article', Article::where('id', $value->userArticle->aid)->first());
+        });
+
+        return view('index.read_share', compact('list_read', 'list_share'));
     }
 
     /**
@@ -173,18 +178,19 @@ class UserArticleController extends CommonController
         //判断用户会员是否过期
         $member_time = User::where('id', $uid)->value('membership_time');
 
-        $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('created_at', 'desc')->get()->toArray();
-        foreach ( $list as $key => $value ) {
-            //统计新访客(2018-2-2注释-》更改为显示多少个用户)
-//            $list[ $key ][ 'new_count' ] = Footprint::where([ 'uaid' => $value[ 'id' ], 'new' => 1 ])->count();
-
+        $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('updated_at', 'desc')->paginate(6);
+        $list->transform(function ($value) {
             //去除重复用户获取单个用户id
-            $user_list = remove_duplicate($value[ 'footprint' ]);
-            $list[$key]['user_count'] = count($user_list);
-            foreach ( $user_list as $k => $v ) {
-                $list[ $key ][ 'user' ][ $k ] = User::where('id', $v[ 'see_uid' ])->select('head')->first();
-            }
-        }
+            $user_list = remove_duplicate($value['footprint']);
+
+            $new = collect($value);
+            $new->put('user_count', count($user_list));
+            $new->put('user',collect($user_list)->transform(function ($user) {
+                return collect($user)->put('user_list', User::where('id', $user[ 'see_uid' ])->select('head')->first());
+            }));
+
+            return $new;
+        });
 
         //准客户数量
         $prospect = remove_duplicate(Footprint::where('uid', $uid)->get());
@@ -204,22 +210,25 @@ class UserArticleController extends CommonController
     {
         $visitor_article = UserArticles::with([ 'article' => function ( $query ) {
             $query->select('id', 'title', 'pic');
-        }, 'footprint'                                    => function ( $query ) {
-            $query->orderBy('created_at', 'desc');
         }, 'user' ])->where('id', $id)->first();
-        $footprint = $visitor_article->footprint;
-        foreach ( $footprint as $key => $value ) {
 
+        $footprint = Footprint::where('uaid', $id)->paginate(6);
+        foreach ( $footprint as $key => $value ) {
             //用户分享层级关系
             if($value->ex_id) {
                 $footprint[$key]['extension'] = app(Footprint::class)->extension_user($value);
             }
 
-            Footprint::where('id', $value[ 'id' ])->update([ 'new' => 0 ]);
-            $footprint[ $key ][ 'user' ] = User::where('id', $value[ 'see_uid' ])->select('head', 'wc_nickname')->first();
+            Footprint::where('id', $value['id'])->update(['new' => 0]);
+            $footprint[$key]['user'] = User::where('id', $value['see_uid'])->select('head', 'wc_nickname')->first();
         }
 
         $res = $visitor_article;
+
+        if(\request()->ajax()){
+            $html = view('index.public._visitor_template', compact('res', 'footprint'))->render();
+            return response()->json(['html' => $html]);
+        }
 
         return view('index.visitor_detail', compact('res', 'footprint'));
     }
@@ -338,7 +347,17 @@ class UserArticleController extends CommonController
      */
     public function tipUserQrcode(User $user)
     {
-        $content = '有人对你的文章有兴趣并想加你微信，但你尚未上传微信二维码';
-        \message($user->openid, 'text', $content);
+        Cache::remember('tip_user'.$user->openid, 5 * 60, function () use($user){
+            $msg = [
+                "first"    => '未能成功拨打电话或添加微信',
+                "keyword1" => '爆文访客',
+                "keyword2" => date('Y-m-d H:i', time()),
+                "remark"   => '因您未上传微信二维码，访客无法添加您的微信。请尽快上传二维码防止错失顾客线索。'
+            ];
+            $app = new Application(config('wechat'));
+            template_message($app, $user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record'));
+
+            return true;
+        });
     }
 }

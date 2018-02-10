@@ -6,6 +6,14 @@
 	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
 	<title>最近看我的</title>
 	@include('index.public.css')
+	<style>
+		.loading, .ending{
+			font-size: 1.3rem;
+			color: #888888;
+			padding: 10px 0;
+		}
+		.hide {display: none;}
+	</style>
 <body>
 <div id="lately" class="flexv wrap">
 	<div class="flexitemv mainbox">
@@ -77,7 +85,47 @@
 				</div>
 			@endforeach
 		</div>
+		<p class="flex center loading hide">正在加载中~</p>
+		<p class="flex center ending hide">已全部加载~</p>
 	</div>
 </div>
 </body>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script>
+    // 简单的防抖动函数
+    function debounce(func, wait) {
+        // 定时器变量
+        var timeout;
+        return function() {
+            // 每次触发 scroll handler 时先清除定时器
+            clearTimeout(timeout);
+            // 指定 xx ms 后触发真正想进行的操作 handler
+            timeout = setTimeout(func, wait);
+        };
+    };
+    // 实际想绑定在 scroll 事件上的 handler
+    function realFunc(){
+        var scrollTop = Math.ceil(scroll.scrollTop()),thisHeight = scroll.height(),boxHeight = $(".sharerbox").height();
+        if((scrollTop + thisHeight) > boxHeight - 10) {
+            page++;
+            if(page < Number({{ $footprint->lastPage() }})+Number(1) ) {
+				$(".loding").removeClass("hide");
+				var url = "{{ route('visitor_details', request()->id) }}" + "?page=" + page;
+				$.get(url, function (ret) {
+					console.log(ret);
+					$(".sharerbox").append(ret.html);
+					$(".loding").addClass("hide");
+				});
+            } else {
+                $(".ending").removeClass("hide");
+            }
+        }
+    }
+    // 采用了防抖动
+    var page = 1;
+    var scroll = $(".flexitemv.mainbox");
+    scroll.scroll(debounce(realFunc,50));
+</script>
+
 </html>

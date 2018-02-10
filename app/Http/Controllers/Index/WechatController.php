@@ -34,7 +34,7 @@ class WechatController extends Controller
                     break;
                 //收到文字消息
                 case 'text':
-                    return "欢迎关注我！有事请联系客服喔~";
+                    return "欢迎关注我！有问题请联系客服喔~";
                     break;
             }
         });
@@ -76,6 +76,7 @@ class WechatController extends Controller
      */
     public function _event($app,$FromUserName, $event, $eventkey)
     {
+        $user = User::where('openid', $FromUserName)->first();
         switch ($event){
             //已关注公众号的
             case 'SCAN':
@@ -83,6 +84,9 @@ class WechatController extends Controller
                     User::where('openid',$FromUserName)->update(['subscribe'=>1]);
                 }
                 if(is_numeric($eventkey)){
+                    if($user->id == $eventkey) {
+                        return '扫自己的推广二维码是没用的喔';
+                    }
                     return $this->register($app,$FromUserName,$eventkey);
                 }else{
                     $this->bcuserArticle($FromUserName,$eventkey);
@@ -101,6 +105,9 @@ class WechatController extends Controller
                     if (is_numeric($eventkey)) {
                         $context = "恭喜老师，先给你个么么哒\n\n您已踏上成功签单之路！\n\n事业头条可以帮您一秒在文章中嵌入专属名片，让每一次分享都成为获客商机，挖掘价值准客户。\n\n点击下方菜单栏【发现爆文】立刻在文章中嵌入我的名片\n\n↓ ↓ ↓ ↓ ↓";
                         message($FromUserName, 'text', $context);
+                        if($user->id == $eventkey) {
+                            return '扫自己的推广二维码是没用的喔';
+                        }
                         return $this->register($app, $FromUserName, $eventkey);
                     } else {
                         $this->bcuserArticle($FromUserName, $eventkey);
@@ -122,7 +129,7 @@ class WechatController extends Controller
     {
         //查找该用户
         $fuser = User::where('openid',$FromUserName)->first();
-        if($fuser && $fuser->id !==$eventkey){
+        if($fuser && $fuser->id !== $eventkey){
             //用户已存在 -> 关联关系
             //会员时间过期或没有
             if(Carbon::parse('now')->gt(Carbon::parse($fuser->membership_time))){
