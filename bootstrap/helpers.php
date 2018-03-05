@@ -9,7 +9,7 @@ function base64ToImage( $base64, $path )
     if ( preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64, $result) ) {
         $type = $result[ 2 ];
         $day = date('Ymd', time());
-        $new_file = "../public_html/uploads/" . $path . "/" . $day ."/";
+        $new_file = "../public/uploads/" . $path . "/" . $day ."/";
         if ( !file_exists($new_file) ) {
             //检查是否有该文件夹，如果没有就创建，并给予最高权限
             mkdir($new_file, 0777, true);

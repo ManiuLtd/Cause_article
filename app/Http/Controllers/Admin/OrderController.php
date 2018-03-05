@@ -211,8 +211,10 @@ class OrderController extends CommonController
             $user = User::find($order->uid);
             if($order->type == 1) {
                 $user->membership_time = Carbon::parse($user->membership_time)->subMonth();
-            } else {
+            } elseif($order->type == 2) {
                 $user->membership_time = Carbon::parse($user->membership_time)->subYear();
+            } elseif($order->type == 3) {
+                $user->membership_time = Carbon::parse($user->membership_time)->subYears(2);
             }
             $user->save();
 

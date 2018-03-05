@@ -28,7 +28,6 @@ class PhotoController extends Controller
      */
     public function index($type = '')
     {
-        //美图类型
         $types = PhotoType::orderBy('sort', 'asc')->get();
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
@@ -77,7 +76,8 @@ class PhotoController extends Controller
         $head = Cache::remember('user_head'.$user->openid, 60 * 24 * 30, function () {
             //头像转base64
             $head = session('head_pic');
-            if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+            if(str_contains($head, 'qlogo.cn')) {
+//            if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
                 $content = file_get_contents($head);
                 $head =  'data:image/jpeg;base64,' . base64_encode($content);
             } else {

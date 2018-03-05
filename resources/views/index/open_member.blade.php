@@ -35,7 +35,7 @@
 								</div>
 							</div>
 							<div class="flexitem endh">
-								<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session()->get('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>
+								<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>
 							</div>
 							<div class="flex center cornu">优惠</div>
 						</div>
@@ -45,7 +45,16 @@
 								<em>&yen;19.9</em>
 							</div>
 							<div class="flexitem endh ">
-								<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session()->get('user_id')}}" data-title="爆文1个月会员">购买</a>
+								<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
+							</div>
+						</div>
+						<div class="flex list">
+							<div class="flex centerv price">
+								<span class="flex">2年</span>
+								<em>&yen;158</em>
+							</div>
+							<div class="flexitem endh ">
+								<a href="javascript:;" class="flex center discounts" data-price="158" data-type="3" data-uid="{{session('user_id')}}" data-title="爆文2年会员">购买</a>
 							</div>
 						</div>
 					</div>

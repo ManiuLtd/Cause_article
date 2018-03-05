@@ -49,7 +49,7 @@ class IndexController extends CommonController
         if ($file->getClientOriginalExtension() && !in_array($file->getClientOriginalExtension(), $allowed_extensions)) {
             return json_encode(['error' => '文件格式错误！']);
         }
-        $destinationPath = "../public_html/uploads/$file_name/$daytime/";
+        $destinationPath = "../public/uploads/$file_name/$daytime/";
         $extension = $file->getClientOriginalExtension();
         $fileName = str_random(10).'.'.$extension;
         $ret = $file->move($destinationPath, $fileName);

@@ -67,7 +67,7 @@
 				<span>事业头条</span>
 				<span>136***4613</span>
 			</div>
-			<div class="button">
+			<div class="buttons">
 				<a href="javascript:;" class="flex center phone">
 					<i class="flex center bls bls-dh"></i>
 					<span>打电话</span>

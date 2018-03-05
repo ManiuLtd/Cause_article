@@ -28,7 +28,7 @@
                     <div class="upload-list">
                         <div class="old">
                             <input type="hidden" name="head" value="{{$res->head}}" />
-                            <img src="@if(empty($res->head)) /kf_login.png @else /uploads/{{$res->head}} @endif" width="100px" height="100"/>
+                            <img src="@if(empty($res->head)) /kf_login.png @else {{config('app.url')}}uploads/{{$res->head}} @endif" width="100px" height="100"/>
                             <span class="deleteImage">修改</span>
                         </div>
                     </div>

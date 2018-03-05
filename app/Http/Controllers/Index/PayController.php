@@ -99,7 +99,9 @@ class PayController extends Controller
                 if($order->type == 1){
                     $pay_user->membership_time = $time->addMonth(1);
                 } else if($order->type == 2){
-                    $pay_user->membership_time = $time->addMonth(12);
+                    $pay_user->membership_time = $time->addYear();
+                } else if($order->type == 3){
+                    $pay_user->membership_time = $time->addYears(2);
                 }
                 $pay_user->save();
 

@@ -195,6 +195,13 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
 
 });
 
+Horizon::auth(function ($request) {
+    if(optional(Auth::user())->id == 1) {
+        return true; // false;
+    }
+    return false;
+});
+
 
 Auth::routes();
 

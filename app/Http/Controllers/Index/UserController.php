@@ -47,9 +47,7 @@ class UserController extends CommonController
         }])->where(['state' => 1, 'refund_state' => 0])->orderBy('pay_time', 'desc')->limit(10)->get();
 
         //美图列表
-        $photos = Cache::remember('user_photo_list', 30, function () {
-           return Photo::orderBy('id', 'desc')->limit(4)->get();
-        });
+        $photos = Photo::get()->random(4);
 
         return view('index.user_center', compact('res', 'orders', 'photos'));
     }
@@ -71,7 +69,8 @@ class UserController extends CommonController
         $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 30, function () {
             //头像转base64
             $head = session('head_pic');
-            if(strstr(session('head_pic'), "wx.qlogo.cn", true) == 'http://') {
+            if(str_contains($head, 'qlogo.cn')) { //strpos
+//            if(strstr(session('head_pic'), "thirdwx.qlogo.cn", true) == 'http://') {
                 $content = file_get_contents($head);
                 $head =  'data:image/jpeg;base64,' . base64_encode($content);
             } else {

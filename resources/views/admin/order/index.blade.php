@@ -43,7 +43,7 @@
                 <td>{{ $value->brand_name }}</td>
                 <td>{{ $value->user->membership_time }}</td>
                 <td>{{ number_format($value->price, 2) }}</td>
-                <td>@if($value->type == 1)一个月@else一年@endif</td>
+                <td>@if($value->type == 1) 一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
                 <td>
                     @if($value->state == 1)
                         <color style="color: green;font-weight: bold;">已支付</color>

@@ -54,6 +54,7 @@
 
     <img src="{{ $head }}" class="hidden user">
     <img src="{{ $pic }}" class="hidden qrcode">
+    @include('index.public.perfect_information')
 </div>
 </body>
 <script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>

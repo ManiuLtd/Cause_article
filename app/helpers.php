@@ -185,22 +185,22 @@ function wecahtPackage()
  * @param $array
  * @return array
  */
-function remove_duplicate($array){
-    $result=array();
-    foreach ($array as $key => $value) {
-        $has = false;
-          foreach($result as $val){
-              if($val['see_uid'] == $value['see_uid']){
-                $has = true;
-                break;
-              }
-          }
-        if(!$has){
-            $result[]=$value;
-        }
-    }
-    return $result;
-}
+//function remove_duplicate($array){
+//    $result=array();
+//    foreach ($array as $key => $value) {
+//        $has = false;
+//          foreach($result as $val){
+//              if($val['see_uid'] == $value['see_uid']){
+//                $has = true;
+//                break;
+//              }
+//          }
+//        if(!$has){
+//            $result[]=$value;
+//        }
+//    }
+//    return $result;
+//}
 
 /**
  * 把base64转为图片保存到本地
@@ -217,7 +217,7 @@ function base64Toimg($img_base64,$file_name)
         if(!file_exists($new_file))
         {
             //检查是否有该文件夹，如果没有就创建，并给予最高权限
-            mkdir($new_file, 0777);
+            mkdir($new_file, 0777, true);
         }
         $imgae_name = time().rand(1000,9999);
         $file = $imgae_name.'.'.$type;

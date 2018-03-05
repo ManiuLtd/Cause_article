@@ -177,12 +177,12 @@ class UserArticleController extends CommonController
         $uid = session()->get('user_id');
         //判断用户会员是否过期
         $member_time = User::where('id', $uid)->value('membership_time');
-
         $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('updated_at', 'desc')->paginate(6);
         $list->transform(function ($value) {
             //去除重复用户获取单个用户id
-            $user_list = remove_duplicate($value['footprint']);
-
+//            $user_list = remove_duplicate($value['footprint']);
+            //unique 方法返回集合中所有唯一的项目
+            $user_list = $value->footprint->unique('see_uid');
             $new = collect($value);
             $new->put('user_count', count($user_list));
             $new->put('user',collect($user_list)->transform(function ($user) {
@@ -193,7 +193,8 @@ class UserArticleController extends CommonController
         });
 
         //准客户数量
-        $prospect = remove_duplicate(Footprint::where('uid', $uid)->get());
+//        $prospect = remove_duplicate(Footprint::where('uid', $uid)->get());
+        $prospect = Footprint::where('uid', $uid)->get()->unique('see_uid');
 
         //个人文章今日浏览数
         $today_see = Footprint::where('uid', $uid)->whereDate('created_at', date('Y-m-d', time()))->count();
