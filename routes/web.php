@@ -147,7 +147,7 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         //查看佣金
         Route::get('see_integral/{id}', 'UserController@seeIntegral')->name('see_integral');
         //设置佣金比例
-        Route::post('set_integral', 'UserController@setIntegral')->name('set_integral');
+        Route::post('set_integral/{user}', 'UserController@setIntegral')->name('set_integral_scale');
         //举报文章列表
         Route::get('report', 'ReportController@index')->name('admin.report');
         //总订单列表

@@ -151,7 +151,7 @@
 			<p class="flex center tis">立刻完善资料，让客户找到您</p>
 			<div class="flex center input">
 				<span class="flex centerv">姓名</span>
-				<input type="text" name="wc_nickname" class="flexitem" value="{{ $res->user->wc_nickname }}" data-rule="*" data-errmsg="请填写您的姓名">
+				<input type="text" name="wc_nickname" class="flexitem" value="{{ $user->wc_nickname }}" data-rule="*" data-errmsg="请填写您的姓名">
 			</div>
 			<div class="flex center input">
 				<span class="flex centerv">手机号</span>

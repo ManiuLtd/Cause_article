@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
+    public function test(Request $request)
+    {
+
+    }
     /**
      * 首页
      * @param int $type

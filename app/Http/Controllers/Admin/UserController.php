@@ -33,17 +33,6 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
 
-        foreach ($list as $key => $value) {
-            $list[$key]['is_dealer'] = '';
-            if($value['dealer_id'] != 0) {
-                $dealer = User::with('dealer')->select('id', 'dealer_id')->where('id', $value[ 'dealer_id' ])->first();
-                if(!empty($dealer->dealer)) {
-                    $list[ $key ][ 'is_dealer' ] = 2;
-                } else {
-                    $list[ $key ][ 'is_dealer' ] = 1;
-                }
-            }
-        }
         $menu = $this->menu; $active = $this->active;
 
         return view('admin.user.index',compact('list','menu','active'));
@@ -68,15 +57,19 @@ class UserController extends CommonController
                 break;
         }
         array_push($where, ['type', 2]);
-        $list = User::with(['dealer'=>function($query){
+        $list = User::with(['dealer' => function($query){
             $query->select('id','wc_nickname');
-        },'brand','admin'=>function($query){
+        },'brand','admin' => function($query){
             $query->select('id','account');
         }])->where($where)->paginate(15);
 
-        foreach ($list as $key =>$value) {
-            $list[$key]['cmmission'] = app(Integral::class)->commission($value->id);
-        }
+        $list->transform(function ($value) {
+            $new = collect($value);
+            $commission = app(Integral::class)->commission($value->id);
+            $new->put('commission', $commission);
+            return $new;
+        });
+
         $menu = $this->menu;
         $active = $this->active;
 
@@ -114,11 +107,11 @@ class UserController extends CommonController
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function setIntegral(Request $request)
+    public function setIntegral(Request $request, User $user)
     {
-        User::where('id',$request->id)->update(['integral_scale'=>$request->scale]);
+        $user->update(['integral_scale'=>$request->integral_scale]);
 
-        return redirect()->route('admin.user');
+        return response()->json(['state' => 0, 'error' => '设置成功']);
     }
 
     public function setMemberTime( Request $request )

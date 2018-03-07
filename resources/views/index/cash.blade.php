@@ -34,10 +34,8 @@
         </div>
         <div class="flex center tips"><span>温馨提示</span></div>
         <div class="tip">
-            <p>提现需要注意满足以下条件</p>
-            {{--<p>1.提现前需先绑定银行卡(商家中心-个人资料-账户绑定)</p>--}}
-            {{--<p>2.提现前需先绑定微信(商家中心-个人资料-微信绑定)</p>--}}
-            <p>1.提现金额不可低于100(剩余不足100的年底可申请发放)</p>
+            <p>1、提现金额最晚在下一个工作日24:00之前到账</p>
+            <p>2、周六、周日与节假日顺延至下一个工作日！</p>
         </div>
     </div>
 </div>
@@ -49,20 +47,21 @@
 <script src="http://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script type="text/javascript">
     $('#cash .getcash').click(function () {
-        if ($(this).hasClass('disabled')) {
+        if ($(this).hasClass('disable')) {
             showMsg("请先绑定银行卡", 0);
+            return;
         }
         var trottle = null,
             post_url = $(this).attr('data-url'),
             integral = $(this).attr('data-integral');
         layer.open({
-            content: '<div class="sl"><p class="sl-item line">可使用余额<span class="total-num">'+integral+'</span></p><input type="number" name="integral" value="" placeholder="请输入本次提现余额" class="sl-item"></div>'
+            content: '<div class="sl"><p class="sl-item line">可使用余额<span class="total-num">'+integral+'</span></p><input type="number" name="integral" disabled value="'+integral+'" placeholder="请输入本次提现余额" class="sl-item"></div>'
             , skin: 'footer'
             , btn: ['确定', '取消']
             , yes: function (index, el) {
                 var num = el.querySelector('input[name=integral]').value;
-                if(num<=0){
-                    showMsg('兑换不能小于1积分');return layer.close(index);
+                if(num<=1){
+                    showMsg('兑换不能小于1元');return layer.close(index);
                 }else {
                     //异步请求银行卡提现
                     if(!trottle) {

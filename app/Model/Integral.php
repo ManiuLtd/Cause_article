@@ -14,6 +14,8 @@ class Integral extends Model
 {
     protected $table = 'integral';
 
+    protected $guarded = [];
+
     public function commission($id)
     {
         return Integral::where('user_id', $id)->sum('price');

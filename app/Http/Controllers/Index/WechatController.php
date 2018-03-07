@@ -84,7 +84,7 @@ class WechatController extends Controller
                     User::where('openid',$FromUserName)->update(['subscribe'=>1]);
                 }
                 if(is_numeric($eventkey)){
-                    if($user->id == $eventkey) {
+                    if(optional($user)->id == $eventkey) {
                         return '扫自己的推广二维码是没用的喔';
                     }
                     return $this->register($app,$FromUserName,$eventkey);
@@ -105,7 +105,7 @@ class WechatController extends Controller
                     if (is_numeric($eventkey)) {
                         $context = "恭喜老师，先给你个么么哒\n\n您已踏上成功签单之路！\n\n事业头条可以帮您一秒在文章中嵌入专属名片，让每一次分享都成为获客商机，挖掘价值准客户。\n\n点击下方菜单栏【发现爆文】立刻在文章中嵌入我的名片\n\n↓ ↓ ↓ ↓ ↓";
                         message($FromUserName, 'text', $context);
-                        if($user->id == $eventkey) {
+                        if(optional($user)->id == $eventkey) {
                             return '扫自己的推广二维码是没用的喔';
                         }
                         return $this->register($app, $FromUserName, $eventkey);
@@ -129,19 +129,14 @@ class WechatController extends Controller
     {
         //查找该用户
         $fuser = User::where('openid',$FromUserName)->first();
-        if($fuser && $fuser->id !== $eventkey){
+        if($fuser && optional($fuser)->id !== $eventkey){
             //用户已存在 -> 关联关系
             //会员时间过期或没有
             if(Carbon::parse('now')->gt(Carbon::parse($fuser->membership_time))){
                 if($fuser->extension_id == 0 && $fuser->dealer_id == 0 && $fuser->admin_id == 0) {
                     //当用户本来没有推广用户和经销商的时候
                     $pinfo = User::find($eventkey);
-                    if ($pinfo->type == 2) {
-                        $extension = 0;$dealer = $pinfo->id;
-                    } else {
-                        $extension = $pinfo->id;$dealer = $pinfo->dealer_id;
-                    }
-                    User::where('openid',$FromUserName)->update(['extension_id'=>$extension,'dealer_id'=>$dealer]);
+                    User::where('openid', $FromUserName)->update(['extension_id'=>$pinfo->id]);
 
                     //推送【推荐会员成功提醒】模板消息
                     $msg = [
@@ -152,24 +147,18 @@ class WechatController extends Controller
                     ];
                     template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
                     //推广奖励操作
-                    $this->extension($eventkey);
+//                    $this->extension($eventkey);
                 }
             }
         }else {
             //用户不存在 -> 创建账号并关联关系
             $userinfores = $app->user->get($FromUserName);
             $pinfo = User::find($eventkey);
-            if ($pinfo->type == 2) {
-                $extension = 0;$dealer = $pinfo->id;
-            } else {
-                $extension = $pinfo->id;$dealer = $pinfo->dealer_id;
-            }
             $data = [
                 'wc_nickname' => $userinfores['nickname'],
                 'head' => $userinfores['headimgurl'],
                 'openid' => $userinfores['openid'],
-                'extension_id' => $extension,
-                'dealer_id' => $dealer,
+                'extension_id' => $pinfo->id,
                 'subscribe' => $userinfores['subscribe']
             ];
             //保存用户
@@ -184,7 +173,7 @@ class WechatController extends Controller
             ];
             template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
             //推广奖励操作
-            $this->extension($eventkey);
+//            $this->extension($eventkey);
         }
     }
 

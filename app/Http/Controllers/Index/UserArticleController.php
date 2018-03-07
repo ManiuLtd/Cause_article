@@ -50,12 +50,19 @@ class UserArticleController extends CommonController
     {
         $uid = session('user_id');
         $user = User::find($uid);
+
+        //创建关联关系
+        if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid) {
+            $user->extension_id = $articles->uid;
+            $user->save();
+        }
+
         $addfootid = '';
         $fkarticle = '';
         $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
 
         //获取品牌
-        $brand = Brand::find($uarticle->user->brand_id);
+        $brand = Brand::find(optional($uarticle->user)->brand_id);
 
         if ( $uarticle->uid != $uid ) {
             //用户文章第一次阅读则推送文本消息给该文章拥有者
@@ -337,7 +344,7 @@ class UserArticleController extends CommonController
     public function prospect()
     {
         //准客户数量
-        $prospect = remove_duplicate(Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get());
+        $prospect = Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get()->unique('see_uid');
 
         return view('index.visitor_prospect', compact('prospect'));
     }

@@ -67,36 +67,14 @@
 				<i class="flex center bls bls-mp" style="background:#fbc45d; "></i>
 				<span class="flex center text">设置名片</span>
 			</a>
-			{{--<a href="{{route('open_member')}}" class="flexitem centerv kt">--}}
-				{{--<i class="flex center bls bls-ck" style="background:#f68f66; "></i>--}}
-				{{--<span class="flex center text">开通谁查看我的功能</span>--}}
-			{{--</a>--}}
 			<a href="javascript:;" class="flexitem centerv hy">
 				<i class="flex center bls bls-jhy" style="background:#67cef9; "></i>
-				<span class="flex center text">
-					@if($res['extension_type'] == 0)
-						首次推荐5位好友，立享5天试用期
-					@elseif($res['extension_type'] == 1)
-						继续推荐10位好友，立享5天试用期
-					@elseif($res['extension_type'] == 2)
-						继续推荐20位好友，立享10天试用期
-					@elseif($res['extension_type'] == 3)
-						继续推荐30位好友，立享10天试用期
-					@elseif($res['extension_type'] == 4)
-						继续推荐40位好友，立享20天试用期
-					@else
-						邀请好友
-					@endif
-				</span>
-				{{--<img id="code" src="{{ $pic }}" alt="" style="display: none">--}}
-				{{--<img src="{{ $head }}" id="userImg" alt="" style="display: none;">--}}
+				<span class="flex center text">邀请好友</span>
 			</a>
-			@if($res['type'] == 2)
 			<a href="{{ route('index.extension') }}" class="flexitem centerv tg">
 				<i class="flex center bls bls-generalize" style="background:#35f921; "></i>
 				<span class="flex center text">推广中心</span>
 			</a>
-			@endif
 		</div>
 
 		<div class="picture" style="padding-bottom: 15px">

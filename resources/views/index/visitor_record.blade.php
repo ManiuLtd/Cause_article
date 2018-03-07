@@ -46,7 +46,7 @@
 								<div class="between base">
 									<span><em>{{ \Carbon\Carbon::parse($value['updated_at'])->toDateString() }}</em></span>
 									<span><em>{{ $value['read'] }}</em>浏览</span>
-									<span class="flex center"><em>{{ $value['user_count'] }}</em></span>
+									<span class="flex center"><em>{{ $value['user_count'] < 99 ? $value['user_count'] : 99}}</em></span>
 								</div>
 							</div>
 							<a href="{{ route('user_article_details', $value['id']) }}" class="link"></a>

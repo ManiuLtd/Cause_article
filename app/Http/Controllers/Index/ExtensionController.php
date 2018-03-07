@@ -16,6 +16,7 @@ use App\Model\User;
 use App\Model\UserAccount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ExtensionController extends CommonController
 {
@@ -27,12 +28,12 @@ class ExtensionController extends CommonController
      */
     public function index()
     {
-        $where = ['user_id' => \Session::get('user_id')];
+        $where = ['user_id' => \Session::get('user_id'),'state' => 1];
         $tomorrow = Carbon::tomorrow();
         $today = Carbon::today();
         $today_integral = Integral::where($where)->whereBetween('created_at',[$today,$tomorrow])->sum('price');
         $use_integral = IntegralUse::where($where)->sum('integral');
-        $where = array_merge($where, ['state'=>1]);
+//        $where = array_merge($where, ['state'=>1]);
         $tot_integral = Integral::where($where)->sum('price');
         $nu_integral = $tot_integral - $use_integral;
 
@@ -43,7 +44,7 @@ class ExtensionController extends CommonController
      * 申请提现页面
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function applyCash(  )
+    public function applyCash()
     {
         $user = User::with('user_account')->where('id', \Session::get('user_id'))->first();
         $where = ['user_id' => \Session::get('user_id')];
@@ -74,7 +75,10 @@ class ExtensionController extends CommonController
     public function getCode(Request $request)
     {
         $code = rand(100000,999999);
-        $sms_code = $this->sms(\Session::get('phone'), 72236, [$code], '发送验证码');
+        $phone = Cache::remember('sms'.session('user_id'), '10', function () use ($request) {
+            return $request->phone;
+        });
+        $sms_code = $this->sms($phone, 72236, [$code], '发送验证码');
         if($sms_code['state'] == 0) {
             if(isset($request->again)) {
                 \Session::put('code', $code);
@@ -129,6 +133,9 @@ class ExtensionController extends CommonController
      */
     public function getMoney( Request $request, IntegralUse $integralUse )
     {
+        if($request->integral < 100) {
+            return response()->json(['state' => 401, 'code' => 0, 'msg' => '申请提现金额不能少于100']);
+        }
         $integralUse->fill($request->all());
         $integralUse->user_id = \Session::get('user_id');
         $integralUse->created_at = date('Y-m-d H:i:s',time());

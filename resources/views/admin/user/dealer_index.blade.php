@@ -22,8 +22,7 @@
                 <th>从事品牌</th>
                 <th>从业地区</th>
                 <th>会员到期时间</th>
-                <th>用户类型</th>
-                <th>上级经销商/id</th>
+                <th>佣金比例</th>
                 <th>所属部门员工</th>
                 <th>员工推广链接</th>
                 <th>推广分成</th>
@@ -35,28 +34,27 @@
             <tbody>
             @foreach($list as $value)
             <tr>
-                <td>{{$value->id}}</td>
-                <td>{{$value->wc_nickname}}</td>
-                <td>{{$value->phone}}</td>
-                <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
-                <td>{{$value->employed_area}}</td>
-                <td>{{ $value->membership_time }}</td>
-                <td>@if($value->type == 2) 经销商 @endif</td>
-                <td> {{$value->dealer['wc_nickname'].' / '.$value->dealer['id']}} </td>
-                <td>@if($value->admin)<color style="color:green">{{ $value->admin->account }}</color>@endif</td>
+                <td>{{ $value['id'] }}</td>
+                <td>{{ $value['wc_nickname'] }}</td>
+                <td>{{ $value['phone'] }}</td>
+                <td>@if($value['brand']) {{ $value['brand']['name'] }} @endif</td>
+                <td>{{ $value['employed_area'] }}</td>
+                <td>{{ $value['membership_time'] }}</td>
+                <td>@if($value['integral_scale']) {{ $value['integral_scale'] }}% @else 默认比例 @endif</td>
+                <td>@if($value['admin'])<color style="color:green">{{ $value['admin']['account'] }}</color>@endif</td>
                 <td>
-                    @if($value->admin)
-                        <a class="btn btn-xs btn-info" onclick="dealer_url({{ $value->admin_id }});">查看</a>
+                    @if($value['admin'])
+                        <a class="btn btn-xs btn-info" onclick="dealer_url({{ $value['admin_id'] }});">查看</a>
                     @endif
                 </td>
-                <td>{{ $value->cmmission }} 元</td>
-                <td>{{$value->created_at}}</td>
+                <td>{{ $value['commission'] }} 元</td>
+                <td>{{ $value['created_at'] }}</td>
                 <td>
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                        <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral',['id'=>$value->id]) }}');">查看推广金</a>
-                        {{--<a class="btn btn-xs btn-info" onclick="set_integral('{{ route('set_integral') }}',{{$value->id}},'{{csrf_token()}}');">佣金比例设置</a>--}}
+                        <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral', $value['id']) }}');">查看推广金</a>
+                        <a class="btn btn-xs btn-info" onclick="set_integral(this, {{ $value['integral_scale'] }});" data-url="{{ route('set_integral_scale', $value['id']) }}">佣金比例设置</a>
                         @if(has_menu($menu,'admin/setMemberTime'))
-                            <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
+                            <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value['id'] }}, '{{date('Y-m-d', strtotime($value['membership_time']))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
                         @endif
                     </div>
                 </td>
@@ -132,21 +130,28 @@
         });
     }
 
-    function set_integral(url,id,token) {
-        var content = '<form action=' + url + ' class="form-horizontal" style="margin-top: 20px" method="post">' +
-            '<div class="form-group"><label class="col-sm-4 control-label no-padding-right"> 佣金比例： </label>' +
-            '{{csrf_field()}}' +
-            '<input type="hidden" name="id" value="' + id + '">' +
-            '<input type="text" name="scale" class="col-xs-10 col-sm-5"/>' +
+    function set_integral(th, scale) {
+        var content = '<form class="form-horizontal" style="margin-top: 20px">' +
+            '<div class="form-group">' +
+            '<label class="col-sm-4 control-label no-padding-right" style="margin: 4px 10px 0 0"> 佣金百分比：</label>' +
+            '<input type="text" value="'+scale+'" class="scale" >' +
             '</div>' +
-            '<div class="col-md-offset-1 col-md-9" style="text-align: center">' +
-            '<button class="btn btn-info" type="submit">修改</button>' +
             '</form>';
-        layer.open({
-            type: 1,
-            skin: 'layui-layer-rim', //加上边框
-            area: ['440px', '250px'], //宽高
-            content: content
+        layer.confirm(content, {
+            btn: ['确定','取消'],
+            skin: 'layui-layer-rim',
+            area: ['370px', '220px']
+        }, function(){
+            var scale = $('.scale').val(),
+                url = $(th).attr('data-url');
+            $.post(url, {integral_scale:scale, _token:"{{ csrf_token() }}"}, function(ret){
+                if(ret.state == 0) {
+                    layer.msg(ret.error, {icon: 1});
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000)
+                }
+            });
         });
     }
 </script>

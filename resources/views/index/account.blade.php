@@ -18,29 +18,33 @@
                     <span class="flex title">银行/账户</span>
                     <select name="type" class="flexitem" data-rule="*" data-errmsg="请选择银行或账户类型">
                         <option value="">请选择银行或账户类型</option>
-                        <option value="支付宝"@if($user->user_account) @if($user->user_account->type == '支付宝')selected @endif @endif>支付宝</option>
-                        <option value="工商银行"@if($user->user_account) @if($user->user_account->type == '工商银行')selected @endif @endif>工商银行</option>
-                        <option value="农业银行"@if($user->user_account) @if($user->user_account->type == '农业银行')selected @endif @endif>农业银行</option>
-                        <option value="建设银行"@if($user->user_account) @if($user->user_account->type == '建设银行')selected @endif @endif>建设银行</option>
-                        <option value="交通银行"@if($user->user_account) @if($user->user_account->type == '交通银行')selected @endif @endif>交通银行</option>
-                        <option value="招商银行"@if($user->user_account) @if($user->user_account->type == '招商银行')selected @endif @endif>招商银行</option>
+                        <option value="支付宝"@if(optional($user->user_account)->type == '支付宝')selected @endif>支付宝</option>
+                        {{--<option value="工商银行"@if(optional($user->user_account)->type == '工商银行')selected @endif>工商银行</option>--}}
+                        {{--<option value="农业银行"@if(optional($user->user_account)->type == '农业银行')selected @endif>农业银行</option>--}}
+                        {{--<option value="建设银行"@if(optional($user->user_account)->type == '建设银行')selected @endif>建设银行</option>--}}
+                        {{--<option value="交通银行"@if(optional($user->user_account)->type == '交通银行')selected @endif>交通银行</option>--}}
+                        {{--<option value="招商银行"@if(optional($user->user_account)->type == '招商银行')selected @endif>招商银行</option>--}}
                     </select>
                     <i class="flex center bls bls-yjt"></i>
                 </label>
                 <label class="flex centerv row">
                     <span class="flex title">开户姓名</span>
-                    <input type="text" name="name" placeholder="请填写您的开户姓名/真实姓名" class="flexitem input normal" @if($user->user_account) value="{{ $user->user_account->name }}" @endif data-rule="cname" data-errmsg="请填写您的开户姓名/真实姓名">
+                    <input type="text" name="name" placeholder="请填写您的开户姓名/真实姓名" class="flexitem input normal" value="{{ optional($user->user_account)->name }}" data-rule="cname" data-errmsg="请填写您的开户姓名/真实姓名">
                 </label>
                 <label class="flex centerv row">
                     <span class="flex title">卡号/账户</span>
-                    <input type="text" name="card" placeholder="请填写您的银行卡/账户" class="flexitem input normal" @if($user->user_account) value="{{ $user->user_account->card }}" @endif data-rule="*" data-errmsg="请填写您的银行卡/账户">
+                    <input type="text" name="card" placeholder="请填写您的银行卡/账户" class="flexitem input normal" value="{{ optional($user->user_account)->card }}" data-rule="*" data-errmsg="请填写您的银行卡/账户">
+                </label>
+                <label class="flex centerv row">
+                    <span class="flex title">手机号</span>
+                    <input type="text" name="phone" placeholder="请填写获取验证码手机号" class="flexitem input normal" value="{{ $user->phone }}" data-rule="*" data-errmsg="请填写获取验证码手机号">
                 </label>
             </div>
             <a href="javascript:;" class="flex center submit next">下一步</a>
         </form>
         <form action="{{ route('index.checkCode') }}" class="step2" onsubmit="return false" style="display: none">
             {{ csrf_field() }}
-            <input type="hidden" name="user_id"@if($user->user_account)  value="{{ $user->user_account->user_id }}" @endif>
+            <input type="hidden" name="user_id" value="{{ optional($user->user_account)->user_id }}">
 
             <div class="tips">系统已给本账号用户手机发送了短信验证，请输入验证码之后提交。</div>
             <div class="block">

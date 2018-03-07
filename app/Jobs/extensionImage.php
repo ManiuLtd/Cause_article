@@ -53,7 +53,7 @@ class extensionImage implements ShouldQueue
         $ret = $temporary->uploadImage(config('app.image_real_path')."uploads/" . $image);
 
         //推送文本消息
-        $this->extension_tyep($this->user->extension_type, $this->user->extension_num, $this->user->openid);
+        message($this->user->openid, 'text', "分享下图邀请您的朋友同事也来使用事业头条，推荐好友成为正式会员，您将获得丰厚佣金！\n\n赶紧长按保存并分享下方图片吧\n\n↓↓↓↓↓");
         //推送推广图片
         message($this->user->openid, 'image', $ret->media_id);
     }

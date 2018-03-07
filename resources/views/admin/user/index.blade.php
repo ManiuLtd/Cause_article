@@ -21,9 +21,7 @@
                 <th>手机号</th>
                 <th>品牌</th>
                 <th>从业地区</th>
-                <th>用户类型</th>
                 <th>推广人/id</th>
-                <th>经销商/id</th>
                 <th>会员到期时间</th>
                 <th>推广人数</th>
                 <th>创建时间</th>
@@ -39,18 +37,14 @@
                 <td>{{$value->phone}}</td>
                 <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
                 <td>{{$value->employed_area}}</td>
-                <td>@if($value->type == 1) 普通用户 @endif</td>
                 <td> {{$value->extension['wc_nickname'].' / '.$value->extension['id']}} </td>
-                <td> {{$value->dealer['wc_nickname'].' / '.$value->dealer['id']}} </td>
                 <td>{{$value->membership_time}}</td>
                 <td>{{$value->extension_num}}</td>
                 <td>{{$value->created_at}}</td>
                 <td>
                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                        @if(has_menu($menu,'/admin/user') && !$value['is_dealer'])
+                        @if(has_menu($menu,'/admin/user'))
                             <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
-                        @elseif(has_menu($menu,'/admin/user') && $value['is_dealer'] == 1)
-                            <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为二级经销商</a>
                         @endif
                         @if(has_menu($menu,'admin/setMemberTime'))
                             <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>

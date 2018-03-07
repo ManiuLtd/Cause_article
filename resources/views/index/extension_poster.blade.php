@@ -50,7 +50,7 @@
     </div>
 
     <!--提示-->
-    @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
+{{--    @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')--}}
 
     <img src="{{ $head }}" class="hidden user">
     <img src="{{ $pic }}" class="hidden qrcode">
@@ -185,7 +185,10 @@
     $('#share').click(_.throttle(function () {
         var base64 = $('.img').attr('src'),
             url = "{{ route('get_share_photo') }}";
+        showProgress('正在发送图片');
         $.post(url, {img: base64, _token: "{{ csrf_token() }}"}, function (ret) {
+            console.log(ret);
+            hideProgress();
             $(".win").show();
         });
     }, 3000, { 'trailing': false }));
