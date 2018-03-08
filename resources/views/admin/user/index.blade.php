@@ -12,57 +12,91 @@
         <input type="text" name="value" class="input" value="{{request()->value}}">
         <button class="btn btn-sm btn-info" type="submit">&nbsp;搜索&nbsp;</button>
     </form>
-    <div class="table-responsive">
-        <table id="sample-table-1" class="table table-striped table-bordered table-hover">
-            <thead>
-            <tr>
-                <th>id</th>
-                <th>微信昵称</th>
-                <th>手机号</th>
-                <th>品牌</th>
-                <th>从业地区</th>
-                <th>推广人/id</th>
-                <th>会员到期时间</th>
-                <th>推广人数</th>
-                <th>创建时间</th>
-                <th>操作</th>
-            </tr>
-            </thead>
+    <form action="{{ route('admin_extension') }}" id="form" method="post">
+        {{ csrf_field() }}
+        <div class="table-responsive">
+            <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    @if(has_menu($menu, '/admin/admin_extension'))
+                        <th class="center">
+                            <label>
+                                <input type="checkbox" class="ace"/>
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                    @endif
+                    <th>id</th>
+                    <th>微信昵称</th>
+                    <th>手机号</th>
+                    <th>品牌</th>
+                    <th>从业地区</th>
+                    <th>推广人/id</th>
+                    <th>会员到期时间</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
 
-            <tbody>
-            @foreach($list as $value)
-            <tr>
-                <td>{{$value->id}}</td>
-                <td>{{$value->wc_nickname}}</td>
-                <td>{{$value->phone}}</td>
-                <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
-                <td>{{$value->employed_area}}</td>
-                <td> {{$value->extension['wc_nickname'].' / '.$value->extension['id']}} </td>
-                <td>{{$value->membership_time}}</td>
-                <td>{{$value->extension_num}}</td>
-                <td>{{$value->created_at}}</td>
-                <td>
-                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                        @if(has_menu($menu,'/admin/user'))
-                            <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
+                <tbody>
+                @foreach($list as $value)
+                <tr>
+                    @if(has_menu($menu, '/admin/admin_extension'))
+                        @if(empty($value->admin_id) && empty($value->admin_type))
+                            <td class="center">
+                                <label>
+                                    <input type="checkbox" name="user_id[]" class="ace" value="{{ $value->id }}"/>
+                                    <span class="lbl"></span>
+                                </label>
+                            </td>
+                        @else
+                            <td class="center">-</td>
                         @endif
-                        @if(has_menu($menu,'admin/setMemberTime'))
-                            <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
-                        @endif
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
-        <div style="text-align: center">
-            {{$list->appends(['type'=>request()->type,'key'=>request()->key,'value'=>request()->value])->links()}}
-        </div>
-    </div><!-- /.table-responsive -->
+                    @endif
+                    <td>{{$value->id}}</td>
+                    <td>{{$value->wc_nickname}}</td>
+                    <td>{{$value->phone}}</td>
+                    <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
+                    <td>{{$value->employed_area}}</td>
+                    <td> {{$value->extension['wc_nickname'].' / '.$value->extension['id']}} </td>
+                    <td>{{$value->membership_time}}</td>
+                    <td>{{$value->created_at}}</td>
+                    <td>
+                        <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                            @if(has_menu($menu,'/admin/user'))
+                                <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
+                            @endif
+                            @if(has_menu($menu,'admin/setMemberTime'))
+                                <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+                </tbody>
+            </table>
+            @if(has_menu($menu, '/admin/admin_extension'))
+                <select name="admin_id">
+                    @foreach($admin as $value)
+                        <option value="{{ $value->id }}">{{ $value->account }}</option>
+                    @endforeach
+                </select>
+                <a class="btn btn-sm btn-info distribution">分配</a>
+            @endif
+            <div style="text-align: center">
+                {{$list->appends(['type'=>request()->type,'key'=>request()->key,'value'=>request()->value])->links()}}
+            </div>
+        </div><!-- /.table-responsive -->
+    </form>
 </div><!-- /span -->
 <script type="text/javascript" src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
 <script type="text/javascript" src="/admin/layer/layer.js"></script>
 <script>
+    //提交分配
+    $('.distribution').click(function(){
+        $('#form').submit();
+    });
+
     function setMembertime(th, id, time) {
         var content = '<form class="form-horizontal" style="margin-top: 20px">' +
             '<div class="form-group">' +
@@ -86,24 +120,6 @@
                     }, 1000)
                 }
             });
-        });
-    }
-
-    function set_integral(url,id,token) {
-        var content = '<form action=' + url + ' class="form-horizontal" style="margin-top: 20px" method="post">' +
-            '<div class="form-group"><label class="col-sm-4 control-label no-padding-right"> 佣金比例： </label>' +
-            '{{csrf_field()}}' +
-            '<input type="hidden" name="id" value="' + id + '">' +
-            '<input type="text" name="scale" class="col-xs-10 col-sm-5"/>' +
-            '</div>' +
-            '<div class="col-md-offset-1 col-md-9" style="text-align: center">' +
-            '<button class="btn btn-info" type="submit">修改</button>' +
-            '</form>';
-        layer.open({
-            type: 1,
-            skin: 'layui-layer-rim', //加上边框
-            area: ['440px', '250px'], //宽高
-            content: content
         });
     }
 </script>

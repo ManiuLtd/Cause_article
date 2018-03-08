@@ -42,10 +42,10 @@
 						<div class="flex list">
 							<div class="flex centerv price">
 								<span class="flex">1个月</span>
-								<em>&yen;19.9</em>
+								<em>&yen;39.9</em>
 							</div>
 							<div class="flexitem endh ">
-								<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
+								<a href="javascript:;" class="flex center discounts" data-price="39.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
 							</div>
 						</div>
 						<div class="flex list">
@@ -60,36 +60,6 @@
 					</div>
 				</div>
 			</div>
-
-			{{--<div class="option">--}}
-				{{--<div class="discount">--}}
-					{{--<div class="flex sale">--}}
-						{{--<div class="flexv">--}}
-							{{--<div class="price">--}}
-								{{--<span>12个月</span>--}}
-								{{--<em>&yen; 99</em>--}}
-							{{--</div>--}}
-							{{--<div class="cost">--}}
-								{{--<i class="original">原价 199元</i>--}}
-								{{--<span>立省100元</span>--}}
-							{{--</div>--}}
-							{{--<div class="flex center cornu">优惠</div>--}}
-						{{--</div>--}}
-						{{--<div class="flexitem endh ">--}}
-							{{--<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session()->get('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>--}}
-						{{--</div>--}}
-					{{--</div>--}}
-					{{--<div class="flex month">--}}
-						{{--<div class="flexv center price">--}}
-							{{--<span>1个月</span>--}}
-							{{--<em>&yen; 19.9</em>--}}
-						{{--</div>--}}
-						{{--<div class="flexitem endh">--}}
-							{{--<a href="javascript:;" class="flex center discounts" data-price="19.9" data-type="1" data-uid="{{session()->get('user_id')}}" data-title="爆文1个月会员">开通</a>--}}
-						{{--</div>--}}
-					{{--</div>--}}
-				{{--</div>--}}
-			{{--</div>--}}
 		</div>
 	</div>
 	<div class="flex center once">

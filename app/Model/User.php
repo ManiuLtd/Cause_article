@@ -19,6 +19,15 @@ class User extends Model
     }
 
     /**
+     * 用户订单
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orderList()
+    {
+        return $this->hasMany(Order::class, 'uid');
+    }
+
+    /**
      * 所属后台员工
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

@@ -34,7 +34,7 @@ class UserController extends CommonController
         $uid = session('user_id');
         $res = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if($res->admin_id && $res->admin_type) {
+        if(optional($res)->admin_id && optional($res)->admin_type) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)

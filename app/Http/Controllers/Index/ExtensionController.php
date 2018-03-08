@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Index;
 use App\Http\Controllers\TraitFunction\Notice;
 use App\Model\Integral;
 use App\Model\IntegralUse;
+use App\Model\Order;
 use App\Model\User;
 use App\Model\UserAccount;
 use Carbon\Carbon;
@@ -28,16 +29,70 @@ class ExtensionController extends CommonController
      */
     public function index()
     {
-        $where = ['user_id' => \Session::get('user_id'),'state' => 1];
-        $tomorrow = Carbon::tomorrow();
-        $today = Carbon::today();
-        $today_integral = Integral::where($where)->whereBetween('created_at',[$today,$tomorrow])->sum('price');
+        $where = ['user_id' => session('user_id')];
+        $newwhere = array_merge($where, ['state'=>1]);
+        $today_integral = Integral::where($newwhere)->whereDate('created_at', date('Y-m-d', time()))->sum('price');
         $use_integral = IntegralUse::where($where)->sum('integral');
-//        $where = array_merge($where, ['state'=>1]);
+
         $tot_integral = Integral::where($where)->sum('price');
         $nu_integral = $tot_integral - $use_integral;
 
         return view('index.extension', compact('today_integral','tot_integral','use_integral','nu_integral'));
+    }
+
+    public function rules()
+    {
+        $image = User::where('id', session('user_id'))->value('extension_image');
+
+        return view('index.extension_rules', compact('image'));
+    }
+
+    /**
+     * 推广明细
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function extensionDetail()
+    {
+        $user = User::select('id', 'integral_scale')->where('id', session('user_id'))->first();
+
+        $extension_today = $this->extension($user, true);
+
+        $extension_all = $this->extension($user);
+
+        return view('index.extension_detail', compact('user', 'extension_today', 'extension_all'));
+    }
+
+    /**
+     * 明细列表
+     * @param $type
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function extensionList(Request $request, $type)
+    {
+        $user_id = session('user_id');
+        if($type == 'user') {
+            $lists = User::where('extension_id', $user_id)->orderBy('extension_at', 'desc')->paginate(7);
+            $tem = 'index.extension_user_list';
+            $page_tem = 'index.template.__extension_user';
+        } elseif($type == 'order') {
+            $users = User::has('orderList')->where('extension_id', $user_id)->orderBy('extension_at', 'desc')->paginate(7);
+            foreach ($users as $user) {
+                $orders = Order::with(['user' => function($query){
+                    $query->select('id', 'head', 'wc_nickname');
+                }])->select('uid', 'price', 'pay_time')->where(['uid' => $user->id, 'state' => 1, 'refund_state' => 0])->get()->toarray();
+                $list[] = $orders;
+            }
+            $lists = collect($list)->collapse();
+            $tem = 'index.extension_order_list';
+            $page_tem = 'index.template.__extension_order';
+        }
+
+        if($request->ajax()) {
+            $html = view($page_tem)->render();
+            return response()->json(['html' => $html]);
+        }
+
+        return view($tem, compact('lists', 'users'));
     }
 
     /**
@@ -133,9 +188,6 @@ class ExtensionController extends CommonController
      */
     public function getMoney( Request $request, IntegralUse $integralUse )
     {
-        if($request->integral < 100) {
-            return response()->json(['state' => 401, 'code' => 0, 'msg' => '申请提现金额不能少于100']);
-        }
         $integralUse->fill($request->all());
         $integralUse->user_id = \Session::get('user_id');
         $integralUse->created_at = date('Y-m-d H:i:s',time());

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Model\Admin;
 use App\Model\Integral;
 use App\Model\User;
 use Illuminate\Http\Request;
@@ -33,9 +34,11 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
 
+        $admin = Admin::where('gid', 14)->get();
+
         $menu = $this->menu; $active = $this->active;
 
-        return view('admin.user.index',compact('list','menu','active'));
+        return view('admin.user.index',compact('list','menu','active', 'admin'));
     }
 
     /**
@@ -74,6 +77,19 @@ class UserController extends CommonController
         $active = $this->active;
 
         return view('admin.user.dealer_index',compact('list','menu','active'));
+    }
+
+    /**
+     * 把用户变更为经销商并成为后台员工下级
+     * @param Request $request
+     */
+    public function adminExtension(Request $request)
+    {
+        foreach ($request->user_id as $user) {
+            User::where('id', $user)->update(['type' => 2, 'admin_id' => $request->admin_id, 'admin_type' => 1]);
+        }
+
+        return redirect()->back();
     }
 
     /**

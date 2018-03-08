@@ -133,10 +133,16 @@ class WechatController extends Controller
             //用户已存在 -> 关联关系
             //会员时间过期或没有
             if(Carbon::parse('now')->gt(Carbon::parse($fuser->membership_time))){
-                if($fuser->extension_id == 0 && $fuser->dealer_id == 0 && $fuser->admin_id == 0) {
+                $pinfo = User::find($eventkey);
+                if($fuser->extension_id == 0 && $fuser->admin_id == 0 && $fuser->type == 1 && $pinfo->extension_id != $fuser->id) {
                     //当用户本来没有推广用户和经销商的时候
-                    $pinfo = User::find($eventkey);
-                    User::where('openid', $FromUserName)->update(['extension_id'=>$pinfo->id]);
+                    $data = [
+                        'extension_id' => $pinfo->id,
+                        'admin_id' => $pinfo->admin_id,
+                        'admin_type' => $pinfo->admin_type,
+                        'extension_at' => date('Y-m-d H:i:s', time())
+                    ];
+                    User::where('openid', $FromUserName)->update($data);
 
                     //推送【推荐会员成功提醒】模板消息
                     $msg = [
@@ -159,6 +165,9 @@ class WechatController extends Controller
                 'head' => $userinfores['headimgurl'],
                 'openid' => $userinfores['openid'],
                 'extension_id' => $pinfo->id,
+                'admin_id' => $pinfo->admin_id,
+                'admin_type' => $pinfo->admin_type,
+                'extension_at' => date('Y-m-d H:i:s', time()),
                 'subscribe' => $userinfores['subscribe']
             ];
             //保存用户
@@ -194,14 +203,14 @@ class WechatController extends Controller
         $puser = User::find($pid);
         if ( empty($user->dealer_id) && empty($user->extension_id) && $pid != $user_id && $user->type != 2 ) {
             if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
-                if ( $puser->type == 2 ) {
-                    $extension = 0;
-                    $dealer = $pid;
-                } else {
-                    $extension = $pid;
-                    $dealer = $puser->dealer_id;
-                }
-                User::where('id', $user_id)->update([ 'extension_id' => $extension, 'dealer_id' => $dealer, 'subscribe' => 1 ]);
+
+                User::where('id', $user_id)->update([
+                    'extension_id' => $pid,
+                    'admin_id' => $puser->admin_id,
+                    'admin_type' => $puser->admin_type,
+                    'extension_at' => date('Y-m-d H:i:s', time()),
+                    'subscribe' => 1 ]
+                );
 
                 //推送【推荐会员成功提醒】模板消息
                 $msg = [

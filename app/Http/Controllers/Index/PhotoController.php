@@ -49,11 +49,11 @@ class PhotoController extends Controller
             }
         }
         if(\request()->ajax()) {
-            $view = view('index._photo_list_template', compact('photos'))->render();
+            $view = view('index.template.__photo_list', compact('photos'))->render();
             return response()->json(['html'=>$view]);
         }
 
-        return view('index.extension_photo_list', compact('types', 'user', 'photos'));
+        return view('index.photo_list', compact('types', 'user', 'photos'));
     }
 
     /**
@@ -92,7 +92,7 @@ class PhotoController extends Controller
         //弹窗显示品牌信息
         $brand = Brand::find($user->brand_id);
 
-        return view('index.extension_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo', 'brand'));
+        return view('index.photo_poster', compact('user', 'photo', 'pic', 'head', 'rand_photo', 'brand'));
     }
 
     /**
@@ -104,7 +104,13 @@ class PhotoController extends Controller
      */
     public function randPhoto( $count, $type )
     {
-        $photo = Photo::get()->random($count);
+        $brand_id = User::where('id', session('user_id'))->value('brand_id');
+        if($brand_id) {
+            $brand = Brand::where('id', '<>', $brand_id)->get();
+            $photo = Photo::whereNotIn('brand_id', $brand->pluck('id')->all())->get()->random($count);
+        } else {
+            $photo = Photo::get()->random($count);
+        }
         if($type == 1) {
             return $photo->all();
         } elseif ($type == 2) {

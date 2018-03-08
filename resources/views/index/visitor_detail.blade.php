@@ -43,7 +43,7 @@
 								<img src="{{ $value->user->head }}" class="fitimg">
 							</div>
 							<div class="flexv centerh text">
-								<div class="tex">{{ $value->user->wc_nickname }}</div>
+								<div class="flexv tex">{{ $value->user->wc_nickname }}</div>
 								<div class="data">
 									<span>{{ date('Y-m-d H:s', strtotime($value->created_at)) }}</span>
 								</div>
@@ -64,21 +64,21 @@
 						<div class="flex box">
 							<div class="flexv center img">
 								<img class="flex" src="{{ $res->user->head }}">
-								<span class="flex">{{ $res->user->wc_nickname }}</span>
+								<span class="flexv">{{ $res->user->wc_nickname }}</span>
 							</div>
 							@if(count($value->extension))
 								@foreach($value->extension as $user)
 									<i class="flex centerh bls bls-right"></i>
 									<div class="flexv center img">
 										<img class="flex" src="{{ $user['user']['head'] }}">
-										<span class="flex">{{ $user['user']['wc_nickname'] }}</span>
+										<span class="flexv">{{ $user['user']['wc_nickname'] }}</span>
 									</div>
 								@endforeach
 							@endif
 							<i class="flex centerh bls bls-right"></i>
 							<div class="flexv center img">
 								<img class="flex" src="{{ $value->user->head }}">
-								<span class="flex">{{ $value->user->wc_nickname }}</span>
+								<span class="flexv">{{ $value->user->wc_nickname }}</span>
 							</div>
 						</div>
 					</div>

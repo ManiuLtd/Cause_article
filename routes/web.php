@@ -19,6 +19,10 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('test', 'IndexController@test');
     //首页
     Route::get('/{type?}', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
+    //推荐文章链接
+    Route::view('extension_article', 'index.extension_article')->name('extension_article');
+    //提交推荐文章
+    Route::post('extension_article_post', 'IndexController@extensionArticle')->name('extension_article_post');
     //品牌接口
     Route::get('brand_list', 'IndexController@brandList')->name('brand_list');
     //完善弹窗信息
@@ -43,6 +47,8 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('user_article_share/{articles}/{ex_id?}', 'UserArticleController@userArticleShare')->name('user_article_share');
     //用户中心
     Route::get('user/{type?}/{dealer?}', 'UserController@index')->name('index.user');
+    //查看推广规则
+    Route::get('extension_rule', 'ExtensionController@rules')->name('extension_rule');
     //获取用户的base64头像和base64二维码
     Route::get('head_qrcode_base64', 'UserController@headQrcodeBase64')->name('head_qrcode_base64');
     //查看用户基础信息
@@ -51,6 +57,10 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('qrcode_help', 'UserController@qrcodeHelp')->name('qecode_help');
     //推广中心
     Route::get('extension', 'ExtensionController@index')->name('index.extension');
+    //推广明细
+    Route::get('extension_detail', 'ExtensionController@extensionDetail')->name('extension_detail');
+    //明细列表
+    Route::get('extension_list/{type}', 'ExtensionController@extensionList')->name('extension_list');
     //提现申请
     Route::get('cash', 'ExtensionController@applyCash')->name('index.apply_cash');
     //绑定提现账户
@@ -128,6 +138,8 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('user', 'UserController@index')->name('admin.user');
         //经销商列表
         Route::get('user_dealer', 'UserController@dealerList')->name('admin.dealerlist');
+        //
+        Route::post('admin_extension', 'UserController@adminExtension')->name('admin_extension');
         //成为经销商
         Route::get('be_dealer/{user}', 'UserController@be_dealer')->name('admin.be_dealer');
         //品牌管理资源路由

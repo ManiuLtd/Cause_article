@@ -27,7 +27,7 @@ class ArticleController extends CommonController
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
         if(request()->ajax()) {
-            $html = view('index._article_search_template', compact('list'))->render();
+            $html = view('index.template.__article_search', compact('list'))->render();
 
             return response()->json(['html' => $html]);
         }

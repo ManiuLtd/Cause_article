@@ -26,16 +26,16 @@
 			<a href="javascript:;" class="flex center bls bls-yjt more"></a>
 		</div>
 		<div class="flexitemv mainbox">
-			<div class="flex banner">
-				<div class="swiper-container">
-					<div class="swiper-wrapper">
-						@foreach($banner_list as $value)
-							<div class="swiper-slide"><img class="fitimg" src="/uploads/{{ $value->image }}"/></div>
-						@endforeach
-					</div>
-					<div class="swiper-pagination"></div>
-				</div>
-			</div>
+			{{--<div class="flex banner">--}}
+				{{--<div class="swiper-container">--}}
+					{{--<div class="swiper-wrapper">--}}
+						{{--@foreach($banner_list as $value)--}}
+							{{--<div class="swiper-slide"><img class="fitimg" src="/uploads/{{ $value->image }}"/></div>--}}
+						{{--@endforeach--}}
+					{{--</div>--}}
+					{{--<div class="swiper-pagination"></div>--}}
+				{{--</div>--}}
+			{{--</div>--}}
 			<form action="{{route('article_search')}}" method="get" id="search">
 				<div class="flex center search">
 					<div class="flex centerv home-sea">
@@ -73,6 +73,10 @@
 			<p class="flex center ending hide">已全部加载~</p>
 		</div>
 	</div>
+
+	<!--推荐好文章-->
+	<a href="{{ route('extension_article') }}" class="flex center renew">推荐好文章</a>
+
 	@include('index.public.footer')
 
 	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')

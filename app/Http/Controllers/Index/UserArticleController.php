@@ -51,15 +51,18 @@ class UserArticleController extends CommonController
         $uid = session('user_id');
         $user = User::find($uid);
 
-        //创建关联关系
-        if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid) {
-            $user->extension_id = $articles->uid;
-            $user->save();
-        }
-
         $addfootid = '';
         $fkarticle = '';
         $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
+
+        //创建关联关系并关联后台员工id和类型
+        if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid && $user->type == 1 && $uarticle->extension_id != $uid) {
+            $user->admin_id = $uarticle->user->admin_id;
+            $user->admin_type = $uarticle->user->admin_type;
+            $user->extension_id = $articles->uid;
+            $user->extension_at = date('Y-m-d H:i:s', time());
+            $user->save();
+        }
 
         //获取品牌
         $brand = Brand::find(optional($uarticle->user)->brand_id);
@@ -234,7 +237,7 @@ class UserArticleController extends CommonController
         $res = $visitor_article;
 
         if(\request()->ajax()){
-            $html = view('index.public._visitor_template', compact('res', 'footprint'))->render();
+            $html = view('index.template.__visitor', compact('res', 'footprint'))->render();
             return response()->json(['html' => $html]);
         }
 

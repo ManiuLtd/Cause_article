@@ -8,7 +8,9 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Model\{Article,Banner,Brand,Footprint,Report,User,UserArticles};
+use App\Model\{
+    Article, Banner, Brand, ExtensionArticle, Footprint, Photo, Report, User, UserArticles
+};
 use App\Model\ArticleType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -17,7 +19,12 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-
+//        $list = Photo::get();
+//        foreach ($list as $value) {
+//            if(!$value->brand_id) {
+//                Photo::where('id', $value->id)->update(['brand_id' => 0]);
+//            }
+//        }
     }
     /**
      * 首页
@@ -52,7 +59,7 @@ class IndexController extends CommonController
         })->paginate(7);
 
         if(\request()->ajax()) {
-            $html = view('index._index_template', compact('list'))->render();
+            $html = view('index.template.__index', compact('list'))->render();
             return response()->json(['html' => $html]);
         }
 
@@ -60,6 +67,13 @@ class IndexController extends CommonController
         $package = wecahtPackage();
 
         return view('index.index', compact('banner_list', 'article_type', 'list', 'user', 'package'));
+    }
+
+    public function extensionArticle(Request $request)
+    {
+        ExtensionArticle::create(['user_id' => session('user_id'), 'url' => $request->url]);
+
+        return redirect()->route('index.index');
     }
 
     /**

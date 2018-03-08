@@ -99,7 +99,6 @@
      var page = 1;
      $(".mainbox.result").scroll(function() {
          var scrollTop = Math.ceil($(this).scrollTop()),thisHeight = $(this).height(),boxHeight = $(".listbox").height();
-         console.log(scrollTop,thisHeight,boxHeight);
          if((scrollTop + thisHeight) > boxHeight -10) {
              page++;
              if(page < {{ $list->lastPage() }}) {

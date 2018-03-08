@@ -122,7 +122,7 @@ class PayController extends Controller
                     $app = new Application(config('wechat'));
                     $p_user = User::where('id', $pay_user->extension_id)->select('wc_nickname', 'openid', 'integral_scale', 'extension_id', 'admin_id', 'admin_type')->first();
                     $scale = $p_user->integral_scale != 0 ? $p_user->integral_scale : 30;
-                    $price = number_format($order->price * ($scale / 100));
+                    $price = floor($order->price * ($scale / 100));
                     $data = [
                         'user_id'  =>  $pay_user->extension_id,
                         'price'    =>  $price,
@@ -147,7 +147,7 @@ class PayController extends Controller
 
                     if($p_user->extension_id) {
                         $pp_user = User::where('id', $p_user->extension_id)->select('openid', 'admin_id', 'admin_type')->first();
-                        $price = number_format($order->price * 0.1);
+                        $price = floor($order->price * 0.1);
                         $dealer_data = [
                             'user_id'  => $p_user->extension_id,
                             'price'    => $price,
