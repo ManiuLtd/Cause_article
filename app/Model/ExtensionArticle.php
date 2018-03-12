@@ -18,4 +18,9 @@ class ExtensionArticle extends Model
     protected $table = 'ex_article';
 
     protected $fillable = ['user_id', 'url'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

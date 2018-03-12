@@ -9,6 +9,11 @@ class User extends Model
 {
     protected $guarded = ['membership_time', 'extension_num', 'extension_type', '_token', '_method'];
 
+    public function getWcNickNameAttribute($value)
+    {
+        return str_limit($value, 14);
+    }
+
     /**
      * @title  所属品牌
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

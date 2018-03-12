@@ -19,12 +19,7 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-//        $list = Photo::get();
-//        foreach ($list as $value) {
-//            if(!$value->brand_id) {
-//                Photo::where('id', $value->id)->update(['brand_id' => 0]);
-//            }
-//        }
+        session(['user_id'=>330]);
     }
     /**
      * 首页

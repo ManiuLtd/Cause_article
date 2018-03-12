@@ -85,7 +85,7 @@
         user = document.querySelector(".user"),
         qrcode = document.querySelector(".qrcode"),
         src = "{{ $photo->url }}",
-        name = "{{ $user->wc_nickname }}",
+        name = "{{ str_limit($user->wc_nickname, 10) }}",
         phone = "{{ $user->phone }}";
 
     @if($user->brand)

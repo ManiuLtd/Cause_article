@@ -10,10 +10,10 @@
 <body>
 <div id="open" class="flexv wrap">
 	<div class="flexitemv mainbox">
-		@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($shiptime->membership_time)))
+		@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($user->membership_time)))
 			<div class="state">状态：<span>未开通</span></div>
 		@else
-			<div class="state">有效期至：<span>{{\Carbon\Carbon::parse($shiptime->membership_time)->toDateString()}}</span></div>
+			<div class="state">有效期至：<span>{{\Carbon\Carbon::parse($user->membership_time)->toDateString()}}</span></div>
 		@endif
 		<div class="bjimg">
 			<img src="/index/image/dredge1.jpg" class="fitimg">
@@ -105,10 +105,10 @@
     });
 
 	var time;
-	@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($shiptime->membership_time)))
+	@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($user->membership_time)))
 	time = moment("{{date('Y-m-d H:i:s',time())}}","YYYY-MM-DD HH:mm:ss");
 	@else
-	time = moment("{{$shiptime->membership_time}}","YYYY-MM-DD HH:mm:ss");
+	time = moment("{{$user->membership_time}}","YYYY-MM-DD HH:mm:ss");
 	@endif
     wx.config({
         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -116,11 +116,31 @@
         timestamp: {{$package['timestamp']}}, // 必填，生成签名的时间戳
         nonceStr: '{{$package['nonceStr']}}', // 必填，生成签名的随机串
         signature: '{{$package['signature']}}',// 必填，签名，见附录1
-        jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        jsApiList: ['chooseWXPay', 'onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
     });
     wx.error(function(res){
         alert(JSON.stringify(res));
     });
+
+    wx.ready(function(){
+        //分享微信好友
+        wx.onMenuShareAppMessage({
+            title: '{{ $user->wc_nickname }}邀请您一起开通使用事业爆文展业利器！', // 分享标题1
+            desc: '超多精彩爆文，每日更新推送，赶紧来开通吧！', // 分享描述
+            link: "{{ route('open_member', session('user_id')) }}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: 'http://bw.eyooh.com/logo.jpg', // 分享图标
+            success: function () {}
+        });
+
+        //分享朋友圈
+        wx.onMenuShareTimeline({
+            title: '{{ $user->wc_nickname }}邀请您一起开通使用事业爆文展业利器！', // 分享标题
+            link: "{{ route('open_member', session('user_id')) }}", // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: 'http://bw.eyooh.com/logo.jpg', // 分享图标
+            success: function () {}
+        });
+    });
+
 	$('.discounts').click(function () {
 	    var price = $(this).attr('data-price'),
 			type  = $(this).attr('data-type'),

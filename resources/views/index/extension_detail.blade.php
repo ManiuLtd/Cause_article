@@ -13,12 +13,12 @@
     <div class="flexv partner-container">
         <div class="between theme-column">
             <div class="flex center theme">今日总收入</div>
-            <div class="flex center theme">{{ number_format(($extension_today[2] + $extension_today[5]), 2) }}元</div>
+            <div class="flex center theme">{{ number_format(($extension_today[3] + $extension_today[7]), 2) }}元</div>
         </div>
         <ul class="today-datum-list">
             <li class="between">
                 <div class="flex center title sub-title">我的推广奖金({{ $user->integral_scale ? $user->integral_scale :30 }}%×付费金额)</div>
-                <div class="flex center datum-cont">{{ number_format($extension_today[2], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_today[3], 2) }}元</div>
             </li>
             <li class="between">
                 <div class="flex center title">推广人数</div>
@@ -36,19 +36,19 @@
         <ul class="today-datum-list">
             <li class="between">
                 <div class="flex center title sub-title">下级推广抽成(10%×付费金额)</div>
-                <div class="flex center datum-cont">{{ number_format($extension_today[5], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_today[7], 2) }}元</div>
             </li>
             <li class="between">
                 <div class="flex center title">推广人数</div>
-                <div class="flex center datum-cont">{{ $extension_today[3] }}人</div>
-            </li>
-            <li class="between">
-                <div class="flex center title">付费人数</div>
                 <div class="flex center datum-cont">{{ $extension_today[4] }}人</div>
             </li>
             <li class="between">
+                <div class="flex center title">付费人数</div>
+                <div class="flex center datum-cont">{{ $extension_today[5] }}人</div>
+            </li>
+            <li class="between">
                 <div class="flex center title">付费金额</div>
-                <div class="flex center datum-cont">{{ number_format($extension_today[5], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_today[6], 2) }}元</div>
             </li>
         </ul>
     </div>
@@ -56,12 +56,12 @@
     <div class="partner-container" style="margin-top:28px;">
         <div class="between theme-column">
             <div class="flex center theme">累计总收入</div>
-            <div class="flex center theme">{{ number_format(($extension_all[5] + $extension_all[2]), 2) }}元</div>
+            <div class="flex center theme">{{ number_format(($extension_all[3] + $extension_all[7]), 2) }}元</div>
         </div>
         <ul class="today-datum-list">
             <li class="between">
                 <div class="flex center title sub-title">我的推广奖金({{ $user->integral_scale ? $user->integral_scale :30 }}%×付费金额)</div>
-                <div class="flex center datum-cont">{{ number_format($extension_all[2], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_all[3], 2) }}元</div>
             </li>
             <li class="flex">
                 <a href="{{ route('extension_list', 'user') }}" class="between">
@@ -89,19 +89,19 @@
         <ul class="today-datum-list">
             <li class="between">
                 <div class="flex center title sub-title">下级推广抽成(10%×付费金额)</div>
-                <div class="flex center datum-cont">{{ number_format($extension_all[5], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_all[7], 2) }}元</div>
             </li>
             <li class="between">
                 <div class="flex center title">推广人数</div>
-                <div class="flex center datum-cont">{{ $extension_all[3] }}人</div>
-            </li>
-            <li class="between">
-                <div class="flex center title">付费人数</div>
                 <div class="flex center datum-cont">{{ $extension_all[4] }}人</div>
             </li>
             <li class="between">
+                <div class="flex center title">付费人数</div>
+                <div class="flex center datum-cont">{{ $extension_all[5] }}人</div>
+            </li>
+            <li class="between">
                 <div class="flex center title">付费金额</div>
-                <div class="flex center datum-cont">{{ number_format($extension_all[5], 2) }}元</div>
+                <div class="flex center datum-cont">{{ number_format($extension_all[6], 2) }}元</div>
             </li>
         </ul>
     </div>

@@ -75,7 +75,7 @@
 	</div>
 
 	<!--推荐好文章-->
-	<a href="{{ route('extension_article') }}" class="flex center renew">推荐好文章</a>
+	<a href="{{ route('extension_article') }}" class="flex center renew">提交好文章</a>
 
 	@include('index.public.footer')
 

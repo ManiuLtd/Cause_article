@@ -34,11 +34,16 @@ class UserController extends CommonController
         $uid = session('user_id');
         $res = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if(optional($res)->admin_id && optional($res)->admin_type) {
+        if($res->type == 1 && optional($res)->admin_id && optional($res)->admin_type) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
+            //普通用户推广链接进来的
+            if($type == 'ex_user') {
+                $puser = User::select('admin_id', 'admin_type')->where('id', $dealer)->first();
+                User::where('id', $uid)->update(['extension_id' => $dealer, 'admin_id' => $puser->admin_id, 'admin_type' => $puser->admin_type]);
+            }
         }
 
         //订单轮播展示
@@ -147,14 +152,28 @@ class UserController extends CommonController
      * 开通会员页面
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function openMember()
+    public function openMember($uid = 0)
     {
-        $shiptime = User::where('id', session()->get('user_id'))->select('membership_time')->first();
+        if($uid) {
+            $user = User::find(session('user_id'));
+            $puser = User::select('admin_id', 'admin_type')->where('id', $uid)->first();
+            //创建关联关系并关联后台员工id和类型
+            if(!$user->extension_id && $user->subscribe == 1 && $user->type == 1 && $user->extension_id != $uid) {
+                $user->admin_id = $puser->admin_id;
+                $user->admin_type = $puser->admin_type;
+                $user->extension_id = $uid;
+                $user->extension_at = date('Y-m-d H:i:s', time());
+                $user->ex_type = 3;
+                $user->save();
+            }
+        }
+
+        $user = User::where('id', session('user_id'))->select('wc_nickname', 'membership_time')->first();
 
         //微信支付配置
         $package = wecahtPackage();
 
-        return view('index.open_member', compact('shiptime', 'package'));
+        return view('index.open_member', compact('user', 'package'));
     }
 
     /**

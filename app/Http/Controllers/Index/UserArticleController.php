@@ -56,11 +56,12 @@ class UserArticleController extends CommonController
         $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
 
         //创建关联关系并关联后台员工id和类型
-        if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid && $user->type == 1 && $uarticle->extension_id != $uid) {
+        if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid && $user->type == 1 && $uarticle->user->extension_id != $uid) {
             $user->admin_id = $uarticle->user->admin_id;
             $user->admin_type = $uarticle->user->admin_type;
             $user->extension_id = $articles->uid;
             $user->extension_at = date('Y-m-d H:i:s', time());
+            $user->ex_type = 1;
             $user->save();
         }
 

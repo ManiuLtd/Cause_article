@@ -30,11 +30,18 @@
                 <div class="flex center rules-num">2</div>
                 <div class="rules-info">奖励金额将自动计入您的钱包，所获得的金额都可以提现。</div>
             </li>
-            <li class="flex center">
-                <button class="flex center btn extension">点击生成个人推广二维码</button>
+            {{--<li class="flex center">--}}
+                {{--<button class="flex center btn extension">点击生成个人推广二维码</button>--}}
+            {{--</li>--}}
+            <li class="between">
+                <a href="javascript:;" class="flex center btn extension">点击生成推广二维码</a>
+                <a href="javascript:;" data-url="{{ route('index.user', ['ex_user', session('user_id')]) }}" class="flex center btn href">点击复制推广链接</a>
             </li>
         </ul>
     </div>
+
+    <canvas id="myCanvas" style="display: none"></canvas>
+    <img src="/poster.jpg" id="background" style="display: none">
 
     <!--提示-->
     <div class="flex center hint">
@@ -45,13 +52,33 @@
         </div>
     </div>
 </div>
+
+<!--推广链接提示框-->
+<div id="wechat" class="flex center alert">
+    <div class="new"></div>
+    <div class="content wechat">
+        <h3 class="flex center">长按复制链接</h3>
+        <p class="flex center cont"></p>
+    </div>
+</div>
+
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 <script type="text/javascript" src="/js/common/functions.js"></script>
 <script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
 <script type="text/javascript">
+    $("a.href").click(function () {
+        $("#wechat").show();
+        $("#wechat").find(".content").addClass('trans');
+        $(".wechat p").text($(this).attr('data-url'));
+    });
+
+    $(".new").click(function () {
+        $(".alert").css({"display":"none"});
+    });
+
     $(".mask").click(function () {
-        $(".hint").css({"display":"none"});
+        $(".alert").css({"display":"none"});
         window.location.reload();
     });
 
@@ -62,7 +89,7 @@
     $(function () {
         $(".extension").click(_.throttle(function () {
             @if($image != '')
-                showProgress('正在发送海报');
+                showProgress('二维码正在火速制作中！请静待20秒~');
                 $.post("{{route('inviting')}}",{url:"{{ $image }}", type:1, _token:"{{csrf_token()}}"},function (ret) {
                     hideProgress();
                     if(ret.state == 0) {

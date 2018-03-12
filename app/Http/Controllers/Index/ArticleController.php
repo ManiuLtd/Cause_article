@@ -56,6 +56,22 @@ class ArticleController extends CommonController
     }
 
     /**
+     * 事业夜听喜欢数量+1
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function articleLike( $id, $type )
+    {
+        if($type == 1) {
+            Article::where('id', $id)->increment('like');
+        } elseif($type == 2){
+            UserArticles::where('id', $id)->increment('like');
+        }
+
+        return response()->json(['state' => 0]);
+    }
+
+    /**
      * @title 公共文章分享数+1
      * @param $article
      */

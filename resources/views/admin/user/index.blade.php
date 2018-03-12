@@ -33,6 +33,8 @@
                     <th>从业地区</th>
                     <th>推广人/id</th>
                     <th>会员到期时间</th>
+                    <th>推广方式</th>
+                    <th>推广时间</th>
                     <th>创建时间</th>
                     <th>操作</th>
                 </tr>
@@ -53,18 +55,20 @@
                             <td class="center">-</td>
                         @endif
                     @endif
-                    <td>{{$value->id}}</td>
-                    <td>{{$value->wc_nickname}}</td>
-                    <td>{{$value->phone}}</td>
+                    <td>{{ $value->id }}</td>
+                    <td>{{ $value->wc_nickname }}</td>
+                    <td>{{ $value->phone }}</td>
                     <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
                     <td>{{$value->employed_area}}</td>
-                    <td> {{$value->extension['wc_nickname'].' / '.$value->extension['id']}} </td>
-                    <td>{{$value->membership_time}}</td>
-                    <td>{{$value->created_at}}</td>
+                    <td>{{ $value->extension['wc_nickname'].' / '.$value->extension['id'] }} </td>
+                    <td>{{ $value->membership_time }}</td>
+                    <td>@if($value->ex_type == 1) 文章 @elseif($value->ex_type == 2) 二维码 @elseif($value->ex_type == 3) 购买页面 @endif</td>
+                    <td>{{ $value->extension_at }}</td>
+                    <td>{{ $value->created_at }}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             @if(has_menu($menu,'/admin/user'))
-                                <a href="{{route('admin.be_dealer',['id'=>$value->id])}}" class="btn btn-xs btn-primary">成为经销商</a>
+                                <a href="{{ route('admin.be_dealer',['id'=>$value->id]) }}" class="btn btn-xs btn-primary">成为经销商</a>
                             @endif
                             @if(has_menu($menu,'admin/setMemberTime'))
                                 <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>

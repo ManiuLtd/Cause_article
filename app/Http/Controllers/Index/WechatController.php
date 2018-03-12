@@ -24,7 +24,7 @@ class WechatController extends Controller
         $options = config('wechat');
         $app = new Application($options);
         //菜单
-        $this->button();
+//        $this->button();
 
         $app->server->setMessageHandler(function ($message) use ($app) {
             switch ($message->MsgType) {
@@ -140,7 +140,8 @@ class WechatController extends Controller
                         'extension_id' => $pinfo->id,
                         'admin_id' => $pinfo->admin_id,
                         'admin_type' => $pinfo->admin_type,
-                        'extension_at' => date('Y-m-d H:i:s', time())
+                        'extension_at' => date('Y-m-d H:i:s', time()),
+                        'ex_type' => 2
                     ];
                     User::where('openid', $FromUserName)->update($data);
 
@@ -168,7 +169,8 @@ class WechatController extends Controller
                 'admin_id' => $pinfo->admin_id,
                 'admin_type' => $pinfo->admin_type,
                 'extension_at' => date('Y-m-d H:i:s', time()),
-                'subscribe' => $userinfores['subscribe']
+                'subscribe' => $userinfores['subscribe'],
+                'ex_type' => 2
             ];
             //保存用户
             User::create($data);
@@ -205,11 +207,13 @@ class WechatController extends Controller
             if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
 
                 User::where('id', $user_id)->update([
-                    'extension_id' => $pid,
-                    'admin_id' => $puser->admin_id,
-                    'admin_type' => $puser->admin_type,
-                    'extension_at' => date('Y-m-d H:i:s', time()),
-                    'subscribe' => 1 ]
+                        'extension_id' => $pid,
+                        'admin_id' => $puser->admin_id,
+                        'admin_type' => $puser->admin_type,
+                        'extension_at' => date('Y-m-d H:i:s', time()),
+                        'ex_type' => 2,
+                        'subscribe' => 1
+                    ]
                 );
 
                 //推送【推荐会员成功提醒】模板消息

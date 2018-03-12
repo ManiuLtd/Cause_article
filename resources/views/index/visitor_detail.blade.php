@@ -45,7 +45,7 @@
 							<div class="flexv centerh text">
 								<div class="flexv tex">{{ $value->user->wc_nickname }}</div>
 								<div class="data">
-									<span>{{ date('Y-m-d H:s', strtotime($value->created_at)) }}</span>
+									<span>{{ date('Y-m-d H:i', strtotime($value->created_at)) }}</span>
 								</div>
 							</div>
 						</div>

@@ -74,6 +74,11 @@ class Report extends Model
             array_push($where, ['admin_id', $admin_id]);
         }
         array_push($where, ['admin_type', $admin_type]);
-        return Order::where($where)->whereBetween('pay_time', [ $last_day, $tot_tomorrow ])->count();
+        $orders = Order::where($where)->whereBetween('pay_time', [ $last_day, $tot_tomorrow ])->get();
+        $price = 0;
+        foreach ($orders as $order) {
+            $price += floor($order->price * 0.04);
+        }
+        return $price;
     }
 }

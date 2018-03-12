@@ -31,6 +31,8 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('article_search/{key?}', 'ArticleController@searchArticle')->name('article_search');
     //公共文章详情
     Route::get('article_details/{article}/{share?}', 'ArticleController@articleDetails')->name('article_details');
+    //文章喜欢数+1
+    Route::get('article_like/{id}/{type}', 'ArticleController@articleLike')->name('article_like');
     //分享公共文章成功
     Route::get('article_share/{article}', 'ArticleController@articleShare')->name('article_share');
     //我的文章
@@ -74,7 +76,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //提现记录
     Route::get('get_money_record/{integralUse?}', 'ExtensionController@getMoneyRecord')->name('get_money_record');
     //开通会员页面
-    Route::get('open_member', 'UserController@openMember')->name('open_member');
+    Route::get('open_member/{uid?}', 'UserController@openMember')->name('open_member');
     //获取用户在个人文章页面停留时间
     Route::post('user_article_time', 'UserArticleController@userArticleTime')->name('user_article_time');
     //在线咨询
@@ -132,6 +134,10 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::resource('admin_group', 'AdminGroupController');
         //后台用户管理资源路由
         Route::resource('admin_user', 'AdminUserController');
+        //提交好的文章列表
+        Route::get('good_article', 'ArticlesController@goodArticleList');
+        //删除提交的好文章
+        Route::post('delete_good_article/{article}', 'ArticlesController@deleteGoodArticle')->name('admin.delete_good_article');
         //文章管理资源路由
         Route::resource('articles', 'ArticlesController');
         //前台用户管理资源路由
@@ -192,6 +198,8 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('extract_complete/{integralUse}', 'ExtractCashController@complete')->name('admin.extract_complete');
         //客服修改会员时间
         Route::post('set_member_time', 'UserController@setMemberTime')->name('admin.set_member_time');
+        //审核提交的好文章内容
+        Route::post('examine_article/{article}', 'ArticlesController@examine')->name('examine_article');
     });
 
     //上传图片

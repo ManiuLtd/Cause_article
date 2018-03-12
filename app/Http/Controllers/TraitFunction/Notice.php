@@ -41,11 +41,13 @@ trait Notice
      */
     public function extension($me_user, $bool = false) : array
     {
-        $order = 0;
-        $order_price = 0;
-        $extension_user = 0;
-        $extension_order = 0;
-        $extension_order_price = 0;
+        $order = 0; //订单数
+        $order_price_tot = 0; //订单价格总计
+        $integral_price_tot = 0; //获得佣金合计
+        $extension_user = 0; //下级用户总数
+        $extension_order_tot = 0; //下级订单数
+        $extension_order_price = 0; //下级订单价格总计
+        $extension_integral_price_tot = 0; //获得下级佣金合计
         $users = User::select('id', 'integral_scale')->where('extension_id', $me_user->id)->when($bool, function($query) {
             return $query->whereDate('created_at', date('Y-m-d', time()));
         })->get();
@@ -53,8 +55,11 @@ trait Notice
             $data = ['state' => 1, 'refund_state' => 0];
             $where = array_merge($data, ['uid' => $user->id]);
             $order += Order::where($where)->count();
-            $price = Order::where($where)->sum('price') * ($me_user->integral_scale ? $me_user->integral_scale/100 : 0.3);
-            $order_price += floor($price);
+            $order_price = Order::where($where)->sum('price');
+            $integral_price = $order_price * ($me_user->integral_scale ? $me_user->integral_scale/100 : 0.3);
+            $order_price_tot += floor($order_price);
+            $integral_price_tot += floor($integral_price);
+
 
             $ex_users = User::select('id')->where('extension_id', $user->id)->when($bool, function ($query) {
                 return $query->whereDate('created_at', date('Y-m-d', time()));
@@ -62,13 +67,15 @@ trait Notice
             $extension_user += count($ex_users);
             foreach ($ex_users as $e_user) {
                 $where = array_merge($data, ['uid' => $e_user->id]);
-                $extension_order += Order::where($where)->count();
-                $price = Order::where($where)->sum('price') * 0.1;
-                $extension_order_price += floor($price);
+                $extension_order_tot += Order::where($where)->count();
+                $extension_price = Order::where($where)->sum('price');
+                $extension_integral_price = $extension_price * 0.1;
+                $extension_order_price += floor($extension_price);
+                $extension_integral_price_tot += floor($extension_integral_price);
             }
         }
 
-        return [count($users), $order, $order_price, $extension_user, $extension_order, $extension_order_price];
+        return [count($users), $order, $order_price_tot, $integral_price_tot, $extension_user, $extension_order_tot, $extension_order_price, $extension_integral_price_tot];
     }
 
 }

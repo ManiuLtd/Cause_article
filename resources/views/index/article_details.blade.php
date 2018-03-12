@@ -10,44 +10,114 @@
 	<style>
 		.box img{ max-width: 100% !important; height:auto !important; }
 		.box iframe{ width: 100% !important; height:auto !important; }
+		.usercard{margin: 1rem 0;}
+		.usercard .head{width: 4rem; height: 4rem; border-radius: 50%; overflow: hidden; padding: 0; margin: 0; background: #fff;}
+		.usercard .head img{width: 100%; height: 100%; border-radius: 50%;}
+		.usercard .link{margin: 0 2rem; width:7rem; height:2.5rem; background:url(/xz.gif) no-repeat;background-size:contain;}
+		.usercard .contact .item:last-child{margin-top: 0.2rem;}
+		.usercard .contact .item .icon{width: 20px; height: 20px; font-size:1.6rem;}
+		.usercard .contact .item .text{padding: 0 0.2rem; font-size:1.2rem;}
+		.usercard .contact .item .btn{width:4rem;height:2rem;border-radius:.5rem;font-size:1rem;color:#fff; background:#0178d6;}
+		.usercard .contact .item .wx{background:#4ba601;}
 	</style>
 </head>
 <body>
-<div @if($res->type == 3) id="listen" @else id="article" @endif class="flexv wrap">
+<div @if($res->type == 3) id="listen" @else id="article" @endif class="flexv center wrap">
 	<div class="flexitemv mainbox contents" @if($res->type == 3) style="padding:1.2rem" @endif>
 		@if($res->type == 3)
 			<div class="info">
 				<h1>{{ $res->title }}</h1>
 				<div class="bottom"><span>{{\Carbon\Carbon::parse($res->created_at)->toDateString()}}</span><a href="javascript:;">轩轩</a></div>
 			</div>
-			<div id="audio">
-				<div class="flex centerv inner">
-					<div class="flex center icon" data-src="{{ json_decode($res->audio, true)['src'] }}"></div>
-					<div class="flexitemv media">
-						<h3 class="flexv centerh">{{ json_decode($res->audio, true)['title'] }}</h3>
-						<p class="flexv centerh">{{ json_decode($res->audio, true)['desc'] }}</p>
-						<div class="flex progress"><em></em><span class="flex"></span></div>
-						<div class="flex centerv duration">
-							<span class="flexitem">00:00</span>
-							<em class="flex">00:00</em>
-						</div>
+			
+			{{--<div class="flex centerv usercard">--}}
+				{{--<div class="flex center head"><img src="/kf_login.png" class="radimg"></div>--}}
+				{{--<a href="javascript:;" class="flex center link"></a>--}}
+				{{--<div class="flexitemv centerh endv contact">--}}
+					{{--<div class="flex centerv item">--}}
+						{{--<i class="flex center bls bls-dh icon" style="color:#0178d6;"></i>--}}
+						{{--<span class="flex text">136***4613</span>--}}
+						{{--<a href="javascript:;" class="flex center btn">打电话</a>--}}
+					{{--</div>--}}
+					{{--<div class="flex centerv item">--}}
+						{{--<i class="flex center bls bls-weixin icon" style="color:#4ba601;"></i>--}}
+						{{--<span class="flex text">136***4613</span>--}}
+						{{--<a href="javascript:;" class="flex center btn wx">加微信</a>--}}
+					{{--</div>--}}
+				{{--</div>--}}
+			{{--</div>--}}
+			<div class="around consult-box">
+				<div class="flex center c-img"><img src="/kf_login.png" class="radimg"></div>
+				<a href="javascript:;" class="flex center c-zx"></a>
+				<div class="flexv no">
+					<div class="between phone">
+						<i class="flex center bls bls-shouji" style="color:#0178d6;"></i>
+						<div class="flex center number"><span>136***4613</span></div>
+						<a href="javascript:;" class="flex center n-btn">打电话</a>
+					</div>
+					<div class="between wx">
+						<i class="flex center bls bls-wx" style="width:1.6rem;color:#4ba601;"></i>
+						<div class="flex center number"><span>136***4613</span></div>
+						<a href="javascript:;" class="flex center n-btn">加微信</a>
 					</div>
 				</div>
 			</div>
-			<div class="body">
+
+
+			<div class="body-img">
+				<img src="http://yun.zx85.net/image/jpeg/5a7baf3e56f9b.jpeg">
+				<i class="flex center icon bls bls-play" data-src="{{ json_decode($res->audio, true)['src'] }}"></i>
+			</div>
+			<div class="audio">
+				<div class="between">
+					<div class="flexv center a-read">
+						<i class="flex center bls bls-ck"></i>
+						<div class='flex center a-num'><span class="flexv center">{{ $res->read }}</span>阅读</div>
+					</div>
+					<div class="flexv center a-read">
+						<i class="flex center bls bls-kx fond"></i>
+						<div class='flex center a-num'><span class="flexv center like-count">{{ $res->like }}</span>喜欢</div>
+					</div>
+				</div>
+				<div class="flex centerv duration">
+					<span class="flex num start">00:00</span>
+					<div class="flexitem progress"><em></em><span class="flex"></span></div>
+					<span class="flex num end">00:00</span>
+				</div>
+			</div>
+			<div class="content max">
 				{!! $res->details !!}
 			</div>
 		@else
-			<div class="title max">
+			<div class="title">
 				<h2 class="flex">{{ $res->title }}</h2>
 				<div class="flex subhead">
 					<span class="date">{{\Carbon\Carbon::parse($res->created_at)->toDateString()}}</span>
 					<span class="name">轩轩</span>
 					<a href="{{route('index.index')}}" class="site">事业头条</a>
 				</div>
-				<div class="box">
-					{!! $res->details !!}
+
+				<div class="around consult-box">
+					<div class="flex center c-img"><img src="/kf_login.png" class="radimg"></div>
+					<a href="javascript:;" class="flex center c-zx"></a>
+					<div class="flexv no">
+						<div class="between phone">
+							<i class="flex center bls bls-shouji" style="color:#0178d6;"></i>
+							<div class="flex center number"><span>136***4613</span></div>
+							<a href="javascript:;" class="flex center n-btn">打电话</a>
+						</div>
+						<div class="between wx">
+							<i class="flex center bls bls-wx" style="width:1.6rem;color:#4ba601;"></i>
+							<div class="flex center number"><span>136***4613</span></div>
+							<a href="javascript:;" class="flex center n-btn">加微信</a>
+						</div>
+					</div>
 				</div>
+
+			</div>
+
+			<div class="content max">
+				{!! $res->details !!}
 			</div>
 
 			<div class="flex center unfold">
@@ -83,14 +153,6 @@
 			<span class="col last"></span>
 		</div>
 		
-		{{--<div class="flexv center qrcode">--}}
-			{{--<div class="img">--}}
-				{{--<img src="/qrcode.jpg" class="fitimg">--}}
-			{{--</div>--}}
-			{{--<p>马上加我微信沟通</p>--}}
-			{{--<a href="javascript:;" class="flex center bls bls-kefu service"></a>--}}
-		{{--</div>--}}
-		
 		<div class="flexv center text-box">
 			<p>本文为 <span>轩轩</span> 发布，不代表事业头条立场</p>
 			<p>若内容不规范或涉及违规，可立即 <a href="{{ route('report',['article_id'=>$res->id, 'type'=>1]) }}">举报/报错</a></p>
@@ -119,7 +181,7 @@
 
 </div>
 </body>
-<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script type="text/javascript" src="/index/js/checkform.js"></script>
@@ -127,6 +189,22 @@
 <script src="https://cdn.bootcss.com/clipboard.js/1.5.15/clipboard.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
+    // 喜欢
+    $(".fond").click(function () {
+        if($(this).hasClass('bls-sx')) return false;
+        $(this).removeClass('bls-kx').addClass('bls-sx').css('color','#f13c50');
+        var up = '<em class="flex center add">+1</em>';
+        $(this).parent().append(up);
+        $("em.add").animate({top:'-1.2rem',opacity:'.5'},1000,function () {
+            var like = $('.like-count'),
+                url = "{{ route('article_like', [$res->id, 1]) }}";
+            $.get(url, function (ret) {
+                like.html(Number(like.html()) + Number(1));
+            });
+            $("em.add").remove();
+        });
+    });
+
     $('#cut').click(function () {
         @if(!$user->brand_id && !$user->phone)
             $(".alert").css({"display":"block"});
@@ -166,13 +244,11 @@
 			}
 		});
     @endif
-</script>
 
-<script type="text/javascript">
-	//  展示全部
-	$(".unfold").click(function () {
-        $(".title").removeClass('max');
-        $(".unfold").text('');
+    //  展示全部
+    $(".unfold").click(function () {
+        $(".content").removeClass('max');
+        $(this).remove();
     });
 
 	//	事业宝典

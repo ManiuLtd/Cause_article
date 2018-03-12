@@ -12,7 +12,7 @@
         {{ csrf_field() }}
         <div class="report-text-area">
             <div class="text-input-wrap">
-                <textarea name="url" id="tip_content" class="text-input" cols="30" rows="10" maxlength="150" placeholder="请填写推荐的文章链接"></textarea>
+                <textarea name="url" id="tip_content" class="text-input" cols="30" rows="10" maxlength="150" placeholder="推荐文章时请填写推荐的文章链接，文章添加后会通知您"></textarea>
                 <div class="text-num-tip">
                     <span class="now-num">0</span>/<span class="max-num">150</span>
                 </div>

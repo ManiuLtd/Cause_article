@@ -36,7 +36,7 @@
                 <tbody>
                     @foreach($extension as $value)
                         <tr>
-                            <td>{{ $value->account }}</td>
+                            <td>{{ $value->account }}/元</td>
                             @foreach($value->count as $v)
                                 @if($loop->last)
                                     <td style="color: red;font-weight: bold">{{ $v }}</td>
@@ -47,7 +47,7 @@
                         <tr>
                         @if($loop->last && !empty($value->tot_count))
                             <tr>
-                                <td>总计</td>
+                                <td>总计/元</td>
                                 @foreach($value->tot_count as $v)
                                     <td style="color: red;font-weight: bold">{{ $v }}</td>
                                 @endforeach

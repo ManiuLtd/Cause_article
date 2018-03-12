@@ -53,6 +53,8 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #home .search .home-sea i{width: 1px;height:50%;background: #a6a6a6;}
 #home .search .home-sea span{width: 4rem;height:2rem;color:#999;font-size: 1.5rem;}
 #home .listbox{padding:0 12px;}
+#article .content.max{max-height:30rem;overflow:hidden;}
+#article .content .img{padding:1rem 0;}
 #home .listbox .lists{border-bottom: 1px solid #f2f2f2;padding-top: 12px;padding-bottom: 10px;}
 #home .listbox .lists:last-child{border-bottom: none;}
 #home .listbox .lists .img{width:8rem;height:6rem;position:relative;}
@@ -403,17 +405,18 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #seek .result p:after{content: "";width:11rem;height:1px;background: -webkit-linear-gradient(-180deg, #f2f2f2, #dadada);position: absolute;top:2.5rem;right: 0.5rem; }
 #seek .void p{color:#6b6b6b;font-size: 1.2rem;}
 /***************************************** 文章 ***************************************/
-#article{background: #fff;}
+#article{background: #fff;position: relative;}
 #article .contents{padding: 1.5rem;}
-#article .title.max{max-height: 48rem;overflow: hidden;}
 #article .title h2{font-size: 1.8rem;color:#333;}
 #article .title .subhead{padding: 1rem 0;font-size: 1.2rem;color:#6d6d6d;}
 #article .title .subhead .name{padding: 0 1rem;}
 #article .title .subhead .site{color:#4ea1d0;}
-#article .title .box{ font-size:1.5rem;color:#333;}
-#article .title .img{height:8rem;padding: 1rem 0;text-indent: 0;}
-#article .unfold{color:#4ea1d0;font-size: 1.4rem;}
-#article .unfold i{font-size: 1.4rem;}
+#article .content p{font-size:1.3rem;line-height:2.2rem !important;letter-spacing:.2rem;color:#333;}
+#article .content.max{max-height:30rem;overflow:hidden;}
+#article .content img{width: 100%;padding:1rem 0;text-indent:0;}
+#article .unfold .unfoldbox{margin:1rem;padding:0.5rem 1rem;font-size: 1.4rem;border-radius:0.5rem;border:1.5px solid #eb6060;color:#eb6060;}
+#article .unfold i{font-size: 1.4rem;padding:0 0.5rem;}
+
 .user-info{padding: 2.5rem 2rem;position: relative;margin: 3rem 0;font-size: 1.4rem;}
 .user-info .userimg{width:4rem;height:4rem;border: 1px solid #f83c39; border-radius: 50%;overflow: hidden;position: absolute;top: -2rem;left: 12.5rem;z-index: 5;}
 .user-info p{height: 2rem;}
@@ -447,19 +450,23 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #listen .body{padding: .6rem 0;font-size:1.05em;line-height:2.8rem;color: #555;}
 #listen .body p{margin-bottom:1rem;}
 #listen .body img{max-width:100%;}
-#audio{padding:1rem 0;}
-#audio .inner{border:1px solid #f2f2f2;background:#fdfdfd;padding:1rem;}
-#audio .icon{position:relative;width:36px;height:36px;background: url(/index/image/audio.gif) 0 -36px no-repeat;}
-#audio .icon.play{background-position: 0 0;}
-#audio .media{padding-left:1rem;}
-#audio .media h3{font-size:1.6rem;font-weight:normal;-webkit-line-clamp:1;height:2.3rem;overflow:hidden;}
-#audio .media p{font-size:1.3rem;color:#999;-webkit-line-clamp:1;height:1.8rem;overflow:hidden;}
-#audio .progress{position:relative;height:2px;background:#eee;margin: 5px 0;}
-#audio .progress span{background:#ccc;height:100%;width:0%;}
-#audio .progress em{position:absolute;left:0;top:0;height:2px;background:#03ba03;width:0%;visibility:hidden;transition:width 0.2s linear;-webkit-transition: width 0.2s linear;}
-#audio .progress em:before{content: '';position:absolute;top:-4px;right:-2px;width:12px;height:12px;background:rgba(15, 189, 15,0.2);border-radius: 50%;}
-#audio .progress em:after{content: '';position:absolute;top:-2px;right:0;width:8px;height:8px;background: #03ba03;border-radius: 50%;}
-#audio .duration{font-size:1.2rem;color:#999;}
+#listen .body-img{margin:1rem 0;font-size:0;position:relative;}
+#listen .body-img img{max-width:100%;margin-bottom:1rem;border-radius:.4rem;box-shadow:0px -2px 10px 2px #cfcfcf;}
+#listen .body-img i.icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6rem;height:6rem;border-radius:50%;background:-webkit-linear-gradient(top,#f46475,#ef1a32);box-shadow:0 0 1rem .2rem #f35c6d;font-size:3rem;color:#fff;}
+#listen .audio .a-read i.bls{width:2.4rem;height:2.4rem;font-size:2rem;color:#333;}
+#listen .audio .a-read{position:relative;}
+#listen .audio .a-read em.add{position:absolute;top:0;left:1.6rem;width:2rem;height:2rem;font-size:1rem;color:#f13c50;}
+#listen .audio .a-num{font-size:1rem;color:#bfbfbf;}
+#listen .audio .a-num span{max-width:3rem;margin-right:.4rem;overflow:hidden;-webkit-line-clamp:1;}
+#listen .audio .duration{margin:1rem 0;font-size:1.2rem;}
+#listen .audio .duration>span{margin:0 .5rem;}
+#listen .audio .progress{position:relative;height:2px;background:#eee;margin:5px 0;}
+#listen .audio .progress span{background:#ccc;height:100%;width:0%;}
+#listen .audio .progress em{position:absolute;left:0;top:0;height:2px;background:#ef1a32;width:0%;visibility:hidden;transition:width 0.2s linear;-webkit-transition: width 0.2s linear;}
+#listen .audio .progress em:after{content: '';position:absolute;top:-4px;right:-8px;width:10px;height:10px;background:#ef1a32;box-shadow:0 0 10px 2px #f35c6d;border-radius: 50%;}
+#listen .status{padding:2rem 0;}
+#listen .status>i.bls{width:5rem;height:5rem;font-size:3rem;color:#ef1931;}
+#listen .s-swith>i.bls{width:6rem;height:6rem;border-radius:50%;background:-webkit-linear-gradient(top,#f46475,#ef1a32);box-shadow:0 0 1rem .2rem #f35c6d;font-size:3rem;color:#fff;}
 
 /*提示*/
 .hint {position: fixed;top:0;left:0;width: 100%;bottom: 0;overflow: hidden;z-index: 20;display: none;}
@@ -624,10 +631,35 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #rules .rules_list ul li:last-child{margin:0;}
 #rules .rules_list .rules-num{width:1.8rem;height:1.8rem;background-image:linear-gradient(rgba(224,79,70,1),rgba(224,79,70,1)),linear-gradient(rgba(180,0,1,1),rgba(180,0,1,1));background-blend-mode:normal,normal;border-radius:50%;font-size:1.2rem;color:#fff;position:absolute;top:.3rem;left:0}
 #rules .rules_list .rules-info{width:auto;line-height:2.4rem;padding-left:2.6rem;font-size:1.4rem;font-weight:400;color:#262525;}
-#rules .rules_list .btn{width:20rem;height:4rem;border-radius:2rem;border:1px solid #f87721;background:#ffe539;font-weight:600;font-size:1.4rem;color:#db463c;}
+#rules .rules_list .btn{width:13rem;height:3.5rem;border-radius:2rem;border:1px solid #f87721;background:#ffe539;font-weight:600;font-size:1.4rem;color:#db463c;}
 
 #article .unfold .unfoldbox{margin:1rem;padding:0.5rem 1rem;font-size: 1.4rem;border-radius:0.5rem;border:1.5px solid #eb6060;color:#eb6060;}
 
 #article .user .userimg{width:4rem;height:4rem;border: 1px solid #f83c39; border-radius: 50%;overflow: hidden;position: absolute;top: -2rem;left: 50%;transform: translateX(-50%);z-index: 5;}
 
+.radimg{width:100%;height:100%;border-radius:50%;}
+#more{height:5rem;}
+#more i{width:1.6rem;height:1.6rem;display:inline-block;border-width:1px;border-style:solid;border-color:#ccc #ccc #222 #222;border-radius:50%;-webkit-animation:loading 1s infinite linear;animation:loading 1s infinite linear;vertical-align:-0.3rem;}
+#more span{font-size:1.2em;padding-left:.8rem;color:#999;}
+.twinkle{-webkit-tap-highlight-color:transparent;}
+
+/*加微信提示框*/
+#wechat .wechat.trans{animation: zoomIn 0.3s ease;}
+#wechat .wechat{width: 66%; background: #fff;border-radius: 1rem;position: absolute;top: 26%;left:50%;transform:translateX(-50%);}
+#wechat .wechat h3{color: #DD726B;font-size: 1.5rem;padding: 1rem 0;}
+#wechat .wechat .qrcode{width: 16rem;margin: 0 auto;}
+#wechat .wechat p{padding: 1rem 0;font-size: 1.2rem;color:#363636;}
+.new{width:100%;height:100%;background:rgba(0,0,0,.5);}
+
+/* 文章头部 */
+.consult-box{margin:1rem 0;}
+.consult-box .c-img{width:4rem;height:4rem;}
+.consult-box .c-zx{width:7rem;height:2.5rem;background:url(/xz.gif) no-repeat;background-size:contain;}
+.consult-box .no{width:14rem;}
+.consult-box .no div:last-child{margin-top:.2rem;}
+.consult-box .no i.bls{font-size:1.6rem;}
+.consult-box .no span{padding-left:.2rem;font-size:1.2rem;}
+.consult-box .no .n-btn{width:4rem;height:2rem;border-radius:.5rem;font-size:1rem;color:#fff;}
+.consult-box .no .phone .n-btn{background:#0178d6;}
+.consult-box .no .wx .n-btn{background:#4ba601;}
 

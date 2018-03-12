@@ -10,6 +10,15 @@
 	<style>
 		.box img{ width: 100% !important; height:auto !important; }
 		.box iframe{ width: 100% !important; height:auto !important; }
+      	.usercard{margin: 1rem 0;}
+		.usercard .head{width: 4rem; height: 4rem; border-radius: 50%; overflow: hidden; padding: 0; margin: 0; background: #fff;}
+		.usercard .head img{width: 100%; height: 100%; border-radius: 50%;}
+		.usercard .link{margin: 0 2rem; width:7rem; height:2.5rem; background:url(/xz.gif) no-repeat;background-size:contain;}
+		.usercard .contact .item:last-child{margin-top: 0.2rem;}
+		.usercard .contact .item .icon{width: 20px; height: 20px; font-size:1.6rem;}
+		.usercard .contact .item .text{padding: 0 0.2rem; font-size:1.2rem;}
+		.usercard .contact .item .btn{width:4rem;height:2rem;border-radius:.5rem;font-size:1rem;color:#fff; background:#0178d6;}
+		.usercard .contact .item .wx{background:#4ba601;}
 	</style>
 </head>
 <body>
@@ -20,21 +29,46 @@
 				<h1>{{ $res->article->title }}</h1>
 				<div class="bottom"><span>{{$res->created_at->toDateString()}}</span><a href="javascript:;">{{$res->user['wc_nickname']}}</a></div>
 			</div>
-			<div id="audio">
-				<div class="flex centerv inner">
-					<div class="flex center icon" data-src="{{ json_decode($res->article->audio, true)['src'] }}"></div>
-					<div class="flexitemv media">
-						<h3 class="flexv centerh">{{ json_decode($res->article->audio, true)['title'] }}</h3>
-						<p class="flexv centerh">{{ json_decode($res->article->audio, true)['desc'] }}</p>
-						<div class="flex progress"><em></em><span class="flex"></span></div>
-						<div class="flex centerv duration">
-							<span class="flexitem">00:00</span>
-							<em class="flex">00:00</em>
-						</div>
+
+			<div class="around consult-box">
+				<div class="flex center c-img"><img src="{{$res->user['head']}}" class="radimg"></div>
+				<a href="{{ route('chatroom', $res->user->id) }}" class="flex center c-zx"></a>
+				<div class="flexv no">
+					<div class="between phone">
+						<i class="flex center bls bls-shouji" style="color:#0178d6;"></i>
+						<div class="flex center number"><span>@if($member_time){{$res->user['phone']}}@else{{substr( $res->user['phone'], 0, 3 )}}********@endif</span></div>
+						<a @if($member_time)href="tel:{{$res->user['phone']}}"@else href='javascript:;' id='phone'@endif class="flex center n-btn">打电话</a>
+					</div>
+					<div class="between wx">
+						<i class="flex center bls bls-wx" style="width:1.6rem;color:#4ba601;"></i>
+						<div class="flex center number"><span>@if($member_time){{$res->user['phone']}}@else{{substr( $res->user['phone'], 0, 3 )}}********@endif</span></div>
+						<a href="javascript:;" class="flex center n-btn book">加微信</a>
 					</div>
 				</div>
 			</div>
-			<div class="body">
+
+            <div class="body-img">
+                <img src="http://yun.zx85.net/image/jpeg/5a7baf3e56f9b.jpeg">
+				<i class="flex center icon bls bls-play" data-src="{{ json_decode($res->article->audio, true)['src'] }}"></i>
+            </div>
+            <div class="audio">
+                <div class="between">
+                    <div class="flexv center a-read">
+                        <i class="flex center bls bls-ck"></i>
+                        <div class='flex center a-num'><span class="flexv center">{{ $res->read }}</span>阅读</div>
+                    </div>
+                    <div class="flexv center a-read">
+                        <i class="flex center bls bls-kx fond @if(session('user_id') != $res->uid))like @endif"></i>
+                        <div class='flex center a-num'><span class="flexv center like-count">{{ $res->like }}</span>喜欢</div>
+                    </div>
+                </div>
+                <div class="flex centerv duration">
+                    <span class="flex num start">00:00</span>
+                    <div class="flexitem progress"><em></em><span class="flex"></span></div>
+                    <span class="flex num end">00:00</span>
+                </div>
+            </div>
+			<div class="content max">
 				{!! $res->article->details !!}
 			</div>
 		@else
@@ -45,9 +79,27 @@
 					<span class="name">{{$res->user['wc_nickname']}}</span>
 					<a href="{{route('index.index')}}" class="site">事业头条</a>
 				</div>
-				<div class="box">
-					{!! $res->article['details'] !!}
+
+				<div class="around consult-box">
+					<div class="flex center c-img"><img src="{{$res->user['head']}}" class="radimg"></div>
+					<a href="{{ route('chatroom', $res->user->id) }}" class="flex center c-zx"></a>
+					<div class="flexv no">
+						<div class="between phone">
+							<i class="flex center bls bls-shouji" style="color:#0178d6;"></i>
+							<div class="flex center number"><span>@if($member_time){{$res->user['phone']}}@else{{substr( $res->user['phone'], 0, 3 )}}********@endif</span></div>
+							<a @if($member_time)href="tel:{{$res->user['phone']}}"@else href='javascript:;' id='phone'@endif class="flex center n-btn">打电话</a>
+						</div>
+						<div class="between wx">
+							<i class="flex center bls bls-wx" style="width:1.6rem;color:#4ba601;"></i>
+							<div class="flex center number"><span>@if($member_time){{$res->user['phone']}}@else{{substr( $res->user['phone'], 0, 3 )}}********@endif</span></div>
+							<a href="javascript:;" class="flex center n-btn book">加微信</a>
+						</div>
+					</div>
 				</div>
+			</div>
+
+			<div class="content max">
+				{!! $res->article['details'] !!}
 			</div>
 
 			<div class="flex center unfold">
@@ -60,15 +112,15 @@
 		
 		<div class="flexv centerv user-info">
 			<div class="userimg">
-				<img src="{{$res->user['head']}}" class="fitimg" style="border-radius: 50%;overflow: hidden;">
+				<img src="{{ $res->user['head'] }}" class="fitimg" style="border-radius: 50%;overflow: hidden;">
 			</div>
-			<p class="flex center name">{{$res->user['wc_nickname']}}</p>
+			<p class="flex center name">{{ str_limit($res->user['wc_nickname'], 10) }}</p>
 			<div class="flex centerh mesg">
 				<span>健康顾问</span>
-				<span>@if($member_time){{$res->user['phone']}}@else{{substr( $res->user['phone'], 0, 3 )}}********@endif</span>
+				<span>@if($member_time){{ $res->user['phone'] }}@else{{ substr( $res->user['phone'], 0, 3 ) }}********@endif</span>
 			</div>
 			<div class="buttons">
-				<a @if($member_time)href="tel:{{$res->user['phone']}}"@else href='javascript:;' id='phone'@endif class="flex center phone">
+				<a @if($member_time)href="tel:{{ $res->user['phone'] }}"@else href='javascript:;' id='phone'@endif class="flex center phone">
 					<i class="flex center bls bls-dh"></i>
 					<span>给我电话</span>
 				</a>
@@ -82,44 +134,13 @@
 			<span class="row last"></span>
 			<span class="col last"></span>
 		</div>
-		
-		{{--<div class="flexv center qrcode">--}}
-			{{--<div class="img">--}}
-				{{--@if($member_time)--}}
-					{{--@if($res->user['id'] == session()->get('user_id'))--}}
-						{{--@if($res->user['qrcode'] != '')--}}
-						{{--<img src="{{$res->user['qrcode']}}" class="fitimg">--}}
-						{{--@else--}}
-						{{--<img src="/index/image/upload_qrcode.jpg" class="fitimg">--}}
-						{{--<input type="file" accept="image/jpg,image/png,image/jpeg" id="put">--}}
-						{{--@endif--}}
-					{{--@else--}}
-						{{--@if($res->user['qrcode'] != '')--}}
-							{{--<img src="{{$res->user['qrcode']}}" class="fitimg">--}}
-						{{--@else--}}
-							{{--<a href="{{route('chatroom',['id'=>$res->id])}}">--}}
-								{{--<img src="/index/image/callme.jpg" class="fitimg">--}}
-							{{--</a>--}}
-						{{--@endif--}}
-					{{--@endif--}}
-				{{--@else--}}
-					{{--<a href="{{route('chatroom',['id'=>$res->id])}}">--}}
-						{{--<img src="/index/image/callme.jpg" class="fitimg">--}}
-					{{--</a>--}}
-				{{--@endif--}}
-			{{--</div>--}}
-			{{--<p>马上加我微信沟通</p>--}}
 
-		{{--</div>--}}
-
-		<a href="{{ route('chatroom', $res->user->id) }}" class="flex center bls bls-kefu service"></a>
+		{{--<a href="{{ route('chatroom', $res->user->id) }}" class="flex center bls bls-kefu service"></a>--}}
 		
 		<div class="flexv center text-box">
-			<p>本文为 <span>{{$res->user['wc_nickname']}}</span> 发布，不代表事业头条立场</p>
+			<p>本文为 <span>{{ $res->user['wc_nickname'] }}</span> 发布，不代表事业头条立场</p>
 			<p>若内容不规范或涉及违规，可立即 <a href="{{ route('report',['article_id'=>$res->id,'type'=>2]) }}">举报/报错</a></p>
 		</div>
-
-		{{--<a href="javascript:;" id="cut" class="flex center cut">免费换成我的名片 >></a>--}}
 	</div>
 
 	@if(session()->get('user_id') != $res->uid)
@@ -148,7 +169,7 @@
 		<div class='content'>
 			<i class="flex center bls bls-cuo cuo"></i>
 			<h3 class="flex center title">您的信息不完整</h3>
-			<p class="flex center tis">立刻完善资料，让客户找到您</p>
+			<p class="flex center tis" style="font-size: 1.2rem">立刻完善资料，让客户找到您</p>
 			<div class="flex center input">
 				<span class="flex centerv">姓名</span>
 				<input type="text" name="wc_nickname" class="flexitem" value="{{ $user->wc_nickname }}" data-rule="*" data-errmsg="请填写您的姓名">
@@ -208,7 +229,7 @@
 	</div>
 </div>
 </body>
-<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 <script type="text/javascript" src="/index/js/checkform.js"></script>
@@ -217,6 +238,22 @@
 <script src="https://cdn.bootcss.com/clipboard.js/1.5.15/clipboard.min.js"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
+    // 喜欢
+    $(".fond").click(function () {
+        if($(this).hasClass('bls-sx')) return false;
+        $(this).removeClass('bls-kx').addClass('bls-sx').css('color','#f13c50');
+        var up = '<em class="flex center add">+1</em>';
+        $(this).parent().append(up);
+        $("em.add").animate({top:'-1.2rem',opacity:'.5'},1000,function () {
+            var like = $('.like-count'),
+                url = "{{ route('article_like', [$res->id, 2]) }}";
+            $.get(url, function (ret) {
+                like.html(Number(like.html()) + Number(1));
+            });
+            $("em.add").remove();
+        });
+    });
+
     $('#cut').click(function () {
 		@if(!$user->brand_id && !$user->phone)
 			$(".alert").css({"display":"block"});
@@ -256,13 +293,11 @@
 			}
 		});
     @endif
-</script>
 
-<script type="text/javascript">
-	//  展示全部
-	$(".unfold").click(function () {
-        $(".title").removeClass('max');
-        $(".unfold").text('');
+    //  展示全部
+    $(".unfold").click(function () {
+        $(".content").removeClass('max');
+        $(this).remove();
     });
 
     $('#phone').click(_.throttle(function () {
@@ -297,9 +332,6 @@
 			$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
 		}, 3000, { 'trailing': false }));
 	@endif
-
-
-
 
 	//上传个人二维码
 	$("#put").change(function (event) {

@@ -86,7 +86,7 @@ class UserController extends CommonController
     public function adminExtension(Request $request)
     {
         foreach ($request->user_id as $user) {
-            User::where('id', $user)->update(['type' => 2, 'admin_id' => $request->admin_id, 'admin_type' => 1]);
+            User::where('id', $user)->update(['type' => 2, 'extension_id' => 0,'admin_id' => $request->admin_id, 'admin_type' => 1]);
         }
 
         return redirect()->back();

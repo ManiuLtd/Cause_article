@@ -16,7 +16,7 @@
                 <li class="between">
                     <img class="flex u-avatar" src="{{ $list->head }}">
                     <div class="flexitemv reg-info">
-                        <div class="flex centerv reg-title">您邀请的: <strong>{{ $list->wc_nickname }}</strong> 推广成功</div>
+                        <div class="flex centerv reg-title">您邀请的: <strong class="flexv">{{ $list->wc_nickname }}</strong> 推广成功</div>
                         <div class="flex centerv reg-date">{{ $list->extension_at }}</div>
                     </div>
                 </li>
@@ -46,14 +46,12 @@
             if(page < {{ $lists->lastPage() }}) {
                 var loadTpl = '<div id="more" class="flex center"><i></i><span>正在加载..</span></div>';
                 $(loadTpl).appendTo($(innerBox));
-                setTimeout(function () {
-                    var url = "{{ route('extension_list', 'user') }}" + "?page=" + page;
-                    $.get(url, function (ret) {
-                        $(innerBox).append(ret.html);
-                        $('#more').remove();
-                        loadBtn = false;
-                    })
-                }, 2000)
+                var url = "{{ route('extension_list', 'user') }}" + "?page=" + page;
+                $.get(url, function (ret) {
+                    $(innerBox).append(ret.html);
+                    $('#more').remove();
+                    loadBtn = false;
+                })
             }
         }
     });

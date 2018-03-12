@@ -54,7 +54,7 @@ class IndexController extends CommonController
         $fileName = str_random(10).'.'.$extension;
         $ret = $file->move($destinationPath, $fileName);
         if($ret){
-            return json_encode(['state'=>0, 'msg'=>'上传成功', 'saveName'=>"$file_name/$daytime/$fileName"]);
+            return json_encode(['state'=>0, 'msg'=>'上传成功', 'saveName'=>"/uploads/$file_name/$daytime/$fileName"]);
         }else{
             return json_encode(['state'=>401, 'msg'=>'上传失败']);
         }

@@ -29,9 +29,9 @@ class ExtensionController extends CommonController
      */
     public function index()
     {
-        $where = ['user_id' => session('user_id')];
-        $newwhere = array_merge($where, ['state'=>1]);
-        $today_integral = Integral::where($newwhere)->whereDate('created_at', date('Y-m-d', time()))->sum('price');
+        $where = ['user_id' => session('user_id'), 'state'=>1];
+//        $newwhere = array_merge($where, ['state'=>1]);
+        $today_integral = Integral::where($where)->whereDate('created_at', date('Y-m-d', time()))->sum('price');
         $use_integral = IntegralUse::where($where)->sum('integral');
 
         $tot_integral = Integral::where($where)->sum('price');
@@ -75,7 +75,9 @@ class ExtensionController extends CommonController
             $tem = 'index.extension_user_list';
             $page_tem = 'index.template.__extension_user';
         } elseif($type == 'order') {
-            $users = User::has('orderList')->where('extension_id', $user_id)->orderBy('extension_at', 'desc')->paginate(7);
+            $users = User::whereHas('orderList', function ($query) {
+                $query->where(['state' => 1, 'refund_state' => 0]);
+            })->where('extension_id', $user_id)->orderBy('extension_at', 'desc')->paginate(7);
             foreach ($users as $user) {
                 $orders = Order::with(['user' => function($query){
                     $query->select('id', 'head', 'wc_nickname');
@@ -88,7 +90,7 @@ class ExtensionController extends CommonController
         }
 
         if($request->ajax()) {
-            $html = view($page_tem)->render();
+            $html = view($page_tem, compact('lists'))->render();
             return response()->json(['html' => $html]);
         }
 
