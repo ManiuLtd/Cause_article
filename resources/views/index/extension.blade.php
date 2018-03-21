@@ -11,8 +11,11 @@
     <div id="expand" class="twinkle flexv wrap">
         <div class="flexitemv datum">
             <div class="flexv center sub">
-                <a href="{{ route('extension_detail') }}" class="flex center num" style="color: red;text-decoration:underline">{{ $today_integral }}</a>
-                <h2 class="flex center income" style="color: red">今日收益</h2>
+                <h2 class="flex center income">今日收益</h2>
+                <div class="flex center num">{{ $today_integral }}</div>
+                <a href="{{ route('extension_detail') }}" class="flex center btn">推广记录</a>
+                {{--<a href="{{ route('extension_detail') }}" class="flex center num" style="color: red;text-decoration:underline">{{ $today_integral }}</a>--}}
+                {{--<h2 class="flex center income" style="color: red">今日收益</h2>--}}
                 <div class="flexv centerv front">
                     <div class="flexitemv center myfront">
                         <em class="flex">{{ $use_integral }}</em>
@@ -49,7 +52,7 @@
     <div class="twinkle flexv kf-qrcode">
         <div class="flex center kf-tit">提现客服</div>
         <div class="flex center kf-img">
-            <img src="../logo.jpg" class="fitimg">
+            <img src="../kf_qrcode.jpg" class="fitimg">
         </div>
     </div>
 

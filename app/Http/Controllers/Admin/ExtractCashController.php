@@ -36,7 +36,7 @@ class ExtractCashController extends CommonController
 
     public function complete( IntegralUse $integralUse )
     {
-        $integralUse->update(['state' => 1]);
+        $integralUse->update(['state' => 1, 'over_at' => date('Y-m-d H:i:s', time())]);
         return redirect()->route('admin.extract_cash');
     }
 }

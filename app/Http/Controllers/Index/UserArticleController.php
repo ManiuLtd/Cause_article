@@ -63,6 +63,17 @@ class UserArticleController extends CommonController
             $user->extension_at = date('Y-m-d H:i:s', time());
             $user->ex_type = 1;
             $user->save();
+
+            //推送【推荐会员成功提醒】模板消息
+            $app = new Application(config('wechat'));
+            $msg = [
+                "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
+                "keyword1"  => $user->wc_nickname,
+                "keyword2"  => date('Y-m-d H:i:s',time()),
+                "keyword3"  => '扫描个人专属二维码',
+                "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
+            ];
+            template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
         }
 
         //获取品牌
@@ -164,19 +175,17 @@ class UserArticleController extends CommonController
      * @title  分享和阅读列表
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function readShare()
+    public function readShare(Request $request, $type)
     {
-        $list_read = Footprint::with('userArticle', 'user')->where([ 'uid' => session('user_id'), 'type' =>1 ])->orderBy('created_at', 'desc')->get();
-        $list_read->transform(function ($value){
-            return collect($value)->put('article', Article::where('id', $value->userArticle->aid)->first());
-        });
+        $lists = Footprint::with('userArticle.article', 'user')->where([ 'uid' => session('user_id'), 'type' =>$type ])->orderBy('id', 'desc')->paginate(5);
 
-        $list_share = Footprint::with('userArticle', 'user')->where([ 'uid' => session('user_id'), 'type' =>2 ])->orderBy('created_at', 'desc')->get();
-        $list_share->transform(function ($value){
-            return collect($value)->put('article', Article::where('id', $value->userArticle->aid)->first());
-        });
+        if($request->ajax()) {
+            $view = view('index.template.__read_share', compact('lists'))->render();
 
-        return view('index.read_share', compact('list_read', 'list_share'));
+            return response()->json(['html' => $view]);
+        }
+
+        return view('index.read_share', compact('lists'));
     }
 
     /**
@@ -305,14 +314,21 @@ class UserArticleController extends CommonController
 
     /**
      * 咨询列表
-     * @param $message Message
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \Throwable
      */
-    public function messageList(Message $message)
+    public function messageList(Request $request)
     {
-        $list = $message->with('user')->where('uid', session('user_id'))->get();
+        $lists = Message::with('user')->where('uid', session('user_id'))->paginate(5);
 
-        return view('index.message', compact('list'));
+        if($request->ajax()) {
+            $view = view('index.template.__message', compact('lists'))->render();
+
+            return response()->json(['html' => $view]);
+        }
+
+        return view('index.message', compact('lists'));
     }
 
     /**
@@ -322,8 +338,7 @@ class UserArticleController extends CommonController
      */
     public function messageDetail( $id )
     {
-        $message = Message::with('user')->where('id', $id)->first();
-        $message[ 'brand' ] = Brand::where('id', $message->user[ 'brand_id' ])->first();
+        $message = Message::with('user', 'subUser')->where('id', $id)->first();
 
         return view('index.message_detail', compact('message'));
     }
@@ -344,13 +359,41 @@ class UserArticleController extends CommonController
 
     /**
      * 准客户
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
+     * @throws \Throwable
      */
-    public function prospect()
+    public function prospect(Request $request)
     {
         //准客户数量
-        $prospect = Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get()->unique('see_uid');
+        $lists = Footprint::with('userArticle.article', 'user')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->paginate(15);
+//        dump($lists);die;
+        $prospect = $lists->unique('see_uid');
+        if($request->ajax()) {
+            $view = view('index.template.__visitor_prospect', compact('prospect'))->render();
 
-        return view('index.visitor_prospect', compact('prospect'));
+            return response()->json(['html' => $view]);
+        }
+
+        return view('index.visitor_prospect', compact('lists', 'prospect'));
+    }
+
+    /**
+     * @title 访客记录统计页
+     * @param $uid  '查找的用户id'
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function contacts( $uid )
+    {
+        //阅读
+        $read = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 1 ])->count();
+        //分享
+        $share = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 2 ])->count();
+        //最近访问的时间
+        $res = Footprint::with([ 'user' => function ( $query ) {
+            $query->select('id', 'head', 'wc_nickname');
+        } ])->where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid ])->orderBy('created_at', 'desc')->limit(1)->get()->toArray();
+        return view('index.connection', compact('read', 'share', 'res'));
     }
 
     /**

@@ -42,9 +42,11 @@ class extensionImage implements ShouldQueue
         if ( $this->type == 1 ) {
             $image = $this->image_url;
         } elseif ( $this->type == 2 ) {
-            // 保存本地图片
+            // 删除过期的二维码
+            if($this->user->extension_image) unlink(config('app.image_real_path')."uploads/" . $this->user->extension_image);
+            // 保存新的二维码
             $path = base64Toimg($this->image_url, 'inviting_qrcode');
-            User::where('id', $this->user->id)->update([ 'extension_image' => $path[ 'path' ] ]);
+            User::where('id', $this->user->id)->update([ 'extension_image' => $path[ 'path' ], 'image_at' => date('Y-m-d H:i:s') ]);
             $image = $path[ 'path' ];
         }
         // 上传临时图片素材

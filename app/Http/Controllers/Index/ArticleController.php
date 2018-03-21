@@ -41,18 +41,27 @@ class ArticleController extends CommonController
      */
     public function articleDetails(Article $article)
     {
-        $res = Article::with('brand')->where('id', $article->id)->first();
-//        dd($res);
         //文章浏览数+1
         $article->increment('read',1);
-        //判断用户是否已拥有该文章
-//        $user_article = UserArticles::where(['uid'=>session()->get('user_id'),'aid'=>$id])->first();
-        //微信分享配置
-        $package = wecahtPackage();
 
-        $user = User::with('brand')->where('id', session('user_id'))->first();
+        $user_id = session('user_id');
+        if ($uarticle = UserArticles::where(['uid' => $user_id, 'aid' => $article->id])->first()) {
+            return redirect(route('user_article_details', ['id' => $uarticle->id]));//跳到个人此文章详细页
+        } else {
+            $add = UserArticles::create(['uid' => $user_id, 'aid' => $article->id]);
 
-        return view('index.article_details',compact('res','package','user_article', 'user'));
+            return redirect(route('user_article_details', ['id' => $add->id]));//跳到个人此文章详细页
+        }
+
+//        $res = Article::with('brand')->where('id', $article->id)->first();
+//        //文章浏览数+1
+//        $article->increment('read',1);
+//        //微信分享配置
+//        $package = wecahtPackage();
+//
+//        $user = User::with('brand')->where('id', session('user_id'))->first();
+//
+//        return view('index.article_details',compact('res','package','user_article', 'user'));
     }
 
     /**

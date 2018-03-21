@@ -14,12 +14,19 @@ class PhotoController extends CommonController
      * @param $photo
      * @return \Illuminate\Http\Response
      */
-    public function index(Photo $photo)
+    public function index(Request $request, Photo $photo)
     {
-        $list = $photo->with('type', 'brand')->orderBy('created_at', 'desc')->paginate(10);
+        $where = [];
+        if($request->name) $where['name'] = $request->name;
+        if($request->type) $where['type_id'] = $request->type;
+        if($request->brand_id) $where['brand_id'] = $request->brand_id;
+        $list = $photo->with('type', 'brand')->where($where)->orderBy('created_at', 'desc')->paginate(10);
         $menu = $this->menu;
         $active = $this->active;
-        return view('admin.photo.index',compact('list','menu','active'));
+        $brands = Brand::get();
+        $types = PhotoType::get();
+
+        return view('admin.photo.index',compact('list', 'menu', 'active', 'brands', 'types'));
     }
 
     /**
@@ -44,7 +51,7 @@ class PhotoController extends CommonController
     public function store(Request $request, Photo $photo)
     {
         $photo->fill($request->all());
-        $photo->url = '/uploads/'.$request->url;
+        $photo->url = $request->url;
         if($photo->save()){
             return json_encode(['state'=>0, 'msg'=>'添加美图类型完成', 'url'=>route('photo.index')]);
         }else{
@@ -76,7 +83,7 @@ class PhotoController extends CommonController
     {
         $data = $request->all();
         if($photo->url != $request->photo) {
-            $data['url'] = '/uploads/'.$request->url;
+            $data['url'] = $request->url;
         }
         $update = $photo->update($data);
         if($update){

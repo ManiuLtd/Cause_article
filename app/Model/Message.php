@@ -21,4 +21,9 @@ class Message extends Model
     {
         return $this->belongsTo(User::class, 'uid');
     }
+
+    public function subUser()
+    {
+        return $this->belongsTo(User::class, 'sub_uid');
+    }
 }

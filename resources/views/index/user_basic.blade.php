@@ -47,7 +47,7 @@
 				<div class="item brand">
 					<span class="flex centerv">我的品牌</span>
 					<div class="flex centerv right">
-						<input readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" @if($res->brand != null) value="{{$res->brand['name']}} @endif" data-rule="*" data-errmsg="请选择您的品牌" unselectable="on" onfocus="this.blur()">
+						<input readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" @if($res->brand_id == 0) value="全品牌" @else value="{{$res->brand['name']}}" @endif data-rule="*" data-errmsg="请选择您的品牌" unselectable="on" onfocus="this.blur()">
 						<input type="hidden" name="brand_id" class="brand_id" value="{{  $res->brand_id }}">
 						<i class="flex center bls bls-yjt"></i>
 					</div>
@@ -85,26 +85,6 @@
 		</div>
 	</form>
 
-	<!-- 二维码上传 -->
-	{{--<div id="conWrap" class='mainbox'>--}}
-		{{--<!--拖动选择层-->--}}
-		{{--<div id="picture">--}}
-			{{--<div id="bg"></div>--}}
-			{{--<div id="mask"></div>--}}
-		{{--</div>--}}
-		{{--<!--操作按钮-->--}}
-		{{--<div id="button">--}}
-			{{--<div id="select" class="active">取消</div>--}}
-			{{--<div id="preview">确定</div>--}}
-		{{--</div>--}}
-		{{--<!--用于生成和预览-->--}}
-		{{--<div id="canvasWrap">--}}
-			{{--<canvas id="canvas"></canvas>--}}
-		{{--</div>--}}
-	{{--</div>--}}
-	{{--<!-- 二维码上传END -->--}}
-	
-	{{--<div class="flex center bottom">&copy;&ensp;2017&ensp;事业头条&ensp;版权所有</div>--}}
 	<!--品牌-->
 	<div id="brand" class="flexv dialog_box">
 		<div class="flex center head">
@@ -165,6 +145,7 @@
         var brands = ret.brand_list;
         var char = '', charlist = [];
         var charTpl = [], listTpl = [];
+        listTpl.push('<li id="#"><p>#</p><div data-id="0">全品牌</div></li>');
         for (var k = 0; k < brands.length; k++) {
             var ch = brands[k].domain.substring(0, 1);
             if (char == ch) {

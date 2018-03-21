@@ -16,9 +16,21 @@ class UserController extends CommonController
      */
     public function index(Request $request)
     {
+        $type = $request->type;
         $key = $request->key;
         $value = $request->value;
         $where = [];
+        switch ($type) {
+            case '1':
+                array_push($where, ['phone', '=', ""]);
+                break;
+            case '2':
+                array_push($where, ['phone', '<>', ""]);
+                break;
+            case '3':
+                array_push($where, ['membership_time', '>', time()]);
+                break;
+        }
         switch($key){
             case 'wc_nickname':
                 array_push($where, ['wc_nickname', 'like', "%$value%"]);
@@ -34,7 +46,7 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
 
-        $admin = Admin::where('gid', 14)->get();
+        $admin = Admin::whereIn('gid', [14, 21])->get();
 
         $menu = $this->menu; $active = $this->active;
 

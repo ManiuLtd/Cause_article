@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>提现明细</title>
+    <title>推广记录</title>
     <link rel="stylesheet" href="http://xhh.wasd1.cn/static/css/base.css">
     <link rel="stylesheet" href="../index/css/index.css">
 </head>

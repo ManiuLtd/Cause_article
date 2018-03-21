@@ -4,6 +4,23 @@
     <div class="page-header">
         <h1>{{v('headtitle')}}</h1>
     </div>
+    <form class="form-inline" style="margin-bottom: 15px" action="{{route('photo.index')}}" method="get">
+        <select class="form-control" name="brand_id" style="width: 140px">
+            <option value="0" @if(request()->brand_id == 0) selected @endif>全品牌</option>
+            @foreach($brands as $brand)
+                <option value="{{ $brand->id }}" @if(request()->brand_id == $brand->id) selected @endif>{{ $brand->name }}</option>
+            @endforeach
+        </select>
+        <select class="form-control" name="type" style="width: 140px">
+            <option value="0" @if(request()->brand_id == 0) selected @endif>类型</option>
+            @foreach($types as $type)
+                <option value="{{ $type->id }}" @if(request()->type == $type->id) selected @endif>{{ $type->name }}</option>
+            @endforeach
+        </select>
+        <span style="font-size: 16px">名称：</span>
+        <input type="text" name="value" class="input" value="{{request()->value}}">
+        <button class="btn btn-sm btn-info" type="submit">&nbsp;搜索&nbsp;</button>
+    </form>
 
     <button class="btn btn-success store" data-url="{{route('photo.create')}}" style="margin-bottom: 15px">新增普通美图</button>
 
@@ -60,7 +77,7 @@
             </tbody>
         </table>
         <div style="text-align: center">
-            {{$list->appends(['type'=>request()->type,'key'=>request()->key,'value'=>request()->value])->links()}}
+            {{$list->appends(['type'=>request()->type,'name'=>request()->name,'brand_id'=>request()->brand_id])->links()}}
         </div>
     </div><!-- /.table-responsive -->
 </div><!-- /span -->

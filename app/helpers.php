@@ -180,27 +180,6 @@ function wecahtPackage()
     return Wechat::getSignPackage();
 }
 
-/**
- * @title 二维数组去重
- * @param $array
- * @return array
- */
-//function remove_duplicate($array){
-//    $result=array();
-//    foreach ($array as $key => $value) {
-//        $has = false;
-//          foreach($result as $val){
-//              if($val['see_uid'] == $value['see_uid']){
-//                $has = true;
-//                break;
-//              }
-//          }
-//        if(!$has){
-//            $result[]=$value;
-//        }
-//    }
-//    return $result;
-//}
 
 /**
  * 把base64转为图片保存到本地

@@ -88,9 +88,9 @@
 
     $(function () {
         $(".extension").click(_.throttle(function () {
-            @if($image != '')
-                showProgress('二维码正在火速制作中！请静待20秒~');
-                $.post("{{route('inviting')}}",{url:"{{ $image }}", type:1, _token:"{{csrf_token()}}"},function (ret) {
+            @if($user->extension_image != '' && \Carbon\Carbon::parse($user->image_at)->addDays(10) > \Carbon\Carbon::now())
+                showProgress('正在发送二维码');
+                $.post("{{route('inviting')}}",{url:"{{ $user->extension_image }}", type:1, _token:"{{csrf_token()}}"},function (ret) {
                     hideProgress();
                     if(ret.state == 0) {
                         $(".hint").css({"display":"block"});
@@ -100,7 +100,7 @@
                     }
                 });
             @else
-                showProgress('正在发送海报');
+                showProgress('二维码正在火速制作中！请静待20秒~');
                 $.get("{{ route('head_qrcode_base64') }}", function (ret) {
                     //canvas画图
                     var image = document.querySelector('#background');

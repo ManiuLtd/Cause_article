@@ -19,6 +19,7 @@
                     <th>ID</th>
                     <th>用户名称</th>
                     <th>用户手机</th>
+                    <th>支付宝账号</th>
                     <th>提现金额(元)</th>
                     <th>提现状态</th>
                     <th>备注</th>
@@ -34,6 +35,7 @@
                         <td>{{$value->id}}</td>
                         <td>{{$value->user->wc_nickname}}</td>
                         <td>{{$value->user->phone}}</td>
+                        <td>{{$value->user->user_account->card}}</td>
                         <td>{{$value->integral}}</td>
                         <td>
                             @if($value->state == 1)
@@ -51,8 +53,8 @@
                                 @endif
                             </a>
                         </td>
-                        <td>{{$value->created_at}}</td>
-                        <td>{{$value->over_at}}</td>
+                        <td>{{ $value->created_at }}</td>
+                        <td>{{ $value->over_at }}</td>
                         <td>
                             @if($value->state == 0)
                                 <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">

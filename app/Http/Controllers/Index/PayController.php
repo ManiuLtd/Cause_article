@@ -119,56 +119,51 @@ class PayController extends Controller
 
                 //推广用户获得佣金
                 if($pay_user->extension_id){
-                    $app = new Application(config('wechat'));
-                    $p_user = User::where('id', $pay_user->extension_id)->select('wc_nickname', 'openid', 'integral_scale', 'extension_id', 'admin_id', 'admin_type')->first();
-                    $scale = $p_user->integral_scale != 0 ? $p_user->integral_scale : 30;
-                    $price = floor($order->price * ($scale / 100));
-                    $data = [
-                        'user_id'  =>  $pay_user->extension_id,
-                        'price'    =>  $price,
-                        'order_id' =>  $order->id
-                    ];
-                    Integral::create($data);
-                    //所属员工和员工部门
-                    if($p_user->admin_id && $p_user->admin_type) {
-                        $order->admin_id = $p_user->admin_id;
-                        $order->admin_type = $p_user->admin_type;
-                    }
-                    //推送【推荐成交通知】模板消息
-                    $msg = [
-                        "first"     => "尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。",
-                        "keyword1"  => $pay_user->wc_nickname,
-                        "keyword2"  => date('Y-m-d',time()),
-                        "keyword3"  => $price . '元',
-                        "keyword4"  => $order->title,
-                        "remark"    => "感谢您的推荐。"
-                    ];
-                    template_message($app, $p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
-
-                    if($p_user->extension_id) {
-                        $pp_user = User::where('id', $p_user->extension_id)->select('openid', 'admin_id', 'admin_type')->first();
-                        $price = floor($order->price * 0.1);
-                        $dealer_data = [
-                            'user_id'  => $p_user->extension_id,
+                    $count = Integral::where(['user_id' => $pay_user->extension_id, 'order_id' => $order->id])->get()->count();
+                    if($count == 0) {
+                        $app = new Application(config('wechat'));
+                        $p_user = User::where('id', $pay_user->extension_id)->first();
+                        $scale = $p_user->integral_scale != 0 ? $p_user->integral_scale : 30;
+                        $price = floor($order->price * ( $scale / 100 ));
+                        $data = [
+                            'user_id'  => $pay_user->extension_id,
                             'price'    => $price,
                             'order_id' => $order->id
                         ];
-                        Integral::create($dealer_data);
-                        //所属员工和员工部门
-                        if($pp_user->admin_id && $pp_user->admin_type) {
-                            $order->admin_id = $pp_user->admin_id;
-                            $order->admin_type = $pp_user->admin_type;
-                        }
+                        Integral::create($data);
+                        \Log::info("订单ID:{$order->id},直接推广用户ID：{$pay_user->extension_id},昵称：{$p_user->wc_nickname}，获得佣金:{$price}");
                         //推送【推荐成交通知】模板消息
                         $msg = [
-                            "first"     => "尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。",
-                            "keyword1"  => $pay_user->wc_nickname,
-                            "keyword2"  => date('Y-m-d',time()),
-                            "keyword3"  => $price . '元',
-                            "keyword4"  => $order->title,
-                            "remark"    => "感谢您的推荐。"
+                            "first"    => "尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。",
+                            "keyword1" => $pay_user->wc_nickname,
+                            "keyword2" => date('Y-m-d', time()),
+                            "keyword3" => $price . '元',
+                            "keyword4" => $order->title,
+                            "remark"   => "感谢您的推荐。"
                         ];
-                        template_message($app, $pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+                        template_message($app, $p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+
+                        if ( $p_user->extension_id ) {
+                            $pp_user = User::where('id', $p_user->extension_id)->first();
+                            $price = floor($order->price * 0.1);
+                            $dealer_data = [
+                                'user_id'  => $p_user->extension_id,
+                                'price'    => $price,
+                                'order_id' => $order->id
+                            ];
+                            Integral::create($dealer_data);
+                            \Log::info("订单ID:{$order->id},直接推广用户ID：{$p_user->extension_id},昵称：{$pp_user->wc_nickname}，获得佣金:{$price}");
+                            //推送【推荐成交通知】模板消息
+                            $msg = [
+                                "first"    => "尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。",
+                                "keyword1" => $pay_user->wc_nickname,
+                                "keyword2" => date('Y-m-d', time()),
+                                "keyword3" => $price . '元',
+                                "keyword4" => $order->title,
+                                "remark"   => "感谢您的推荐。"
+                            ];
+                            template_message($app, $pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+                        }
                     }
                 }
 

@@ -78,7 +78,7 @@
 				<span>2017-09-15 10:42:20</span>
 			</div>
 			<div class="button">
-				<a href="{{route('read_share')}}" class="flex center">去看看谁查看了我的头条</a>
+				<a href="{{route('read_share', 1)}}" class="flex center">去看看谁查看了我的头条</a>
 			</div>
 		</div>
 	</div>

@@ -7,44 +7,50 @@
     <title>准客户</title>
     @include('index.public.css')
 </head>
-<body>
-<div id="prospect" class="flexv wrap">
+<body class="mescroll">
+<div id="prospect" class="flexv">
     <div class='flexitemv mainbox'>
-        @foreach($prospect as $value)
-            <div class="afterbox">
-                <div class="between after">
-                    <div class="flex center kf">
-                        <img src="{{ optional($value->user)->head }}" class="img">
-                        <span class="flex">{{ optional($value->user)->wc_nickname }}</span>
-                    </div>
-                    <div class="flexv center data">
-                        <span class="flex">{{ $value->created_at->toTimeString() }}</span>
-                        <span class="flex">{{ $value->created_at->toDateString() }}</span>
-                    </div>
-                </div>
-                <div class="between text">
-                    <span>看过的文章</span>
-                    <a href="{{ route('visitor_record_see', $value->id) }}">全部浏览记录>></a>
-                </div>
 
-                <div class="listbox">
-                    <div class="flex lists">
-                        <div class="img">
-                            <img class="fitimg" src="{{ optional($value->userArticle)->article->pic }}">
-                        </div>
-                        <div class="flexitemv cont">
-                            <h2 class="flexv">{{ optional($value->userArticle)->article->title }}</h2>
-                            <div class="between base">
-                                {{--<span><em>{{ $value->created_at->toDateString() }}</em></span>--}}
-                                <span><em>{{ optional($value->userArticle)->read }}</em>浏览</span>
-                            </div>
-                        </div>
-                        <a href="{{ route('user_article_details', $value->uaid) }}" class="link"></a>
-                    </div>
-                </div>
-            </div>
-        @endforeach
     </div>
 </div>
 </body>
+<script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+<script src="/index/js/mescroll.min.js"></script>
+<script>
+    //下拉分页
+    var mescroll = new MeScroll("body", { //第一个参数"mescroll"对应上面布局结构div的id
+        //解析: down.callback默认调用mescroll.resetUpScroll(),而resetUpScroll会将page.num=1,再触发up.callback
+        down: {
+            use: false,
+            auto: false,
+            isLock: true
+        },
+        up: {
+            page: {num:0,size:15},
+            callback: upCallback , //上拉加载的回调
+            toTop:{ //配置回到顶部按钮
+                src : "/index/image/mescroll-totop.png", //默认滚动到1000px显示,可配置offset修改
+                offset : 1000
+            }
+        }
+    });
+
+    //上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
+    function upCallback(page) {
+        var url = "{{ route('visitor_prospect') }}"+"?page="+page.num;
+        $.ajax({
+            url: url, //如何修改page.num从0开始 ?
+            success: function(curPageData) {
+                //方法一(推荐): 后台接口有返回列表的总页数 totalPage
+                //必传参数(当前页的数据个数, 总页数)
+                mescroll.endByPage({{ $lists->count() }}, {{ $lists->lastPage() }});
+                $(".mainbox").append(curPageData.html);
+            },
+            error: function(e) {
+                //联网失败的回调,隐藏下拉刷新和上拉加载的状态
+                mescroll.endErr();
+            }
+        });
+    }
+</script>
 </html>

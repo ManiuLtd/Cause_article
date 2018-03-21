@@ -291,8 +291,9 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #expand .sub{position:relative;width:100%;padding:2rem 0 0;background:url("../image/focus.jpg") no-repeat;background-size: 100%;}
 #expand .sub:before{position:absolute;top:0;left:0;right:0;bottom:0;content:'';background:rgba(255,255,255,.5);}
 #expand .sub>*{position:relative;}
-#expand .sub .num{height:4rem;font-size:3rem;}
-#expand .sub h2.income{height: 3rem;font-weight: lighter;font-size: 1.8rem;}
+#expand .sub h2.income{font-weight:normal;font-size:1.4rem;}
+#expand .sub .num{font-size:4rem;color:#f7443e;}
+#expand .sub .btn{width:6.5rem;height:2rem;border-radius:1rem;background:#f7443e;color:#fff;font-size:1.2rem;}
 #expand .front{width: 100%; display: flex;justify-content:space-around;padding: 4rem 0 1rem; }
 #expand .front .myfront{color:#333;}
 #expand .front .myfront em{height: 3rem;font-size: 2rem;}
@@ -413,7 +414,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #article .title .subhead .site{color:#4ea1d0;}
 #article .content p{font-size:1.3rem;line-height:2.2rem !important;letter-spacing:.2rem;color:#333;}
 #article .content.max{max-height:30rem;overflow:hidden;}
-#article .content img{width: 100%;padding:1rem 0;text-indent:0;}
+#article .content img{width: 100%;vertical-align:bottom;text-indent:0;}
 #article .unfold .unfoldbox{margin:1rem;padding:0.5rem 1rem;font-size: 1.4rem;border-radius:0.5rem;border:1.5px solid #eb6060;color:#eb6060;}
 #article .unfold i{font-size: 1.4rem;padding:0 0.5rem;}
 
@@ -475,6 +476,13 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .hint .content h3{color: #DD726B;font-size: 1.5rem;padding: 1rem 0;}
 .hint .content .qrcode{width: 16rem;margin: 0 auto;}
 .hint .content p{padding: 1rem 0;font-size: 1.2rem;color:#363636;}
+/*提示*/
+.gzh {position: fixed;top:0;left:0;width: 100%;bottom: 0;overflow: hidden;z-index: 20;display: none;}
+.gzh .content.trans{animation: zoomIn 0.3s ease;}
+.gzh .content{width: 66%; background: #fff;border-radius: 1rem;position: absolute;top: 26%;left:17%;}
+.gzh .content h3{color: #DD726B;font-size: 1.5rem;padding: 1rem 0;}
+.gzh .content .qrcode{width: 16rem;margin: 0 auto;}
+.gzh .content p{padding: 1rem 0;font-size: 1.2rem;color:#363636;}
 /************************************** 爆单头条 ****************************************/
 #blasting .img{height: 24rem;padding: 2rem 0;}
 #blasting .bottom{margin: 3rem 2rem 0;font-weight: bold;border:1px solid #fb5341;position: relative;border-radius:.5rem;color:#f00;}
@@ -645,7 +653,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 
 /*加微信提示框*/
 #wechat .wechat.trans{animation: zoomIn 0.3s ease;}
-#wechat .wechat{width: 66%; background: #fff;border-radius: 1rem;position: absolute;top: 26%;left:50%;transform:translateX(-50%);}
+#wechat .wechat{width: 76%; background: #fff;border-radius: 1rem;position: absolute;top: 26%;left:50%;transform:translateX(-50%);}
 #wechat .wechat h3{color: #DD726B;font-size: 1.5rem;padding: 1rem 0;}
 #wechat .wechat .qrcode{width: 16rem;margin: 0 auto;}
 #wechat .wechat p{padding: 1rem 0;font-size: 1.2rem;color:#363636;}

@@ -134,12 +134,12 @@ class WechatController extends Controller
             //会员时间过期或没有
             if(Carbon::parse('now')->gt(Carbon::parse($fuser->membership_time))){
                 $pinfo = User::find($eventkey);
-                if($fuser->extension_id == 0 && $fuser->admin_id == 0 && $fuser->type == 1 && $pinfo->extension_id != $fuser->id) {
+                if($fuser->extension_id == 0 && $fuser->admin_id == 0 && $fuser->type == 1 && optional($pinfo)->extension_id != $fuser->id) {
                     //当用户本来没有推广用户和经销商的时候
                     $data = [
-                        'extension_id' => $pinfo->id,
-                        'admin_id' => $pinfo->admin_id,
-                        'admin_type' => $pinfo->admin_type,
+                        'extension_id' => optional($pinfo)->id,
+                        'admin_id' => optional($pinfo)->admin_id,
+                        'admin_type' => optional($pinfo)->admin_type,
                         'extension_at' => date('Y-m-d H:i:s', time()),
                         'ex_type' => 2
                     ];
@@ -147,10 +147,11 @@ class WechatController extends Controller
 
                     //推送【推荐会员成功提醒】模板消息
                     $msg = [
-                        "first"     => "你好，【" . $fuser->wc_nickname . "】已通过扫描您的专属二维码被推荐成为会员。",
+                        "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                         "keyword1"  => $fuser->wc_nickname,
                         "keyword2"  => date('Y-m-d H:i:s',time()),
-                        "remark"    => "感谢您的推荐。"
+                        "keyword3"  => '扫描个人专属二维码',
+                        "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
                     ];
                     template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
                     //推广奖励操作
@@ -177,10 +178,11 @@ class WechatController extends Controller
 
             //推送【推荐会员成功提醒】模板消息
             $msg = [
-                "first"     => "你好，【". $userinfores['nickname'] ."】已通过扫描您的专属二维码被推荐成为会员。",
+                "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                 "keyword1"  => $userinfores['nickname'],
                 "keyword2"  => date('Y-m-d H:i:s',time()),
-                "remark"    => "感谢您的推荐。"
+                "keyword3"  => '扫描个人专属二维码',
+                "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
             template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
             //推广奖励操作
@@ -202,30 +204,33 @@ class WechatController extends Controller
 
         //关联账号关系
         $user = User::find($user_id);
-        $puser = User::find($pid);
-        if ( empty($user->dealer_id) && empty($user->extension_id) && $pid != $user_id && $user->type != 2 ) {
-            if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
+        if($pid) {
+            $puser = User::find($pid);
+            if ( empty($user->dealer_id) && empty($user->extension_id) && $pid != $user_id && $user->type != 2 ) {
+                if ( Carbon::parse('now')->gt(Carbon::parse($user->membership_time)) ) {
 
-                User::where('id', $user_id)->update([
-                        'extension_id' => $pid,
-                        'admin_id' => $puser->admin_id,
-                        'admin_type' => $puser->admin_type,
-                        'extension_at' => date('Y-m-d H:i:s', time()),
-                        'ex_type' => 2,
-                        'subscribe' => 1
-                    ]
-                );
+                    User::where('id', $user_id)->update([
+                            'extension_id' => $pid,
+                            'admin_id'     => $puser->admin_id,
+                            'admin_type'   => $puser->admin_type,
+                            'extension_at' => date('Y-m-d H:i:s', time()),
+                            'ex_type'      => 2,
+                            'subscribe'    => 1
+                        ]
+                    );
 
-                //推送【推荐会员成功提醒】模板消息
-                $msg = [
-                    "first"    => "你好，【{$user->wc_nickname}】已通过查看您的文章被推荐成了会员。",
-                    "keyword1" => $user->wc_nickname,
-                    "keyword2" => date('Y-m-d H:i:s', time()),
-                    "remark"   => "感谢您的推荐。"
-                ];
-                $options = config('wechat');
-                $app = new Application($options);
-                template_message($app, $puser->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+                    //推送【推荐会员成功提醒】模板消息
+                    $msg = [
+                        "first"    => "恭喜您，有新的会员加入您的事业爆文团队！",
+                        "keyword1" => $user->wc_nickname,
+                        "keyword2" => date('Y-m-d H:i:s', time()),
+                        "keyword3" => '查看您的文章',
+                        "remark"   => "您的队伍越来越强大了哦，请再接再厉！"
+                    ];
+                    $options = config('wechat');
+                    $app = new Application($options);
+                    template_message($app, $puser->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+                }
             }
         }
         $data = [

@@ -160,6 +160,19 @@
 			<p class="flex center">长按识别二维码</p>
 		</div>
 	</div>
+
+	<!--提示-->
+	<div class="flex center gzh" style="display: none">
+		<div class="mask"></div>
+		<div class='content'>
+			<h3 class="flex center">更多免费资讯</h3>
+			<div class="qrcode">
+				<img src="/qrcode.jpg" class="fitimg">
+			</div>
+			<p class="flex center">长按识别二维码</p>
+		</div>
+	</div>
+
 	<!--提示-->
 	<form class="flex center alert" id="form" action="{{route('perfect_information', session('user_id'))}}">
 		{{csrf_field()}}
@@ -180,8 +193,8 @@
 			</div>
 			<div class="flex centerv input brands">
 				<span class="flex centerv">品牌</span>
-				<input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" value="{{ $brand->name }}" data-rule="*" data-errmsg="请选择您的品牌" onfocus="this.blur()">
-				<input type="hidden" name="brand_id" class="brand_id" value="{{ $brand->id }}">
+				<input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" value="{{ optional($brand)->name }}" data-rule="*" data-errmsg="请选择您的品牌" onfocus="this.blur()">
+				<input type="hidden" name="brand_id" class="brand_id" value="{{ optional($brand)->id }}">
 				<i class="flex smtxt"></i>
 				<i class="flex center bls bls-xia brand"></i>
 			</div>
@@ -261,7 +274,7 @@
 			//  品牌
 			@include('index.public._brand_list')
 		@else
-			window.location.href = "{{ route('become_my_article',['user_id'=>session()->get('user_id'),'article_id'=>$res->article['id'],'pid'=>$res->uid]) }}";
+			window.location.href = "{{ route('become_my_article',[$res->article['id'], $res->uid]) }}";
 		@endif
     });
 
@@ -332,6 +345,10 @@
 			$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
 		}, 3000, { 'trailing': false }));
 	@endif
+
+    $(".mask").click(function(){
+        $(".gzh").hide();
+    });
 
 	//上传个人二维码
 	$("#put").change(function (event) {
@@ -436,6 +453,7 @@ function logTime() {
                 $.get("{{route('user_article_share',['id'=>$res->id, 'ex_id'=>session('user_id')])}}",function (ret) {
 
                 });
+				$('.gzh').show();
 				return false;
             }
         });
@@ -450,6 +468,7 @@ function logTime() {
                 $.get("{{route('user_article_share',['id'=>$res->id, 'ex_id'=>session('user_id')])}}",function (ret) {
 
                 });
+                $('.gzh').show();
                 return false;
             }
         });

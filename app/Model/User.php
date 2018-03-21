@@ -84,17 +84,19 @@ class User extends Model
 
     /**
      * 生成微信二维码
-     * @param $uid
+     * @param $user
      * @return string
      */
-    public function createQrcode($uid)
+    public function createQrcode($user)
     {
         //创建永久二维码(已改为临时)
-        $options = config('wechat');
-        $app = new Application($options);
+        $app = new Application(config('wechat'));
         $qrcode = $app->qrcode;
-//        $result = $qrcode->forever($uid);
-        $result = $qrcode->temporary($uid, 29 * 24 * 3600);
+        if($user->type == 2) {
+            $result = $qrcode->forever($user->id);
+        } else {
+            $result = $qrcode->temporary($user->id, 29 * 24 * 3600);
+        }
         $ticket = $result->ticket; // 或者 $result['ticket']
         return $qrcode->url($ticket);
     }

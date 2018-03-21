@@ -12,12 +12,12 @@
     <div class="flexitemv mainbox">
         <form action="{{ route('index.get_code') }}" class="step1" onsubmit="return false">
             {{ csrf_field() }}
-            <div class="tips">请绑定持卡本人的银行卡</div>
+            <div class="tips">请绑定本人的支付宝</div>
             <div class="block stepone">
                 <label class="flex centerv row select">
-                    <span class="flex title">银行/账户</span>
-                    <select name="type" class="flexitem" data-rule="*" data-errmsg="请选择银行或账户类型">
-                        <option value="">请选择银行或账户类型</option>
+                    <span class="flex title">支付宝</span>
+                    <select name="type" class="flexitem" data-rule="*" data-errmsg="请选择账户类型">
+                        {{--<option value="">请选择银行或账户类型</option>--}}
                         <option value="支付宝"@if(optional($user->user_account)->type == '支付宝')selected @endif>支付宝</option>
                         {{--<option value="工商银行"@if(optional($user->user_account)->type == '工商银行')selected @endif>工商银行</option>--}}
                         {{--<option value="农业银行"@if(optional($user->user_account)->type == '农业银行')selected @endif>农业银行</option>--}}
@@ -28,12 +28,12 @@
                     <i class="flex center bls bls-yjt"></i>
                 </label>
                 <label class="flex centerv row">
-                    <span class="flex title">开户姓名</span>
-                    <input type="text" name="name" placeholder="请填写您的开户姓名/真实姓名" class="flexitem input normal" value="{{ optional($user->user_account)->name }}" data-rule="cname" data-errmsg="请填写您的开户姓名/真实姓名">
+                    <span class="flex title">支付宝姓名</span>
+                    <input type="text" name="name" placeholder="请填写您的真实姓名" class="flexitem input normal" value="{{ optional($user->user_account)->name }}" data-rule="cname" data-errmsg="请填写您的真实姓名">
                 </label>
                 <label class="flex centerv row">
-                    <span class="flex title">卡号/账户</span>
-                    <input type="text" name="card" placeholder="请填写您的银行卡/账户" class="flexitem input normal" value="{{ optional($user->user_account)->card }}" data-rule="*" data-errmsg="请填写您的银行卡/账户">
+                    <span class="flex title">支付宝账号</span>
+                    <input type="text" name="card" placeholder="请填写您的支付宝账户" class="flexitem input normal" value="{{ optional($user->user_account)->card }}" data-rule="*" data-errmsg="请填写您的支付宝账号">
                 </label>
                 <label class="flex centerv row">
                     <span class="flex title">手机号</span>

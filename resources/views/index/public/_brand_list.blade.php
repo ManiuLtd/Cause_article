@@ -4,6 +4,7 @@ $.get("{{route('brand_list')}}",function (ret) {
     var brands = ret.brand_list;
     var char = '', charlist = [];
     var charTpl = [], listTpl = [];
+listTpl.push('<li id="#"><p>#</p><div data-id="0">全品牌</div></li>');
     for (var k = 0; k < brands.length; k++) {
         var ch = brands[k].domain.substring(0, 1);
         if (char == ch) {

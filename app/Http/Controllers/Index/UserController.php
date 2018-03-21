@@ -34,13 +34,13 @@ class UserController extends CommonController
         $uid = session('user_id');
         $res = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if($res->type == 1 && optional($res)->admin_id && optional($res)->admin_type) {
+        if($res->type == 1 && empty($res->admin_id) && empty($res->admin_type)) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
             //普通用户推广链接进来的
-            if($type == 'ex_user') {
+            if($type == 'ex_user' && $dealer != $res->id) {
                 $puser = User::select('admin_id', 'admin_type')->where('id', $dealer)->first();
                 User::where('id', $uid)->update(['extension_id' => $dealer, 'admin_id' => $puser->admin_id, 'admin_type' => $puser->admin_type]);
             }
@@ -52,7 +52,19 @@ class UserController extends CommonController
         }])->where(['state' => 1, 'refund_state' => 0])->orderBy('pay_time', 'desc')->limit(10)->get();
 
         //美图列表
-        $photos = Photo::get()->random(4);
+        $brand_id = User::where('id', session('user_id'))->value('brand_id');
+        if($brand_id) {
+            $brand_photo = Photo::where('brand_id', $brand_id)->get();
+            if($brand_photo->count() >= 4) {
+                $photos = $brand_photo->random(4);
+            } else {
+                $brand = Brand::where('id', '<>', $brand_id)->get();
+                $photos = Photo::whereNotIn('brand_id', $brand->pluck('id')->all())->get()->random(4);
+            }
+        } else {
+            $photos = Photo::get()->random(4);
+        }
+//        $photos = Photo::get()->random(4);
 
         return view('index.user_center', compact('res', 'orders', 'photos'));
     }
@@ -63,19 +75,18 @@ class UserController extends CommonController
      */
     public function headQrcodeBase64()
     {
-        $res = User::where('id', session('user_id'))->first();
-        $qrcode = Cache::remember('user_qrcode'.$res->openid, 60 * 24 * 29, function () {
-            $url = app(User::class)->createQrcode(session('user_id'));
+        $res = User::where('id', session('user_id'))->select('id', 'type', 'openid')->first();
+        $qrcode = Cache::remember('user_qrcode'.$res->openid, 60 * 24 * 10, function () use($res) {
+            $url = app(User::class)->createQrcode($res);
             //二维码转base64位
             $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
 
             return $pic;
         });
-        $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 30, function () {
+        $head = Cache::remember('user_head'.$res->openid, 60 * 24 * 10, function () {
             //头像转base64
             $head = session('head_pic');
             if(str_contains($head, 'qlogo.cn')) { //strpos
-//            if(strstr(session('head_pic'), "thirdwx.qlogo.cn", true) == 'http://') {
                 $content = file_get_contents($head);
                 $head =  'data:image/jpeg;base64,' . base64_encode($content);
             } else {
@@ -123,8 +134,8 @@ class UserController extends CommonController
             }
 
             //更新用户session
-            $brand = Brand::find($request->brand_id);
-            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
+//            $brand = Brand::find($request->brand_id);
+//            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
 
             if ( $user->update($data) ) {
                 return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);

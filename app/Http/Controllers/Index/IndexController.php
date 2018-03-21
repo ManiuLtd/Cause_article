@@ -12,6 +12,7 @@ use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Footprint, Photo, Report, User, UserArticles
 };
 use App\Model\ArticleType;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -19,7 +20,7 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-        session(['user_id'=>330]);
+//        session(['user_id'=>330]);
     }
     /**
      * 首页

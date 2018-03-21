@@ -41,6 +41,7 @@ class PhotoController extends Controller
         } else {
             if ( $type ) {
                 $photos = Photo::where('type_id', $type)->paginate(12);
+//                dump($photos);
             } else {
                 foreach ( $types as $value ) {
                     $photos = Photo::where('type_id', $value->id)->paginate(12);
@@ -52,6 +53,7 @@ class PhotoController extends Controller
             $view = view('index.template.__photo_list', compact('photos'))->render();
             return response()->json(['html'=>$view]);
         }
+//        dump($photos);
 
         return view('index.photo_list', compact('types', 'user', 'photos'));
     }

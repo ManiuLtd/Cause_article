@@ -42,9 +42,9 @@ class ExtensionController extends CommonController
 
     public function rules()
     {
-        $image = User::where('id', session('user_id'))->value('extension_image');
+        $user = User::where('id', session('user_id'))->select('extension_image', 'image_at')->first();
 
-        return view('index.extension_rules', compact('image'));
+        return view('index.extension_rules', compact('user'));
     }
 
     /**
@@ -78,6 +78,7 @@ class ExtensionController extends CommonController
             $users = User::whereHas('orderList', function ($query) {
                 $query->where(['state' => 1, 'refund_state' => 0]);
             })->where('extension_id', $user_id)->orderBy('extension_at', 'desc')->paginate(7);
+            $list = [];
             foreach ($users as $user) {
                 $orders = Order::with(['user' => function($query){
                     $query->select('id', 'head', 'wc_nickname');

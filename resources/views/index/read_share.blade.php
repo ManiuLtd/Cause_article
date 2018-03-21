@@ -8,121 +8,71 @@
 	@include('index.public.css')
 </head>
 <body>
-<div id="read" class="flexv wrap">
+<div id="read" class="flexv">
 	<div class="flexitemv mainbox box">
 		<div class="flex center title">
-			<span class="flex center read elect">阅读</span>
-			<span class="flex center share">分享</span>
+			<a href="{{ route('read_share', 1) }}" class="flex center read @if(request()->type == 1) elect @endif">阅读</a>
+			<a href="{{ route('read_share', 2) }}" class="flex center share @if(request()->type == 2) elect @endif">分享</a>
 		</div>
 		
-		<div class="reads">
-			@foreach($list_read as $value)
-				<div class="listbox">
-					<div class="flex centerv top">
-						<div class="headimg">
-							<img src="{{$value['user']['head']}}" class="fitimg">
-						</div>
-						<div class="flexitemv info">
-							<p class="flex centerv">{{$value['user']['wc_nickname']}}</p>
-							<p class="flex centerv">{{\Carbon\Carbon::parse($value['created_at'])->toDateString()}}</p>
-						</div>
-						<div class="flex center">停留<em>{{\Carbon\Carbon::now()->subSecond($value['residence_time'])->diffForHumans(null, true)}}</em></div>
-					</div>
-					<div class="flex lists">
-						<div class="img">
-							<img class="fitimg" src="{{$value['article']['pic']}}"/>
-						</div>
-						<div class="flexitemv cont">
-							<a href="{{route('visitor_details',['id'=>$value['uaid']])}}" class="flexitemv">{{$value['article']['title']}}</a>
-						</div>
-					</div>
-				</div>
-			@endforeach
-		</div>
-		
-		<div class="shares" style="display:none;">
-			@foreach($list_share as $value)
-				<div class="listbox">
-					<div class="flex centerv top">
-						<div class="headimg">
-							<img src="{{ $value['user']['head'] }}" class="fitimg">
-						</div>
-						<div class="flexitemv info">
-							<p class="flex centerv">{{$value['user']['wc_nickname']}}</p>
-							<p class="flex centerv">{{\Carbon\Carbon::parse($value['created_at'])->toDateString()}}</p>
-						</div>
-						<div class="flex center">分享给朋友</div>
-					</div>
-					<div class="flex lists">
-						<div class="img">
-							<img class="fitimg" src="{{$value['article']['pic']}}"/>
-						</div>
-						<div class="flexitemv cont">
-							<a href="{{route('visitor_details',['id'=>$value['uaid']])}}" class="flexitemv">{{$value['article']['title']}}</a>
-						</div>
-					</div>
-				</div>
-			@endforeach
+		<div class="shares">
+
 		</div>
 	</div>
 </div>
 </body>
-<script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+<script src="/index/js/mescroll.min.js"></script>
 <script type="text/javascript">
-	$(".read").click(function(){
-        $(".title span").removeClass('elect');
-	    $(this).addClass('elect');
-	    $('.reads').css({'display':'block'});
-		$('.shares').css({'display':'none'});
-	});
-    $(".share").click(function(){
-        $(".title span").removeClass('elect');
-        $(this).addClass('elect');
-        $('.shares').css({'display':'block'});
-        $('.reads').css({'display':'none'});
-    });
+    // $(".read").click(function(){
+    //     $(".title span").removeClass('elect');
+	 //    $(this).addClass('elect');
+    //     initMescroll('read')
+	 //    $('.reads').css({'display':'block'});
+		// $('.shares').css({'display':'none'});
+    // });
+    // $(".share").click(function(){
+    //     $(".title span").removeClass('elect');
+    //     $(this).addClass('elect');
+    //
+    //     $('.shares').css({'display':'block'});
+    //     $('.reads').css({'display':'none'});
+    // });
 
-    // 简单的防抖动函数
-    function debounce(func, wait) {
-        // 定时器变量
-        var timeout;
-        return function() {
-            // 每次触发 scroll handler 时先清除定时器
-            clearTimeout(timeout);
-            // 指定 xx ms 后触发真正想进行的操作 handler
-            timeout = setTimeout(func, wait);
-        };
-    };
-    // 实际想绑定在 scroll 事件上的 handler
-    function realFunc(){
-        var scrollTop = Math.ceil(scroll.scrollTop()),thisHeight = scroll.height(),boxHeight = $(".reads").height();
-        console.log(scrollTop,thisHeight,boxHeight);
-        if((scrollTop + thisHeight) > boxHeight - 10) {
-            page++;
-            if(page < 10 ) {
-                {{--$(".loding").removeClass("hide");--}}
-                {{--var url = "{{ route('index.index', request()->type) }}" + "?page=" + page;--}}
-                {{--$.get(url, function (ret) {--}}
-                    {{--console.log(ret);--}}
-                    {{--$(".listbox").append(ret.html);--}}
-                    {{--$(".loding").addClass("hide");--}}
-                    {{--$(".lazy").lazyload({--}}
-                        {{--event: "scrollstop",--}}
-                        {{--effect : "fadeIn",--}}
-                        {{--container: $(".listbox"),--}}
-                        {{--load:function ($e) {--}}
-                            {{--$e.css({"width":"100%","height":"100%"});--}}
-                        {{--}--}}
-                    {{--});--}}
-                {{--});--}}
-            } else {
-                $(".ending").removeClass("hide");
+    //下拉分页
+    var mescroll = new MeScroll("body", { //第一个参数"mescroll"对应上面布局结构div的id
+        //解析: down.callback默认调用mescroll.resetUpScroll(),而resetUpScroll会将page.num=1,再触发up.callback
+        down: {
+            use: false,
+            auto: false,
+            isLock: true
+        },
+        up: {
+            page: {num:0,size:5},
+            callback: upCallback , //上拉加载的回调
+            toTop:{ //配置回到顶部按钮
+                src : "/index/image/mescroll-totop.png", //默认滚动到1000px显示,可配置offset修改
+                offset : 1000
             }
         }
+    });
+
+    //上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
+    function upCallback(page) {
+        var url = "{{ route('read_share', request()->type) }}"+"?page="+page.num;
+        $.ajax({
+            url: url, //如何修改page.num从0开始 ?
+            success: function(curPageData) {
+                //方法一(推荐): 后台接口有返回列表的总页数 totalPage
+                //必传参数(当前页的数据个数, 总页数)
+                mescroll.endByPage({{ $lists->count() }}, {{ $lists->lastPage() }});
+                $(".shares").append(curPageData.html);
+            },
+            error: function(e) {
+                //联网失败的回调,隐藏下拉刷新和上拉加载的状态
+                mescroll.endErr();
+            }
+        });
     }
-    // 采用了防抖动
-    var page = 1;
-    var scroll = $(".flexitemv.mainbox.box");
-    $(".flexitemv.mainbox.box").scroll(debounce(realFunc,50));
 </script>
 </html>

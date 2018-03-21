@@ -43,17 +43,17 @@
 
 	<div class="flexv centerv dredge">
 		@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($message->user['membership_time'])))
-			<a href="{{route('open_member')}}" class="flex center button">开通<span>{{$message->brand->name}}</span>事业</a>
+			<a href="{{route('open_member')}}" class="flex center button">开通<span>{{ optional($message->user->brand)->name }}</span>事业</a>
 		@endif
 		<p>让客户第一时间联系到您</p>
 	</div>
 	<!--end-->
 	<div class="flexv center qrcode">
 		<div class="img">
-			@if($message->brand->qrcode)
-				<img src="/uploads/{{$message->brand->qrcode}}" />
+			@if($message->subUser->qrcode)
+				<img src="{{ $message->subUser->qrcode }}" />
 			@else
-				<img src="/qrcode.jpg" />
+				<img src="/kf_qrcode.jpg" />
 			@endif
 		</div>
 		<p>长按识别二维码</p>

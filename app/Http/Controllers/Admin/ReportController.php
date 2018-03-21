@@ -60,7 +60,7 @@ class ReportController extends CommonController
         }
 
         if(has_menu($this->menu, '/admin/see_all')) {
-            $extension = Admin::where('gid', 14)->get();
+            $extension = Admin::whereIn('gid', [14, 21])->get();
             $gid = true;
         } else {
             $extension = Admin::where('id', Auth::user()->id)->get();
@@ -131,16 +131,27 @@ class ReportController extends CommonController
 
         /*---- 今日 ----*/
         $today_bw_time = [$today_time, $tomorrow_time];
+        //访客
+        $today['user_fk'] = User::where('phone', '')->whereBetween('created_at', $today_bw_time)->count();
         //注册
-        $today['user_register'] = User::whereBetween('created_at', $today_bw_time)->count();
+        $today['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $today_bw_time)->count();
+        //订单数
+        $today['order'] = Order::whereBetween('created_at', $today_bw_time)->count();
         //开通
-        $today['membership'] = Order::where($where)->whereBetween('created_at', [$today_time, $tomorrow_time])->count();
-        //开通率
+        $today['membership'] = Order::where($where)->whereBetween('created_at', $today_bw_time)->count();
+        //付费开通率
         $today['order_count'] = Order::whereBetween('created_at', $today_bw_time)->count();
         if($today['membership'] != 0 && $today['order_count'] != 0) {
             $today[ 'membership_rate' ] = ($today[ 'membership' ] / $today[ 'order_count' ]) * 100;
         } else {
             $today[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $today['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $today_bw_time)->count();
+        if($today['membership'] != 0 && $today['user'] != 0) {
+            $today[ 'user_membership_rate' ] = ($today[ 'membership' ] / $today[ 'user' ]) * 100;
+        } else {
+            $today[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $today['order_money'] = Order::where($where)->whereBetween('created_at', $today_bw_time)->sum('price');
@@ -152,8 +163,12 @@ class ReportController extends CommonController
 
         /*---- 昨日 ----*/
         $yesterday_bw_time = [$yesterday_time, $today_time];
+        //访客
+        $yesterday['user_fk'] = User::where('phone', '')->whereBetween('created_at', $yesterday_bw_time)->count();
         //注册
-        $yesterday['user_register'] = User::whereBetween('created_at', $yesterday_bw_time)->count();
+        $yesterday['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $yesterday_bw_time)->count();
+        //订单数
+        $yesterday['order'] = Order::whereBetween('created_at', $yesterday_bw_time)->count();
         //开通
         $yesterday['membership'] = Order::where($where)->whereBetween('created_at', $yesterday_bw_time)->count();
         //开通率
@@ -162,6 +177,13 @@ class ReportController extends CommonController
             $yesterday[ 'membership_rate' ] = ($yesterday[ 'membership' ] / $yesterday[ 'order_count' ]) * 100;
         } else {
             $yesterday[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $yesterday['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $yesterday_bw_time)->count();
+        if($yesterday['membership'] != 0 && $yesterday['user'] != 0) {
+            $yesterday[ 'user_membership_rate' ] = ($yesterday[ 'membership' ] / $yesterday[ 'user' ]) * 100;
+        } else {
+            $yesterday[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $yesterday['order_money'] = Order::where($where)->whereBetween('created_at', $yesterday_bw_time)->sum('price');
@@ -172,17 +194,18 @@ class ReportController extends CommonController
         /*---- 昨日 ----*/
 
         /*---- 同比 ----*/
+        //访客
+        $today_yesterday['user_fk'] = $today['user_fk'] - $yesterday['user_fk'];
         //注册
         $today_yesterday['user_register'] = $today['user_register'] - $yesterday['user_register'];
+        //订单数
+        $today_yesterday['order'] = $today['order'] - $yesterday['order'];
         //开通
         $today_yesterday['membership'] = $today['membership'] - $yesterday['membership'];
         //开通率
-        $today_yesterday['order_count'] = $today['order_count'] - $yesterday['order_count'];
-        if($today_yesterday['membership'] != 0 && $today_yesterday['order_count'] != 0) {
-            $today_yesterday[ 'membership_rate' ] = ($today_yesterday[ 'membership' ] / $today_yesterday[ 'order_count' ]) * 100;
-        } else {
-            $today_yesterday[ 'membership_rate' ] = 0;
-        }
+        $today_yesterday[ 'membership_rate' ] = $today[ 'membership_rate' ] - $yesterday[ 'membership_rate' ];
+        //创建开通率
+        $today_yesterday[ 'user_membership_rate' ] = $today[ 'user_membership_rate' ] - $yesterday[ 'user_membership_rate' ];
         //开通金额
         $today_yesterday['order_money'] = $today['order_money'] - $yesterday['order_money'];
         //退款
@@ -193,8 +216,12 @@ class ReportController extends CommonController
 
         /*---- 前日 ----*/
         $before_yesterday_bw_time = [$day_before_yesterday_time, $yesterday_time];
+        //访客
+        $before_yesterday['user_fk'] = User::where('phone', '')->whereBetween('created_at', $before_yesterday_bw_time)->count();
         //注册
-        $before_yesterday['user_register'] = User::whereBetween('created_at', $before_yesterday_bw_time)->count();
+        $before_yesterday['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_yesterday_bw_time)->count();
+        //订单数
+        $before_yesterday['order'] = Order::whereBetween('created_at', $before_yesterday_bw_time)->count();
         //开通
         $before_yesterday['membership'] = Order::where($where)->whereBetween('created_at', $before_yesterday_bw_time)->count();
         //开通率
@@ -204,6 +231,20 @@ class ReportController extends CommonController
         } else {
             $before_yesterday[ 'membership_rate' ] = 0;
         }
+        //创建开通率
+        $before_yesterday['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_yesterday_bw_time)->count();
+        if($before_yesterday['membership'] != 0 && $before_yesterday['user'] != 0) {
+            $before_yesterday[ 'user_membership_rate' ] = ($before_yesterday[ 'membership' ] / $before_yesterday[ 'user' ]) * 100;
+        } else {
+            $before_yesterday[ 'user_membership_rate' ] = 0;
+        }
+        //创建开通率
+//        $before_yesterday['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_yesterday_bw_time)->count();
+//        if($before_yesterday['membership'] != 0 && $before_yesterday['user'] != 0) {
+//            $before_yesterday[ 'user_membership_rate' ] = ($before_yesterday[ 'membership' ] / $before_yesterday[ 'user' ]) * 100;
+//        } else {
+//            $before_yesterday[ 'user_membership_rate' ] = 0;
+//        }
         //开通金额
         $before_yesterday['order_money'] = Order::where($where)->whereBetween('created_at', $before_yesterday_bw_time)->sum('price');
         //退款
@@ -214,8 +255,12 @@ class ReportController extends CommonController
 
         /*---- 本月 ----*/
         $this_month_bw_time = [$start_month_time, $end_month_time];
+        //访客
+        $this_month['user_fk'] = User::where('phone', '')->whereBetween('created_at', $this_month_bw_time)->count();
         //注册
-        $this_month['user_register'] = User::whereBetween('created_at', $this_month_bw_time)->count();
+        $this_month['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $this_month_bw_time)->count();
+        //订单数
+        $this_month['order'] = Order::whereBetween('created_at', $this_month_bw_time)->count();
         //开通
         $this_month['membership'] = Order::where($where)->whereBetween('created_at', $this_month_bw_time)->count();
         //开通率
@@ -224,6 +269,13 @@ class ReportController extends CommonController
             $this_month[ 'membership_rate' ] = ($this_month[ 'membership' ] / $this_month[ 'order_count' ]) * 100;
         } else {
             $this_month[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $this_month['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $this_month_bw_time)->count();
+        if($this_month['membership'] != 0 && $this_month['user'] != 0) {
+            $this_month[ 'user_membership_rate' ] = ($this_month[ 'membership' ] / $this_month[ 'user' ]) * 100;
+        } else {
+            $this_month[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $this_month['order_money'] = Order::where($where)->whereBetween('created_at', $this_month_bw_time)->sum('price');
@@ -235,8 +287,12 @@ class ReportController extends CommonController
 
         /*---- 上月 ----*/
         $last_month_bw_time = [$last_month_time, $start_month_time];
+        //访客
+        $last_month['user_fk'] = User::where('phone', '')->whereBetween('created_at', $last_month_bw_time)->count();
         //注册
-        $last_month['user_register'] = User::whereBetween('created_at', $last_month_bw_time)->count();
+        $last_month['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $last_month_bw_time)->count();
+        //订单数
+        $last_month['order'] = Order::whereBetween('created_at', $last_month_bw_time)->count();
         //开通
         $last_month['membership'] = Order::where($where)->whereBetween('created_at', $last_month_bw_time)->count();
         //开通率
@@ -245,6 +301,13 @@ class ReportController extends CommonController
             $last_month[ 'membership_rate' ] = ($last_month[ 'membership' ] / $last_month[ 'order_count' ]) * 100;
         } else {
             $last_month[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $last_month['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $last_month_bw_time)->count();
+        if($last_month['membership'] != 0 && $last_month['user'] != 0) {
+            $last_month[ 'user_membership_rate' ] = ($last_month[ 'membership' ] / $last_month[ 'user' ]) * 100;
+        } else {
+            $last_month[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $last_month['order_money'] = Order::where($where)->whereBetween('created_at', $last_month_bw_time)->sum('price');
@@ -256,8 +319,12 @@ class ReportController extends CommonController
 
         /*---- 前月 ----*/
         $before_last_month_bw_time = [$before_last_month_time, $last_month_time];
+        //访客数
+        $before_last_month['user_fk'] = User::where('phone', '')->whereBetween('created_at', $before_last_month_bw_time)->count();
         //注册
-        $before_last_month['user_register'] = User::whereBetween('created_at', $before_last_month_bw_time)->count();
+        $before_last_month['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_last_month_bw_time)->count();
+        //订单数
+        $before_last_month['order'] = Order::whereBetween('created_at', $before_last_month_bw_time)->count();
         //开通
         $before_last_month['membership'] = Order::where($where)->whereBetween('created_at', $before_last_month_bw_time)->count();
         //开通率
@@ -266,6 +333,13 @@ class ReportController extends CommonController
             $before_last_month[ 'membership_rate' ] = ($before_last_month[ 'membership' ] / $before_last_month[ 'order_count' ]) * 100;
         } else {
             $before_last_month[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $before_last_month['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_last_month_bw_time)->count();
+        if($before_last_month['membership'] != 0 && $before_last_month['user'] != 0) {
+            $before_last_month[ 'user_membership_rate' ] = ($before_last_month[ 'membership' ] / $before_last_month[ 'user' ]) * 100;
+        } else {
+            $before_last_month[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $before_last_month['order_money'] = Order::where($where)->whereBetween('created_at', $before_last_month_bw_time)->sum('price');
@@ -276,8 +350,12 @@ class ReportController extends CommonController
         /*---- 前月 ----*/
 
         /*---- 总计 ----*/
+        //访客
+        $total['user_fk'] = User::where('phone', '')->count();
         //注册
-        $total['user_register'] = User::count();
+        $total['user_register'] = User::where('phone', '<>', '')->count();
+        //订单数
+        $total['order'] = Order::count();
         //开通
         $total['membership'] = Order::where($where)->count();
         //开通率
@@ -286,6 +364,13 @@ class ReportController extends CommonController
             $total[ 'membership_rate' ] = ($total[ 'membership' ] / $total[ 'order_count' ]) *100;
         } else {
             $total[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $total['user'] = User::where('phone', '<>', '')->count();
+        if($total['membership'] != 0 && $total['user'] != 0) {
+            $total[ 'user_membership_rate' ] = ($total[ 'membership' ] / $total[ 'user' ]) * 100;
+        } else {
+            $total[ 'user_membership_rate' ] = 0;
         }
         //开通金额
         $total['order_money'] = Order::where($where)->sum('price');

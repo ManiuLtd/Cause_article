@@ -5,6 +5,11 @@
         <h1> {{v('headtitle')}} </h1>
     </div>
     <form class="form-inline" style="margin-bottom: 15px" action="{{route('admin.user')}}" method="get">
+        <select class="form-control" name="type" style="width: 140px">
+            <option value="1" @if(request()->type == '1') selected @endif>访客</option>
+            <option value="2" @if(request()->type == '2') selected @endif>注册</option>
+            <option value="3" @if(request()->type == '3') selected @endif>开通/过期</option>
+        </select>
         <select class="form-control" name="key" style="width: 140px">
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
             <option value="phone" @if(request()->key == 'phone') selected @endif>手机号</option>
@@ -35,6 +40,7 @@
                     <th>会员到期时间</th>
                     <th>推广方式</th>
                     <th>推广时间</th>
+                    <th>账号类型</th>
                     <th>创建时间</th>
                     <th>操作</th>
                 </tr>
@@ -58,12 +64,25 @@
                     <td>{{ $value->id }}</td>
                     <td>{{ $value->wc_nickname }}</td>
                     <td>{{ $value->phone }}</td>
-                    <td>@if($value->brand) {{ $value->brand->name }} @endif</td>
+                    <td>@if($value->brand) {{ $value->brand->name }} @elseif($value->brand_id === 0) 全品牌 @endif</td>
                     <td>{{$value->employed_area}}</td>
                     <td>{{ $value->extension['wc_nickname'].' / '.$value->extension['id'] }} </td>
                     <td>{{ $value->membership_time }}</td>
                     <td>@if($value->ex_type == 1) 文章 @elseif($value->ex_type == 2) 二维码 @elseif($value->ex_type == 3) 购买页面 @endif</td>
                     <td>{{ $value->extension_at }}</td>
+                    <td>
+                        @if(\Carbon\Carbon::parse($value->membership_time)->year > 2017)
+                            @if(\Carbon\Carbon::parse($value->membership_time)->gt(\Carbon\Carbon::now()))
+                                <color style="color: green;font-weight: bold">开通</color>
+                            @elseif(\Carbon\Carbon::parse($value->membership_time)->lt(\Carbon\Carbon::now()))
+                                <color style="color: red;font-weight: bold">过期</color>
+                            @endif
+                        @elseif($value->brand_id >= 0 && $value->phone)
+                            <color>注册</color>
+                        @elseif(!$value->brand_id && !$value->phone)
+                            <color style="color: #999;font-weight: bold">访客</color>
+                        @endif
+                    </td>
                     <td>{{ $value->created_at }}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">

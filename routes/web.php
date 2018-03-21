@@ -84,7 +84,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //提交在线咨询
     Route::post('submit_message','UserArticleController@submitMessage')->name('submit_message');
     //咨询列表
-    Route::get('message_list/{message}', 'UserArticleController@messageList')->name('message_list');
+    Route::get('message_list', 'UserArticleController@messageList')->name('message_list');
     //咨询列表
     Route::get('message_detail/{id}', 'UserArticleController@messageDetail')->name('message_detail');
     //前端提交订单
@@ -110,7 +110,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //未开通会员或会员时间到期中间件
     Route::group(['middleware' => 'membership'],function(){
         //用户文章被阅读和分享列表
-        Route::get('read_share', 'UserArticleController@readShare')->name('read_share');
+        Route::get('read_share/{type}', 'UserArticleController@readShare')->name('read_share');
         //用户文章访客记录详情
         Route::get('visitor_details/{id}','UserArticleController@visitorDetails')->name('visitor_details');
         //找到访客

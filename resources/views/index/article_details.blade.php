@@ -171,7 +171,7 @@
 		<div class='content'>
 			<h3 class="flex center">加我免费咨询</h3>
 			<div class="qrcode">
-				<img src="/" class="fitimg">
+				<img src="/kf_qrcode.jpg" class="fitimg">
 			</div>
 			<p class="flex center">长按识别二维码</p>
 		</div>

@@ -18,12 +18,12 @@
 <body>
 <div id="home" class="flexv wrap">
 	<div class="flexitemv box">
-		<div class="flex nav">
+		<div class="flex center nav">
 			{{--<a href="{{route('index.index')}}" class="flex center item @if(request()->type == '') current @endif"><span class="flex center">热文分享</span></a>--}}
 			@foreach($article_type as $type)
 				<a href="{{ route('index.index',['type'=>$type->id]) }}" class="flex center item @if(request()->type == $type->id) current @endif"><span class="flex center">{{ $type->name }}</span></a>
 			@endforeach
-			<a href="javascript:;" class="flex center bls bls-yjt more"></a>
+			{{--<a href="javascript:;" class="flex center bls bls-yjt more"></a>--}}
 		</div>
 		<div class="flexitemv mainbox">
 			{{--<div class="flex banner">--}}
@@ -99,6 +99,8 @@
             $e.css({"width":"100%","height":"100%"});
         }
     });
+
+    $(".cuo").hide();
 
     //给分类第一个标签加上选中状态
 	@if(request()->type == '')

@@ -8,7 +8,7 @@
     @include('index.public.css')
 </head>
 <body>
-<div id="more" class="flexv wrap">
+<div id="more" class="flexv wrap" style="height: 100%">
     <div class="flex tex-t">
         @if($user->brand_id)
             <a href="{{ route('extension_photo_list') }}" class="flex center @if(!request()->type) current @endif">

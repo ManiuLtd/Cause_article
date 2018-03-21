@@ -76,13 +76,13 @@
                 </div>
             </div>
 
-            @if($res->gid == 14 || $res->gid == 15)
+            @if($res->gid == 14 || $res->gid == 15 || $res->gid == 21 || $res->gid == 22)
             <div class="form-group">
                 <label class="col-sm-1 control-label no-padding-right"> 推广链接 </label>
                 <div class="col-sm-9">
-                    @if($res->gid == 14)
+                    @if($res->gid == 14 || $res->gid == 21)
                         <input type="text" class="col-xs-10 col-sm-5" value="{{ route('index.user', ['type'=>'become_dealer', 'dealer'=>$res->id]) }}"/>
-                    @elseif($res->gid == 15)
+                    @elseif($res->gid == 15 || $res->gid == 22)
                         <input type="text" class="col-xs-10 col-sm-5" value="{{ route('index.user', ['type'=>'become_extension', 'dealer'=>$res->id]) }}"/>
                     @endif
                 </div>

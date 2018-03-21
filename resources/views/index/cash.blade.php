@@ -20,7 +20,7 @@
             <div class="flexv bank">
                 @if(!$user->user_account)
                     <div class="flex"><span class="flexitem">未绑定账户</span></div>
-                    <div class="flex"><em class="flexitem">您当前尚未绑定银行卡请先绑定</em></div>
+                    <div class="flex"><em class="flexitem">您当前尚未绑定支付宝请先绑定</em></div>
                     <a href="{{ route('index.bind_account') }}" class="flex endh centerv bls bls-yjt"></a>
                 @else
                     <div class="flex"><span class="flexitem">{{ $user->user_account->type }}</span></div>
