@@ -46,7 +46,7 @@ class UserArticleController extends CommonController
      * @param int $ex_id 分享人id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function articleDetail( UserArticles $articles, $ex_id = 0 )
+    public function articleDetail( Request $request, UserArticles $articles, $ex_id = 0 )
     {
         $uid = session('user_id');
         $user = User::find($uid);
@@ -104,7 +104,8 @@ class UserArticleController extends CommonController
                 'see_uid' => $uid,
                 'uaid' => $articles->id,
                 'ex_id' => $ex_id,
-                'type' => 1
+                'type' => 1,
+                'from' => $request->from
             ];
             $add = Footprint::Create($foot);
             $addfootid = $add->id;
@@ -196,7 +197,7 @@ class UserArticleController extends CommonController
     {
         $uid = session()->get('user_id');
         //判断用户会员是否过期
-        $member_time = User::where('id', $uid)->value('membership_time');
+        $user = User::where('id', $uid)->first();
         $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('updated_at', 'desc')->paginate(6);
         $list->transform(function ($value) {
             //去除重复用户获取单个用户id
@@ -219,7 +220,7 @@ class UserArticleController extends CommonController
         //个人文章今日浏览数
         $today_see = Footprint::where('uid', $uid)->whereDate('created_at', date('Y-m-d', time()))->count();
 
-        return view('index.visitor_record', compact('list', 'today_see', 'prospect', 'member_time'));
+        return view('index.visitor_record', compact('list', 'today_see', 'prospect', 'user'));
     }
 
     /**
@@ -386,14 +387,15 @@ class UserArticleController extends CommonController
     public function contacts( $uid )
     {
         //阅读
-        $read = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 1 ])->count();
+        $read = Footprint::where([ 'uid' => session('user_id'), 'see_uid' => $uid, 'type' => 1 ])->count();
         //分享
-        $share = Footprint::where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid, 'type' => 2 ])->count();
+        $share = Footprint::where([ 'uid' => session('user_id'), 'see_uid' => $uid, 'type' => 2 ])->count();
         //最近访问的时间
-        $res = Footprint::with([ 'user' => function ( $query ) {
+        $foot = Footprint::with([ 'user' => function ( $query ) {
             $query->select('id', 'head', 'wc_nickname');
-        } ])->where([ 'uid' => session()->get('user_id'), 'see_uid' => $uid ])->orderBy('created_at', 'desc')->limit(1)->get()->toArray();
-        return view('index.connection', compact('read', 'share', 'res'));
+        } ])->where([ 'uid' => session('user_id'), 'see_uid' => $uid ])->orderBy('id', 'desc')->first();
+
+        return view('index.connection', compact('read', 'share', 'foot'));
     }
 
     /**

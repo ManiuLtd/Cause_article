@@ -359,21 +359,22 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #headlines .mainbox .more:before{content: "";width:12rem;height:1px;background: -webkit-linear-gradient(0deg, #f2f2f2, #dadada);position: absolute;top:2.5rem;left: 0.5rem; }
 #headlines .mainbox .more:after{content: "";width:12rem;height:1px;background: -webkit-linear-gradient(-180deg, #f2f2f2, #dadada);position: absolute;top:2.5rem;right: 0.5rem; }
 /************************************** 阅读与分享 ******************************/
-#read .box{padding: 0 1.5rem;}
+#read .box{padding: 0 .6rem;}
 #read .title{margin: 1rem 2rem;height:3rem; border-radius: 4rem;overflow: hidden;color:#696969; background: #fff;}
 #read .title .read,.share{width: 50%;height:100%;font-size: 1.5rem;}
 #read .title .elect{background:#f7463e;color:#fef6f3; }
 #read .listbox{background: #fff;border-radius: 6px;margin-top: 1.5rem;}
-#read .listbox .top{padding:4px 10px;border-bottom: 1px solid #c7c7c7;}
+#read .listbox .top{padding:4px 0 4px 10px;border-bottom: 1px solid #c7c7c7;}
 #read .listbox .top .headimg{width:3rem;height:3rem;border-radius: 50%;overflow:hidden;}
 #read .listbox .top .info{padding-left: 10px;}
 #read .listbox .top .info p:last-child{color:#bbb;}
-#read .listbox .top .info p{font-size: 1.2rem;color:#404040;}
-#read .listbox .top .center{height:3rem;font-size: 1.2rem;color:#f73b38;}
 #read .listbox .lists{padding:12px;}
 #read .listbox .lists .img{width:8rem;height:6rem;}
 #read .listbox .lists .cont{height: 6rem;padding-left:10px;}
 #read .listbox .lists .cont a{font-size: 1.3rem;color:#424242;margin: 1.2rem 0;overflow: hidden;-webkit-box-orient: vertical;-webkit-line-clamp: 2;}
+#read .listbox .top .info p{max-width:10rem;overflow:hidden;-webkit-line-clamp:1;font-size: 1.2rem;color:#404040;}
+#read .listbox .top .time{font-size: 1.2rem;color:#f73b38;}
+#read .listbox .top a.btn{width: 6rem;height: 2.4rem;border-top-left-radius: 2rem;border-bottom-left-radius: 2rem;font-size: 1.4rem;color: #fdebea;background: -webkit-linear-gradient(#f95e48, #f7403c);}
 /************************************* 阅读分享详情 ************************************/
 #detail .listbox .lists{padding:1.3rem;margin-bottom:0.5rem;background: #fff;}
 #detail .listbox .lists .img{width:8rem;height:7rem;}
@@ -529,7 +530,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #open .hint .content .button a{height: 4rem;background: -webkit-linear-gradient(#ffc63f, #ff8c00);color:#fdebea;border-radius: 5rem; margin-top: 0.6rem;font-size: 1.3rem;}
 /************************************* 人脉分析 ****************************************/
 #contact{background: #fff;}
-#contact .sub{padding: 2.5rem 0; background: url(../image/focus.jpg) no-repeat; background-size: 100%;color:#f8f2f3;}
+#contact .sub{padding: 2.5rem 0; background: url(../image/focus1.jpg) no-repeat; background-size: 100%;color:#f8f2f3;}
 #contact .sub .userimg{width: 6rem;height: 6rem;border-radius: 50%;overflow: hidden;}
 #contact .sub .name{height: 3rem;font-size: 1.8rem;font-weight: initial;}
 #contact .sub p{padding-bottom: 0.4rem;font-size: 1.4rem;}

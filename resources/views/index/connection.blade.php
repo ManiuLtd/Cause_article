@@ -12,26 +12,26 @@
     <div class="flexv mainbox">
         <div class="flexv center sub">
             <div class="userimg">
-                <img src="{{$res[0]['user']['head']}}" class="fitimg">
+                <img src="{{ $foot->user->head }}" class="fitimg">
             </div>
-            <h2 class="flex center name">{{$res[0]['user']['wc_nickname']}}</h2>
-            <p class="several">共阅读你的头条<em class="color">{{$read}}</em>次，分享<span class="color">{{$share}}</span>次</p>
-            <p class="time">最近访问<em class="color">{{\Carbon\Carbon::parse($res[0]['created_at'])->diffForHumans()}}</em>。</p>
+            <h2 class="flex center name">{{ $foot->user->wc_nickname }}</h2>
+            <p class="several">共阅读你的头条<em class="color">{{ $read }}</em>次，分享<span class="color">{{ $share }}</span>次</p>
+            <p class="time">最近访问<em class="color">{{ $foot->created_at->diffForHumans() }}</em>。</p>
         </div>
     </div>
     <div class="flexitemv center">
         <div class="flexv center text">
             <i class="flex center bls bls-bottom"></i>
-            <p>根据事业头条人脉分析，</p>
-            <p>此客户可能是你的好友或群友。</p>
+            <p>根据事业爆文人脉分析，</p>
+            <p>此客户可能是你的@switch($foot->from) @case('groupmessage')群友 @break @case('timeline')好友 @break @case('singlemessage')好友 @break @endswitch。</p>
         </div>
         <div class="flex center relation">
             <div class="img">
-                <img src="{{session()->get('head_pic')}}" class="fitimg">
+                <img src="{{ session('head_pic') }}" class="fitimg">
             </div>
             <i class="flex center bls bls-xianlu"></i>
             <div class="img">
-                <img src="{{$res[0]['user']['head']}}" class="fitimg">
+                <img src="{{ $foot->user->head }}" class="fitimg">
             </div>
         </div>
     </div>

@@ -67,8 +67,8 @@ class PhotoController extends Controller
     {
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
-        $pic = Cache::remember('user_qrcode'.$user->openid, 60 * 24 * 29, function () {
-            $url = app(User::class)->createQrcode(session('user_id'));
+        $pic = Cache::remember('user_qrcode'.$user->openid, 60 * 24 * 29, function () use($user) {
+            $url = app(User::class)->createQrcode($user);
             //二维码转base64位
             $pic = "data:image/jpeg;base64," . base64_encode(file_get_contents($url));
 

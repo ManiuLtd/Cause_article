@@ -54,12 +54,12 @@
 						<div class="flex details">
 
 								<div class="flex center imgbox">
-									@if(\Carbon\Carbon::parse($member_time)->gt(\Carbon\Carbon::parse('now')))
-										@foreach($value['user'] as $user)
-											<div class="flex center userimg"><img src="{{ $user['user_list']['head'] }}" class="fitimg"></div>
+									@if(\Carbon\Carbon::parse($user->membership_time)->gt(\Carbon\Carbon::parse('now')))
+										@foreach($value['user'] as $users)
+											<div class="flex center userimg"><img src="{{ $users['user_list']['head'] }}" class="fitimg"></div>
 										@endforeach
 									@else
-										@foreach($value['user'] as $key => $user)
+										@foreach($value['user'] as $key => $users)
 											@if($key == 0)
 												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr"></use></svg></div>
 											@elseif($key == 1)
@@ -86,13 +86,17 @@
 		</div>
 	@endif
 
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
+
 	@include('index.public.footer')
 
 </div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
 <script src="https://at.alicdn.com/t/font_568864_xyn4a976gw7mn29.js"></script>
+@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 <script>
+    $(".cuo").hide();
     //滚动提示
     var num = 0;
     setInterval(function () {
@@ -104,5 +108,7 @@
             left: num
         })
     },35);
+
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public._infomation_js')
 </script>
 </html>

@@ -32,17 +32,26 @@ class UserController extends CommonController
     public function index($type = '', $dealer = '')
     {
         $uid = session('user_id');
-        $res = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
+        $user = User::withCount('user_article', 'user_foot')->where('id', $uid)->first();
         //未被员工推广的用户才可以关联
-        if($res->type == 1 && empty($res->admin_id) && empty($res->admin_type)) {
+        if($user->type == 1 && empty($user->admin_id) && empty($user->admin_type)) {
             //通过招商链接进入（成为经销商并关联招商员工）
             if($type == 'become_dealer') User::where('id', $uid)->update(['type' => 2, 'admin_id' => $dealer,'admin_type' => 1]);
             //通过运营链接进入 (该用户关联运营员工)
             if($type == 'become_extension') User::where('id', $uid)->update(['admin_id' => $dealer,'admin_type' => 2]);
             //普通用户推广链接进来的
-            if($type == 'ex_user' && $dealer != $res->id) {
+            if($type == 'ex_user' && $dealer != $user->id) {
                 $puser = User::select('admin_id', 'admin_type')->where('id', $dealer)->first();
-                User::where('id', $uid)->update(['extension_id' => $dealer, 'admin_id' => $puser->admin_id, 'admin_type' => $puser->admin_type]);
+                if(!$user->subscribe) {
+                    $data = [
+                        'extension_id' => $dealer,
+                        'admin_id' => $puser->admin_id,
+                        'admin_type' => $puser->admin_type
+                    ];
+                    Cache::put($user->openid, $data, 60 * 24 * 10);
+                } else {
+                    User::where('id', $uid)->update([ 'extension_id' => $dealer, 'admin_id' => $puser->admin_id, 'admin_type' => $puser->admin_type ]);
+                }
             }
         }
 
@@ -66,7 +75,7 @@ class UserController extends CommonController
         }
 //        $photos = Photo::get()->random(4);
 
-        return view('index.user_center', compact('res', 'orders', 'photos'));
+        return view('index.user_center', compact('user', 'orders', 'photos'));
     }
 
     /**

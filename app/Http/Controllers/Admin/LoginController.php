@@ -57,7 +57,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         if($request->post()) {
-            if (Session::get('milkcaptcha') == $request->code) {
+//            if (Session::get('milkcaptcha') == $request->code) {
                 //用户输入验证码正确
                 $check = Auth::attempt(['account'=>$request->account, 'password'=>$request->password]);
                 if ($check) {
@@ -71,10 +71,10 @@ class LoginController extends Controller
                 } else {
                     return json_encode(['state'=>401, 'msg'=>'账号或密码错误']);
                 }
-            } else {
-                //用户输入验证码错误
-                return json_encode(['state'=>401, 'msg'=>'验证码错误']);
-            }
+//            } else {
+//                //用户输入验证码错误
+//                return json_encode(['state'=>401, 'msg'=>'验证码错误']);
+//            }
         }else {
             return view('admin.login.login');
         }

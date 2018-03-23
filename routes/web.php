@@ -114,7 +114,7 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
         //用户文章访客记录详情
         Route::get('visitor_details/{id}','UserArticleController@visitorDetails')->name('visitor_details');
         //找到访客
-//        Route::get('connection/{uid}','UserArticleController@connection')->name('connection');
+        Route::get('connection/{uid}','UserArticleController@contacts')->name('connection');
         //访客还看了
         Route::get('visitor_record_see/{aid}', 'UserArticleController@connection')->name('visitor_record_see');
         //准客户

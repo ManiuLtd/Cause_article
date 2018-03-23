@@ -10,6 +10,8 @@ namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
 use App\Model\Footprint;
+use App\Model\User;
+use Illuminate\Support\Facades\Cache;
 
 class CommonController extends Controller
 {
@@ -21,6 +23,15 @@ class CommonController extends Controller
                 \Session::put('newkf', 1);
             } else {
                 \Session::forget('newkf');
+            }
+
+            $user = User::where('id', session('user_id'))->first();
+            if(Cache::has($user->openid) && $user->subscribe && !$user->extension_id) {
+                $cache = Cache::get($user->openid);
+                $user->extension_id = $cache['extension_id'];
+                $user->admin_id = $cache['admin_id'];
+                $user->admin_type = $cache['admin_type'];
+                $user->save();
             }
 
             return $next($request);

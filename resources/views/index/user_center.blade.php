@@ -14,18 +14,18 @@
 		<div class="flexv sub">
 			<div class="flexitem centerv userbox">
 				<div class="userimg">
-					<img src="{{$res['head']}}" class="fitimg">
+					<img src="{{ $user->head }}" class="fitimg">
 				</div>
 				<div class="flexitemv info">
 					<div class="flex name">
-						<h2 class="flex center">{{$res['wc_nickname']}}</h2>
+						<h2 class="flex center">{{ $user->wc_nickname }}</h2>
 					</div>
-					@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($res['membership_time'])))
+					@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($user->membership_time)))
 						<p class="flex lock">谁查看我的功能：<span>未开通</span></p>
 					@else
 						<p class="vip">正式会员</p>
 						<p class="flex lock">
-							有效期至：<span>{{ \Carbon\Carbon::parse($res['membership_time'])->toDateString() }}</span>
+							有效期至：<span>{{ \Carbon\Carbon::parse($user->membership_time)->toDateString() }}</span>
 						</p>
 					@endif
 				</div>
@@ -34,7 +34,7 @@
 
 			<div class="flexv centerv around front">
 				<a href="{{route('user_article')}}" class="flexitemv center myfront">
-					<em class="flex">{{ $res->user_article_count }}</em>
+					<em class="flex">{{ $user->user_article_count }}</em>
 					<div class="flex">
 						<span class="flex center">我的头条</span>
 						<i class="flex center bls bls-yjt"></i>
@@ -42,7 +42,7 @@
 				</a>
 				<div class="flex line"></div>
 				<a href="{{route('read_share', 1)}}" class="flexitemv center myfront">
-					<em class="flex">{{ $res->user_foot_count }}</em>
+					<em class="flex">{{ $user->user_foot_count }}</em>
 					<div class="flex">
 						<span class="flex center">谁查看我的头条 </span>
 						<i class="flex center bls bls-yjt"></i>
@@ -96,6 +96,22 @@
 		</div>
 	</div>
 
+	<!--提示-->
+	@if(request()->type == 'ex_user' && request()->dealer && !$user->subscribe)
+		<div class="flex center gzh" style="display: block;">
+			<div class="mask"></div>
+			<div class='content'>
+				<h3 class="flex center">关注公众号后才能关联关系</h3>
+				<div class="qrcode">
+					<img src="/qrcode.jpg" class="fitimg">
+				</div>
+				<p class="flex center">长按识别二维码</p>
+			</div>
+		</div>
+	@else
+		@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
+	@endif
+
 	@include('index.public.footer')
 </div>
 </body>
@@ -103,7 +119,9 @@
 <script type="text/javascript" src="/js/common/functions.js"></script>
 <script src="/index/js/lazyload.js"></script>
 <script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 <script type="text/javascript">
+    $(".cuo").hide();
     //图片延迟加载
     $(".lazy").lazyload({
         event: "scrollstop",
@@ -118,6 +136,8 @@
         var objh = $('.flip').height();
         $(".flipbox .bor").append($(".flipbox .bor .flip").first().height(0).animate({"height":objh+"px"},500));
     },2000);
+
+	@includeWhen(!$user->brand_id && !$user->phone, 'index.public._infomation_js')
 
 </script>
 </html>

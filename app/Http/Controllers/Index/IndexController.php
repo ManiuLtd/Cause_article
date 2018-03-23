@@ -20,7 +20,7 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-//        session(['user_id'=>330]);
+        dump(Cache::get('oKhMu01wHwDlBhREXV0nzjXuaI4U'));
     }
     /**
      * 首页

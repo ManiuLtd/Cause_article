@@ -1,14 +1,17 @@
 @foreach($lists as $value)
     <div class="listbox">
-        <div class="flex centerv top">
-            <div class="headimg">
-                <img src="{{ $value->user->head }}" class="fitimg">
+        <div class="between top">
+            <div class="flex">
+                <div class="headimg">
+                    <img src="{{ $value->user->head }}" class="fitimg">
+                </div>
+                <div class="flexitemv info">
+                    <p class="flex centerv">{{ $value->user->wc_nickname }}</p>
+                    <p class="flex centerv">{{ \Carbon\Carbon::parse($value->created_at)->toDateString() }}</p>
+                </div>
             </div>
-            <div class="flexitemv info">
-                <p class="flex centerv">{{ $value->user->wc_nickname }}</p>
-                <p class="flex centerv">{{ \Carbon\Carbon::parse($value->created_at)->toDateString() }}</p>
-            </div>
-            <div class="flex center">停留<em>{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</em></div>
+            <div class="flex center time">停留<em>{{\Carbon\Carbon::now()->subSecond($value->residence_time)->diffForHumans(null, true)}}</em></div>
+            <a href="{{ route('connection', $value->user->id) }}" class="flex center btn">找到他</a>
         </div>
         <div class="flex lists">
             <div class="img">

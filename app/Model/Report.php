@@ -77,7 +77,7 @@ class Report extends Model
         $orders = Order::where($where)->whereBetween('pay_time', [ $last_day, $tot_tomorrow ])->get();
         $price = 0;
         foreach ($orders as $order) {
-            $price += floor($order->price * 0.04);
+            $price += floor($order->price * 0.05);
         }
         return $price;
     }

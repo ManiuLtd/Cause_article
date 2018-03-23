@@ -91,18 +91,22 @@
 <script type="text/javascript" src="/index/js/functions.js"></script>
 <script type="text/javascript">
     //  点击回到底部
-    var h = $(".bjimg").height()-$(document).height()+$(".state").innerHeight();
-    $(".once a").click(function () {
-        $(".mainbox").animate({ scrollTop: h }, 200);
-    });
-    $(".mainbox").scroll(function () {
-        boxh =  $(".mainbox").scrollTop();
-        if(boxh >= h-20){
-            $(".once").hide();
-        }else{
-            $(".once").show();
-        }
-    });
+    window.onload = function () {
+        // 点击回到底部
+        var h = $(".bjimg").height() - $(document).height() + $(".state").innerHeight(), opbox = $('.optionbox').height(), boxh;
+        $(".once a").click(function () {
+            $(".mainbox").animate({scrollTop: h}, 200);
+        });
+        // 手动滚动显/隐购买按钮
+        $('.mainbox').scroll(function () {
+            boxh = $(".mainbox").scrollTop();
+            if (boxh >= h - opbox) {
+                $(".once").hide();
+            } else {
+                $(".once").show();
+            }
+        });
+    }
 
 	var time;
 	@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($user->membership_time)))

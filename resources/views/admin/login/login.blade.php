@@ -23,11 +23,11 @@
             <span class="rd rd-password"></span>
             <input type="password" name="password" placeholder="密码" data-rule="*" data-errmsg="登录密码不能空"  />
         </div>
-        <div class="row">
-            <span class="rd rd-key"></span>
-            <input type="text" name="code" placeholder="验证码" class="code" />
-            <img src="{{ URL('admin/captcha/1') }}" onclick="this.src='{{ URL('admin/captcha') }}/' + Math.random()" class="codeimg" />
-        </div>
+        {{--<div class="row">--}}
+            {{--<span class="rd rd-key"></span>--}}
+            {{--<input type="text" name="code" placeholder="验证码" class="code" />--}}
+            {{--<img src="{{ URL('admin/captcha/1') }}" onclick="this.src='{{ URL('admin/captcha') }}/' + Math.random()" class="codeimg" />--}}
+        {{--</div>--}}
         <input type="button" value="登录" class="btn" id="submit" />
     </form>
 </div>
