@@ -15,7 +15,7 @@ class IntegralUse extends Model
 {
     protected $table = 'integral_used';
 
-    protected $fillable = [ 'integral', 'remark', 'state' ];
+    protected $fillable = [ 'integral', 'remark', 'state', 'over_at' ];
 
     public $timestamps = false;
 

@@ -53,6 +53,13 @@
 					</div>
 				</div>
 				<div class="item area">
+					<span class="flex centerv">职业</span>
+					<div class="flex centerv right">
+						<input id="profession" name="profession" class="flex center userimg" type="text" value="{{$res->profession}}" data-rule="profession" data-errmsg="职业最多6个字">
+						<i class="flex center bls bls-yjt"></i>
+					</div>
+				</div>
+				<div class="item area">
 					<span class="flex centerv">从业地区</span>
 					<div class="flex centerv right">
 						<input id="sel_city" name="employed_area" readonly="readonly" class="flex center userimg" type="text" placeholder="请选择" value="{{$res->employed_area}}" data-rule="*" data-errmsg="请填写您的从业地区" unselectable="on" onfocus="this.blur()">

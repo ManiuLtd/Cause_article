@@ -20,7 +20,7 @@ class ExtractCashController extends CommonController
      */
     public function index()
     {
-        $list = IntegralUse::with('user')->paginate(15);
+        $list = IntegralUse::with('user')->orderBy('id', 'desc')->paginate(15);
         $menu = $this->menu;
         $active = $this->active;
 
@@ -36,7 +36,7 @@ class ExtractCashController extends CommonController
 
     public function complete( IntegralUse $integralUse )
     {
-        $integralUse->update(['state' => 1, 'over_at' => date('Y-m-d H:i:s', time())]);
+        $integralUse->update(['state' => 1, 'over_at' => date('Y-m-d H:i:s')]);
         return redirect()->route('admin.extract_cash');
     }
 }

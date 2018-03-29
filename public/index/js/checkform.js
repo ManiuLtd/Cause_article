@@ -8,7 +8,8 @@ var checkForm = function (config){
         "cname": /^[\u0391-\uFFE5]{2,15}$/,
         "idcard": /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
         "pwd" : /^[^\s]{6,16}$/,
-        "domain" : /^[^\s]{3,6}$/
+        "domain" : /^[^\s]{3,6}$/,
+        "profession" : /^[^\s]{1,6}$/
     };
     this.form = config.form || '#forms';
     this.btn = config.btn || '#submit';

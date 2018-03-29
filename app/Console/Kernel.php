@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Jobs\everydaySlug;
 use App\Jobs\mondaySlug;
 use App\Model\User;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,12 +28,25 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // 每周一的下午一点钟运行
+        // 每周一早上九点运行
         $schedule->call(function () {
             foreach(User::where('subscribe', 1)->get() as $key => $value){
                 dispatch(new mondaySlug($value));
             }
         })->weekly()->mondays()->at('9:00');
+
+        // 每天早上8点执行
+        $schedule->call(function () {
+            for ($i = 1; $i <= 5; $i++) {
+                $day = Carbon::now()->addDays($i)->toDateString();
+                $users = User::whereDate('membership_time', $day)->select('wc_nickname', 'openid', 'membership_time')->get();
+                foreach ($users as $value) {
+                    if($value) {
+                        dispatch(new everydaySlug($value, $i));
+                    }
+                }
+            }
+        })->dailyAt('8:00');
     }
 
     /**

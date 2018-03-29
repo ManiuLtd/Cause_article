@@ -35,9 +35,10 @@ class UserArticleController extends CommonController
         }
 
         //微信分享配置
-        $package = wecahtPackage();
+        $app = new Application(config('wechat'));
+        $js = $app->js;
 
-        return view('index.user_article', compact('list', 'user', 'package'));
+        return view('index.user_article', compact('list', 'user', 'js'));
     }
 
     /**
@@ -117,12 +118,13 @@ class UserArticleController extends CommonController
         $uarticle[ 'brand' ] = Brand::find($uarticle->article[ 'brand_id' ]);
 
         //微信分享配置
-        $package = wecahtPackage();
+        $app = new Application(config('wechat'));
+        $js = $app->js;
 
         //判断是否是会员或会员已过期
         $member_time = Carbon::parse($uarticle->user[ 'membership_time' ])->gt(Carbon::parse('now'));
 
-        return view('index.user_article_details', [ 'user' => $user, 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'package' => $package, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
+        return view('index.user_article_details', [ 'user' => $user, 'res' => $uarticle, 'brand' => $brand, 'footid' => $addfootid, 'js' => $js, 'member_time' => $member_time, 'fkarticle' => $fkarticle ]);
     }
 
     /**
@@ -341,7 +343,9 @@ class UserArticleController extends CommonController
     {
         $message = Message::with('user', 'subUser')->where('id', $id)->first();
 
-        return view('index.message_detail', compact('message'));
+        $membership_time = Carbon::parse('now')->gt(Carbon::parse($message->user['membership_time']));
+
+        return view('index.message_detail', compact('message', 'membership_time'));
     }
 
     /**

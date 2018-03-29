@@ -14,17 +14,21 @@ use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
+use EasyWeChat\Message\Image;
 
 class WechatController extends Controller
 {
     use FunctionUser;
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \EasyWeChat\Core\Exceptions\InvalidArgumentException
+     * @throws \EasyWeChat\Server\BadRequestException
+     */
     public function index()
     {
         $options = config('wechat');
         $app = new Application($options);
-        //菜单
-//        $this->button();
 
         $app->server->setMessageHandler(function ($message) use ($app) {
             switch ($message->MsgType) {
@@ -38,6 +42,10 @@ class WechatController extends Controller
                     break;
             }
         });
+
+        //菜单
+//        $this->button();
+
         $response = $app->server->serve();
         // 将响应输出
         return $response;
@@ -56,12 +64,29 @@ class WechatController extends Controller
                 "url"  => "http://bw.eyooh.com/"
             ],[
                 "type" => "view",
-                "name" => "个人中心",
-                "url"  => "http://bw.eyooh.com/user"
-            ],[
-                "type" => "view",
                 "name" => "谁查看我",
                 "url"  => "http://bw.eyooh.com/visitor_record"
+            ],[
+                "name" => "服务·活动",
+                "sub_button" => [
+                    [
+                        "type" => "click",
+                        "name" => "联系客服",
+                        "key"  => "Service_Click"
+                    ],[
+                        "type" => "view",
+                        "name" => "个人中心",
+                        "url"  => route('index.user')
+                    ],[
+                        "type" => "view",
+                        "name" => "展业美图",
+                        "url"  => route('extension_photo_list')
+                    ],[
+                        "type" => "view",
+                        "name" => "邀请有礼",
+                        "url"  => route('extension_rule')
+                    ]
+                ]
             ]
         ];
         $menu->add($buttons);
@@ -120,6 +145,10 @@ class WechatController extends Controller
             //取消关注公众号
             case 'unsubscribe':
                 User::where('openid',$FromUserName)->update(['subscribe'=>0]);
+                break;
+            case 'CLICK':
+                $media_id = 'slQ7pC8xwK25Qm-fdcAWc2ibH64ATrBmOqi5u67BKtg';
+                return new Image(['media_id' => $media_id]);
                 break;
         }
     }

@@ -23,7 +23,7 @@
         <div class="flexv center text">
             <i class="flex center bls bls-bottom"></i>
             <p>根据事业爆文人脉分析，</p>
-            <p>此客户可能是你的@switch($foot->from) @case('groupmessage')群友 @break @case('timeline')好友 @break @case('singlemessage')好友 @break @endswitch。</p>
+            <p>此客户可能@switch($foot->from) @case('groupmessage')是你的群友。 @break @case('timeline')是你的好友。 @break @case('singlemessage')是你的好友。 @break @default在默默关注你哦~ @endswitch</p>
         </div>
         <div class="flex center relation">
             <div class="img">

@@ -97,17 +97,19 @@
 	</div>
 
 	<!--提示-->
-	@if(request()->type == 'ex_user' && request()->dealer && !$user->subscribe)
-		<div class="flex center gzh" style="display: block;">
-			<div class="mask"></div>
-			<div class='content'>
-				<h3 class="flex center">关注公众号后才能关联关系</h3>
-				<div class="qrcode">
-					<img src="/qrcode.jpg" class="fitimg">
+	@if(request()->dealer && !$user->subscribe)
+		@if(request()->type == 'ex_user' || request()->type == 'become_extension')
+			<div class="flex center gzh" style="display: block;">
+				<div class="mask"></div>
+				<div class='content'>
+					<h3 class="flex center">关注公众号享受更多功能</h3>
+					<div class="qrcode">
+						<img src="/qrcode.jpg" class="fitimg">
+					</div>
+					<p class="flex center">长按识别二维码</p>
 				</div>
-				<p class="flex center">长按识别二维码</p>
 			</div>
-		</div>
+		@endif
 	@else
 		@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 	@endif

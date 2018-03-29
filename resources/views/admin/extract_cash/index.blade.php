@@ -17,8 +17,10 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>用户id</th>
                     <th>用户名称</th>
                     <th>用户手机</th>
+                    <th>支付宝名称</th>
                     <th>支付宝账号</th>
                     <th>提现金额(元)</th>
                     <th>提现状态</th>
@@ -33,8 +35,10 @@
                 @foreach($list as $value)
                     <tr>
                         <td>{{$value->id}}</td>
+                        <td>{{$value->user->id}}</td>
                         <td>{{$value->user->wc_nickname}}</td>
                         <td>{{$value->user->phone}}</td>
+                        <td>{{$value->user->user_account->name}}</td>
                         <td>{{$value->user->user_account->card}}</td>
                         <td>{{$value->integral}}</td>
                         <td>

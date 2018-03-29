@@ -6,6 +6,7 @@
     </div>
     <form class="form-inline" style="margin-bottom: 15px" action="{{route('admin.user')}}" method="get">
         <select class="form-control" name="type" style="width: 140px">
+            <option value="0" @if(request()->type == '0') selected @endif>全部</option>
             <option value="1" @if(request()->type == '1') selected @endif>访客</option>
             <option value="2" @if(request()->type == '2') selected @endif>注册</option>
             <option value="3" @if(request()->type == '3') selected @endif>开通/过期</option>

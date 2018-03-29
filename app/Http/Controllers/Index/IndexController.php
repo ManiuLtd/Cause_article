@@ -8,10 +8,10 @@
 
 namespace App\Http\Controllers\Index;
 
+use App\Jobs\everydaySlug;
 use App\Model\{
-    Article, Banner, Brand, ExtensionArticle, Footprint, Photo, Report, User, UserArticles
+    Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
-use App\Model\ArticleType;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,7 +20,22 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-        dump(Cache::get('oKhMu01wHwDlBhREXV0nzjXuaI4U'));
+//        session(['user_id' => 5]);
+
+//        for ($i = 1; $i <= 5; $i++) {
+//            $day = Carbon::now()->addDays($i)->toDateString();
+//            $users = User::whereDate('membership_time', $day)->select('wc_nickname', 'openid', 'membership_time')->get();
+//            foreach ($users as $value) {
+//                if($value) {
+//                    dispatch(new everydaySlug($value, $i));
+//                }
+//            }
+//        }
+
+        $user = User::where('id', session('user_id'))->select('extension_image', 'image_at')->first();
+
+        return view('index.extension_rules_test', compact('user'));
+
     }
     /**
      * 首页
@@ -67,6 +82,10 @@ class IndexController extends CommonController
 
     public function extensionArticle(Request $request)
     {
+        $this->validate($request, [
+            'url' => 'required|url',
+        ]);
+
         ExtensionArticle::create(['user_id' => session('user_id'), 'url' => $request->url]);
 
         return redirect()->route('index.index');

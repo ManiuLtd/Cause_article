@@ -30,6 +30,8 @@ class UserController extends CommonController
             case '3':
                 array_push($where, ['membership_time', '>', time()]);
                 break;
+            default:
+                break;
         }
         switch($key){
             case 'wc_nickname':

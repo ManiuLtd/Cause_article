@@ -12,12 +12,15 @@
         {{ csrf_field() }}
         <div class="report-text-area">
             <div class="text-input-wrap">
-                <textarea name="url" id="tip_content" class="text-input" cols="30" rows="10" maxlength="150" placeholder="推荐文章时请填写推荐的文章链接，文章添加后会通知您"></textarea>
+                <textarea name="url" id="tip_content" class="text-input" cols="30" rows="10" maxlength="150" placeholder="推荐文章时请填写推荐的文章链接，文章添加后会通知您" data-rule="*" data-errmsg="请填下文章链接"></textarea>
                 <div class="text-num-tip">
                     <span class="now-num">0</span>/<span class="max-num">150</span>
                 </div>
             </div>
-            <button type="submit" id="button-alt">提交</button>
+            @if (count($errors) > 0)
+                <div style="height: 30px;line-height: 30px;font-size: 16px;color: red;font-weight: bold;text-align: center;">文章链接不能为空或不是正确的链接地址</div>
+            @endif
+            <button id="button-alt">提交</button>
         </div>
     </form>
 </body>

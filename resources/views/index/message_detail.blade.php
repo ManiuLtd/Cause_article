@@ -13,7 +13,7 @@
 		<div class="p1">
 			<span class="hint">姓&ensp;&ensp;&ensp;名：</span>
 			<span>
-				@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($message->user['membership_time'])))
+				@if($membership_time)
 					{{substr( $message->name, 0, 1 )}}**
 				@else
 					{{$message->name}} /@if($message->gender == 1) 男士 @else 女士 @endif
@@ -23,7 +23,7 @@
 		<div class="p1">
 			<span class="hint">手 机 号：</span>
 			<span>
-				@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($message->user['membership_time'])))
+				@if($membership_time)
 					{{substr( $message->phone, 0, 3 )}}********
 				@else
 					{{$message->phone}}
@@ -42,7 +42,7 @@
 	<!--end-->
 
 	<div class="flexv centerv dredge">
-		@if(\Carbon\Carbon::parse('now')->gt(\Carbon\Carbon::parse($message->user['membership_time'])))
+		@if($membership_time)
 			<a href="{{route('open_member')}}" class="flex center button">开通<span>{{ optional($message->user->brand)->name }}</span>事业</a>
 		@endif
 		<p>让客户第一时间联系到您</p>
@@ -50,8 +50,12 @@
 	<!--end-->
 	<div class="flexv center qrcode">
 		<div class="img">
-			@if($message->subUser->qrcode)
-				<img src="{{ $message->subUser->qrcode }}" />
+			@if(!$membership_time)
+				@if($message->subUser->qrcode)
+					<img src="{{ $message->subUser->qrcode }}" />
+				@else
+					<img src="/kf_qrcode.jpg" />
+				@endif
 			@else
 				<img src="/kf_qrcode.jpg" />
 			@endif
