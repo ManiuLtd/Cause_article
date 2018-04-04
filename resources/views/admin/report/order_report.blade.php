@@ -16,6 +16,7 @@
                 <th>开通数</th>
                 <th>付费开通率(%)</th>
                 <th>开通金额(元)</th>
+                <th>提现(元)</th>
                 <th>退款金额</th>
                 <th>退款金额(元)</th>
             </tr>
@@ -31,20 +32,9 @@
                     <td>{{ $today['membership'] }}</td>
                     <td>{{ number_format($today['membership_rate'], 2) }}</td>
                     <td>{{ number_format($today['order_money'], 2) }}</td>
+                    <td>{{ number_format($today['use_integral'], 2) }}</td>
                     <td>{{ $today['refund'] }}</td>
                     <td>{{ number_format($today['refund_money'], 2) }}</td>
-                </tr>
-                <tr>
-                    <td>同比</td>
-                    <td>{{ $today_yesterday['user_fk'] }}</td>
-                    <td>{{ $today_yesterday['user_register'] }}</td>
-                    <td>{{ number_format($today_yesterday['user_membership_rate'], 2) }}</td>
-                    <td>{{ $today_yesterday['order'] }}</td>
-                    <td>{{ $today_yesterday['membership'] }}</td>
-                    <td>{{ number_format($today_yesterday['membership_rate'], 2) }}</td>
-                    <td>{{ number_format($today_yesterday['order_money'], 2) }}</td>
-                    <td>{{ $today_yesterday['refund'] }}</td>
-                    <td>{{ number_format($today_yesterday['refund_money'], 2) }}</td>
                 </tr>
                 <tr>
                     <td>昨日</td>
@@ -55,6 +45,7 @@
                     <td>{{ $yesterday['membership'] }}</td>
                     <td>{{ number_format($yesterday['membership_rate'], 2) }}</td>
                     <td>{{ number_format($yesterday['order_money'], 2) }}</td>
+                    <td>{{ number_format($yesterday['use_integral'], 2) }}</td>
                     <td>{{ $yesterday['refund'] }}</td>
                     <td>{{ number_format($yesterday['refund_money'], 2) }}</td>
                 </tr>
@@ -67,6 +58,7 @@
                     <td>{{ $before_yesterday['membership'] }}</td>
                     <td>{{ number_format($before_yesterday['membership_rate'], 2) }}</td>
                     <td>{{ number_format($before_yesterday['order_money'], 2) }}</td>
+                    <td>{{ number_format($before_yesterday['use_integral'], 2) }}</td>
                     <td>{{ $before_yesterday['refund'] }}</td>
                     <td>{{ number_format($before_yesterday['refund_money'], 2) }}</td>
                 </tr>
@@ -79,8 +71,22 @@
                     <td>{{ $this_month['membership'] }}</td>
                     <td>{{ number_format($this_month['membership_rate'], 2) }}</td>
                     <td>{{ number_format($this_month['order_money'], 2) }}</td>
+                    <td>{{ number_format($this_month['use_integral'], 2) }}</td>
                     <td>{{ $this_month['refund'] }}</td>
                     <td>{{ number_format($this_month['refund_money'], 2) }}</td>
+                </tr>
+                <tr>
+                    <td>同比</td>
+                    <td>{{ $this_last_month['user_fk'] }}</td>
+                    <td>{{ $this_last_month['user_register'] }}</td>
+                    <td>{{ number_format($this_last_month['user_membership_rate'], 2) }}</td>
+                    <td>{{ $this_last_month['order'] }}</td>
+                    <td>{{ $this_last_month['membership'] }}</td>
+                    <td>{{ number_format($this_last_month['membership_rate'], 2) }}</td>
+                    <td>{{ number_format($this_last_month['order_money'], 2) }}</td>
+                    <td>{{ number_format($this_last_month['use_integral'], 2) }}</td>
+                    <td>{{ $this_last_month['refund'] }}</td>
+                    <td>{{ number_format($this_last_month['refund_money'], 2) }}</td>
                 </tr>
                 <tr>
                     <td>上月</td>
@@ -91,6 +97,7 @@
                     <td>{{ $last_month['membership'] }}</td>
                     <td>{{ number_format($last_month['membership_rate'], 2) }}</td>
                     <td>{{ number_format($last_month['order_money'], 2) }}</td>
+                    <td>{{ number_format($last_month['use_integral'], 2) }}</td>
                     <td>{{ $last_month['refund'] }}</td>
                     <td>{{ number_format($last_month['refund_money'], 2) }}</td>
                 </tr>
@@ -103,6 +110,7 @@
                     <td>{{ $before_last_month['membership'] }}</td>
                     <td>{{ number_format($before_last_month['membership_rate'], 2) }}</td>
                     <td>{{ number_format($before_last_month['order_money'], 2) }}</td>
+                    <td>{{ number_format($before_last_month['use_integral'], 2) }}</td>
                     <td>{{ $before_last_month['refund'] }}</td>
                     <td>{{ number_format($before_last_month['refund_money'], 2) }}</td>
                 </tr>
@@ -115,6 +123,7 @@
                     <td>{{ $total['membership'] }}</td>
                     <td>{{ number_format($total['membership_rate'], 2) }}</td>
                     <td>{{ number_format($total['order_money'], 2) }}</td>
+                    <td>{{ number_format($total['use_integral'], 2) }}</td>
                     <td>{{ $total['refund'] }}</td>
                     <td>{{ number_format($total['refund_money'], 2) }}</td>
                 </tr>

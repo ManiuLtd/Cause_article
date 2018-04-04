@@ -22,14 +22,14 @@ use Illuminate\Support\Facades\Cache;
 class UserArticleController extends CommonController
 {
     //我的头条列表
-    public function index($uid = 0)
+    public function index(Request $request, $uid = 0)
     {
         if($uid) {
-            $list = UserArticles::with('article')->where('uid', $uid)->orderBy('created_at', 'desc')->get();
+            $list = UserArticles::with('article')->where('uid', $uid)->orderBy('created_at', 'desc')->paginate(7);
 
             $user = User::find($uid);
         } else {
-            $list = UserArticles::with('article')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->get();
+            $list = UserArticles::with('article')->where('uid', session('user_id'))->orderBy('created_at', 'desc')->paginate(7);
 
             $user = User::find(session('user_id'));
         }
@@ -37,6 +37,12 @@ class UserArticleController extends CommonController
         //微信分享配置
         $app = new Application(config('wechat'));
         $js = $app->js;
+
+        if($request->ajax()) {
+            $view = view('index.template.__user_article', compact('list'))->render();
+
+            return response()->json(['html' => $view]);
+        }
 
         return view('index.user_article', compact('list', 'user', 'js'));
     }
@@ -195,15 +201,13 @@ class UserArticleController extends CommonController
      * @title  用户文章访客记录
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function visitorRecord()
+    public function visitorRecord(Request $request)
     {
         $uid = session()->get('user_id');
         //判断用户会员是否过期
         $user = User::where('id', $uid)->first();
-        $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('updated_at', 'desc')->paginate(6);
+        $list = UserArticles::with('article', 'footprint')->where([ 'uid' => $uid, 'first_read' => 1 ])->orderBy('updated_at', 'desc')->paginate(5);
         $list->transform(function ($value) {
-            //去除重复用户获取单个用户id
-//            $user_list = remove_duplicate($value['footprint']);
             //unique 方法返回集合中所有唯一的项目
             $user_list = $value->footprint->unique('see_uid');
             $new = collect($value);
@@ -216,11 +220,16 @@ class UserArticleController extends CommonController
         });
 
         //准客户数量
-//        $prospect = remove_duplicate(Footprint::where('uid', $uid)->get());
         $prospect = Footprint::where('uid', $uid)->get()->unique('see_uid');
 
         //个人文章今日浏览数
         $today_see = Footprint::where('uid', $uid)->whereDate('created_at', date('Y-m-d', time()))->count();
+
+        if($request->ajax()) {
+            $view = view('index.template.__visitor_record',compact('list', 'user'))->render();
+
+            return response()->json(['html' => $view]);
+        }
 
         return view('index.visitor_record', compact('list', 'today_see', 'prospect', 'user'));
     }
@@ -236,7 +245,7 @@ class UserArticleController extends CommonController
             $query->select('id', 'title', 'pic');
         }, 'user' ])->where('id', $id)->first();
 
-        $footprint = Footprint::where('uaid', $id)->paginate(6);
+        $footprint = Footprint::where('uaid', $id)->orderBy('id', 'desc')->paginate(6);
         foreach ( $footprint as $key => $value ) {
             //用户分享层级关系
             if($value->ex_id) {

@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExtensionArticle extends Model
 {
-    public $timestamps = false;
-
     protected $table = 'ex_article';
 
     protected $fillable = ['user_id', 'url'];

@@ -6,6 +6,13 @@
 	<meta name="format-detection" content="telephone=no">
 	<title>访客记录</title>
 	@include('index.public.css')
+	<style>
+		.mescroll-totop{bottom: 70px !important;}
+		@if($list->isEmpty())
+        	#lists{position: absolute;left: 50%;top: 50%;transform: translate(-50%,-50%);}
+		@endif
+	</style>
+
 </head>
 <body>
 <div id="visitor" class="flexv wrap">
@@ -17,74 +24,27 @@
 			</div>
 		</div>
 	</div>
-	<div class="flexitemv mainbox box">
-        <div class="flexv centerv around front">
-            <a href="javascript:;" class="flexitemv center myfront">
-                <em class="flex">{{ $today_see }}</em>
-                <div class="flex">
-                    <span class="flex center">今日浏览</span>
-                </div>
-            </a>
-            <div class="flex line"></div>
-            <a href="{{ route('visitor_prospect') }}" class="flexitemv center myfront">
-                <em class="flex">{{ count($prospect) }}</em>
-                <div class="flex">
-                    <span class="flex center">准客户</span>
-                </div>
-            </a>
-        </div>
-		@if(count($list) > 0)
-			<div class="lists">
-				@foreach($list as $value)
-					<div class="listbox">
-						<div class="flex lists">
-							<div class="img">
-								<img class="fitimg" src="{{ $value['article']['pic'] }}"/>
-							</div>
-							<div class="flexitemv cont">
-								<h2 class="flexitemv">{{ $value['article']['title'] }}</h2>
-								<div class="between base">
-									<span><em>{{ \Carbon\Carbon::parse($value['updated_at'])->toDateString() }}</em></span>
-									<span><em>{{ $value['read'] }}</em>浏览</span>
-									<span class="flex center"><em>{{ $value['user_count'] < 99 ? $value['user_count'] : 99}}</em></span>
-								</div>
-							</div>
-							<a href="{{ route('user_article_details', $value['id']) }}" class="link"></a>
-						</div>
-						<div class="flex details">
+	<div class="flexitemv mainbox box mescroll" id="mescroll">
+		<div class="flexv centerv around front">
+			<a href="javascript:;" class="flexitemv center myfront">
+				<em class="flex">{{ $today_see }}</em>
+				<div class="flex">
+					<span class="flex center">今日浏览</span>
+				</div>
+			</a>
+			<div class="flex line"></div>
+			<a href="{{ route('visitor_prospect') }}" class="flexitemv center myfront">
+				<em class="flex">{{ count($prospect) }}</em>
+				<div class="flex">
+					<span class="flex center">准客户</span>
+				</div>
+			</a>
+		</div>
 
-								<div class="flex center imgbox">
-									@if(\Carbon\Carbon::parse($user->membership_time)->gt(\Carbon\Carbon::parse('now')))
-										@foreach($value['user'] as $users)
-											<div class="flex center userimg"><img src="{{ $users['user_list']['head'] }}" class="fitimg"></div>
-										@endforeach
-									@else
-										@foreach($value['user'] as $key => $users)
-											@if($key == 0)
-												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr"></use></svg></div>
-											@elseif($key == 1)
-												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr1"></use></svg></div>
-											@elseif($key == 2)
-												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr2"></use></svg></div>
-											@else
-												<div class="flex center userimg"><svg class="sc" aria-hidden="true"><use xlink:href="#sc-gr"></use></svg></div>
-											@endif
-										@endforeach
-									@endif
-								</div>
-							<div class="flexitem endh lock">
-								<a href="{{ route('visitor_details', $value['id']) }}" class="flex center">谁看了？</a>
-							</div>
-						</div>
-					</div>
-				@endforeach
-			</div>
+		<div class="lists" id="lists">
+
 		</div>
-	@else
-		<div class="flexitem center void">
-			<p style="font-size: 18px">暂无访客,快把文章分享给好友吧~</p>
-		</div>
-	@endif
+	</div>
 
 	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 
@@ -94,6 +54,7 @@
 </body>
 <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
 <script src="https://at.alicdn.com/t/font_568864_xyn4a976gw7mn29.js"></script>
+<script src="/index/js/mescroll.min.js"></script>
 @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 <script>
     $(".cuo").hide();
@@ -110,5 +71,45 @@
     },35);
 
 	@includeWhen(!$user->brand_id && !$user->phone, 'index.public._infomation_js')
+
+    var mescroll = new MeScroll("mescroll", { //第一个参数"mescroll"对应上面布局结构div的id
+            //解析: down.callback默认调用mescroll.resetUpScroll(),而resetUpScroll会将page.num=1,再触发up.callback
+            down: {
+                use: false,
+                auto: false,
+                isLock: true
+            },
+            up: {
+                callback: upCallback , //上拉加载的回调
+                empty: {
+                    // icon: "/images/mescroll-totop.png", //图标,默认null
+                    tip: "快把文章分享给好友吧~", //提示
+                },
+                page:{num:0,size:5},
+                clearEmptyId: "lists", //相当于同时设置了clearId和empty.warpId; 简化写法;默认null
+                toTop:{ //配置回到顶部按钮
+                    src : "/index/image/mescroll-totop.png", //默认滚动到1000px显示,可配置offset修改
+                }
+            }
+        });
+
+    //上拉加载的回调 page = {num:1, size:10}; num:当前页 默认从1开始, size:每页数据条数,默认10
+    function upCallback(page) {
+        var url = "{{ route('visitor_record') }}"+"?page="+page.num;
+
+        $.ajax({
+            url: url, //如何修改page.num从0开始 ?
+            success: function(curPageData) {
+                //方法一(推荐): 后台接口有返回列表的总页数 totalPage
+                //必传参数(当前页的数据个数, 总页数)
+                mescroll.endByPage({{ $list->count() }}, {{ $list->lastPage() }});
+                $("#lists").append(curPageData.html);
+            },
+            error: function(e) {
+                //联网失败的回调,隐藏下拉刷新和上拉加载的状态
+                mescroll.endErr();
+            }
+        });
+    }
 </script>
 </html>

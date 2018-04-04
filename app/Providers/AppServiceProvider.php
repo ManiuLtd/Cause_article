@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
         Carbon::setLocale('zh');
         Schema::defaultStringLength(191);
         CarbonInterval::setLocale('zh');
+        Carbon::useMonthsOverflow(false);
     }
 
     /**

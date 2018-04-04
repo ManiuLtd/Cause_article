@@ -16,7 +16,7 @@ Route::any('bw_wechat', 'Index\WechatController@index')->name('wechat');
 Route::any('out_trade_no','Index\PayController@outTradeNo');
 //前台路由组
 Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
-    Route::get('test', 'IndexController@test');
+    Route::get('test', 'IndexController@test')->name('test');
     //首页
     Route::get('/{type?}', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
     //推荐文章链接
@@ -170,6 +170,7 @@ Route::group(['prefix'=>'admin', 'namespace' => 'Admin'], function () {
         Route::get('report', 'ReportController@index')->name('admin.report');
         //总订单列表
         Route::get('order_list', 'OrderController@index');
+        Route::get('order_list1', 'OrderController@index1');
         //未支付订单列表
         Route::get('order_unpay', 'OrderController@unPay')->name('order.unpaylist');
         //已支付订单列表

@@ -26,6 +26,7 @@
                         </label>
                     </th>
                     <th>ID</th>
+                    <th>用户id</th>
                     <th>用户昵称</th>
                     <th>手机号</th>
                     <th>品牌</th>
@@ -54,6 +55,7 @@
                         <td class="center">-</td>
                     @endif
                     <td>{{ $value->id }}</td>
+                    <td>{{ $value->user->id }}</td>
                     <td>{{ $value->user->wc_nickname }}</td>
                     <td>{{ $value->user->phone }}</td>
                     <td>{{ $value->brand_name }}</td>

@@ -23,43 +23,63 @@ class OrderController extends CommonController
     public function index( Request $request )
     {
         $where = [];
+        $wherein = [];
         switch ($request->key) {
             case 'wc_nickname':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $uid = User::where($request->key, $request->value)->get()->pluck('id');
+                    $wherein = $uid;
                 }
                 break;
             case 'phone':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $uid = User::where($request->key, $request->value)->get()->pluck('id');
+                    $wherein = $uid;
                 }
                 break;
         }
         if($request->state) $where['state'] = $request->state;
-        $list = Order::with('user')->distinct()->where($where)->orderBy('created_at', 'desc')->paginate(15);
-        foreach ($list as $key => $value) {
-            $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
+        if($wherein) {
+            $list = Order::with('user.brand')->where($where)->whereIn('uid', $wherein)->orderBy('id', 'desc')->paginate(25);
+        } else {
+            $list = Order::with('user.brand')->where($where)->orderBy('id', 'desc')->paginate(25);
         }
-        return view('admin.order.index',['list'=>$list, 'menu'=>$this->menu, 'active'=>$this->active]);
+        $new = $list->groupBy('uid');
+        $arr = [];
+        foreach ($new as $value) {
+            $arr[] = $value->unique('uid');
+        }
+
+        return view('admin.order.index',['list'=>$list, 'v'=>$arr, 'menu'=>$this->menu, 'active'=>$this->active]);
     }
 
+    /**
+     * 未支付订单
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function unPay( Request $request )
     {
         $where = [];
+        $wherein = [];
         switch ($request->key) {
             case 'wc_nickname':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
             case 'phone':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
         }
         $where['state'] = 0;
-        $list = Order::with('user','dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        if($wherein) {
+            $list = Order::with('user', 'dis')->where($where)->whereIn('uid', $wherein)->orderBy('created_at', 'desc')->paginate(15);
+        } else {
+            $list = Order::with('user', 'dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        }
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
             if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
@@ -75,26 +95,26 @@ class OrderController extends CommonController
     public function pay( Request $request )
     {
         $where = [];
+        $wherein = [];
         switch ($request->key) {
             case 'wc_nickname':
                 if($request->value) {
-                    $uid = User::where($request->key, $request->value)->value('id');
-                    array_push($where, ['uid', $uid]);
-//                    $where[ 'uid' ] = $uid;
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
             case 'phone':
                 if($request->value) {
-                    $uid = User::where($request->key, $request->value)->value('id');
-                    array_push($where, ['uid', $uid]);
-//                    $where[ 'uid' ] = array_push()$uid;
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
         }
         array_push($where, ['state', 1]);
         array_push($where, ['refund_state', 0]);
-//        $where['state'] = 1;
-        $list = Order::with('user','dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        if($wherein) {
+            $list = Order::with('user', 'dis')->where($where)->whereIn('uid', $wherein)->orderBy('created_at', 'desc')->paginate(15);
+        } else {
+            $list = Order::with('user', 'dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        }
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
             if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
@@ -114,20 +134,25 @@ class OrderController extends CommonController
     public function refundList( Request $request, Order $order )
     {
         $where = [];
+        $wherein = [];
         switch ($request->key) {
             case 'wc_nickname':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
             case 'phone':
                 if($request->value) {
-                    $where[ 'uid' ] = User::where($request->key, $request->value)->value('id');
+                    $wherein = User::where($request->key, $request->value)->get()->pluck('id');
                 }
                 break;
         }
         $where['refund_state'] = 1;
-        $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        if($wherein) {
+            $list = $order->with('user')->where($where)->whereIn('uid', $wherein)->orderBy('created_at', 'desc')->paginate(15);
+        } else {
+            $list = $order->with('user')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+        }
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
         }

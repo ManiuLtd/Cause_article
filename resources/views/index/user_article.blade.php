@@ -9,27 +9,10 @@
 </head>
 <body>
 <div id="headlines" class="flexv wrap">
-	<div class="flexitemv mainbox">
-		<div class="listbox">
-			@foreach($list as $value)
-				<a href="{{route('user_article_details',['id'=>$value->id])}}" class="flex">
-					<div class="flexitem lists">
-						<div class="img">
-							<img class="fitimg" src="{{$value->article['pic']}}"/>
-						</div>
-						<div class="flexitemv cont">
-							<h2 class="flexv">{{$value->article['title']}}</h2>
-							<div class="base">
-								<span><em>{{$value->read}}</em>阅读</span>
-								<span><em>{{$value->share}}</em>分享</span>
-								<span><em>{{$value->created_at->diffForHumans()}}</em></span>
-							</div>
-						</div>
-					</div>
-				</a>
-			@endforeach
+	<div class="flexitemv mainbox mescroll" id="mescroll">
+		<div class="listbox" id="listbox">
+
 		</div>
-		<p class="flex center more">没有更多了~</p>
 	</div>
 
 	<div class="flex tabbars">
@@ -73,6 +56,9 @@
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script type="text/javascript" src="/index/js/functions.js"></script>
 <script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.min.js"></script>
+
+@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '暂无相关数据~', 'html' => 'listbox', 'route' => route('user_article'), 'lists' => $list, 'lazyload' => 0])
+
 <script>
 
     $('#phone').click(_.throttle(function () {
@@ -135,6 +121,7 @@
             imgUrl: head // 分享图标
         });
     });
+
 </script>
 
 </html>

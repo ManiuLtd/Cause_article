@@ -2,9 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Model\Footprint;
-use App\Model\UserArticles;
-use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -39,7 +36,7 @@ class everydaySlug implements ShouldQueue
      */
     public function handle()
     {
-        \Log::info($this->user->toarray());
+        \Log::info($this->user);
         $app = new Application(config('wechat'));
         $msg = [
             "first"     => "{$this->user->wc_nickname}您好，您的事业爆文名片功能，还有【{$this->day}】天到期，为了文章都带上您的头像、姓名和电话，防止流失重要顾客，请及时升级！",

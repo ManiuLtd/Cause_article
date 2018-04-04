@@ -143,6 +143,7 @@ class UserController extends CommonController
 
             //是否上传个人二维码
             if ( $request->qrcode != $user->qrcode ) {
+//                $upload = thumdImageUpload(200, 200, $request->qrcode, 'user_qrcode');
                 $upload = base64ToImage($request->qrcode, 'user_qrcode');
                 $data[ 'qrcode' ] = $upload[ 'path' ];
             }
@@ -151,6 +152,10 @@ class UserController extends CommonController
             if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
                 $data['extension_image'] = '';
             }
+
+            //更新用户session
+//            $brand = Brand::find($request->brand_id);
+//            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
 
             if ( $user->update($data) ) {
                 return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);

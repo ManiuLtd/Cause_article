@@ -179,7 +179,7 @@ class WechatController extends Controller
                         "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                         "keyword1"  => $fuser->wc_nickname,
                         "keyword2"  => date('Y-m-d H:i:s',time()),
-                        "keyword3"  => '扫描个人专属二维码',
+//                        "keyword3"  => '扫描个人专属二维码',
                         "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
                     ];
                     template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
@@ -210,7 +210,7 @@ class WechatController extends Controller
                 "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                 "keyword1"  => $userinfores['nickname'],
                 "keyword2"  => date('Y-m-d H:i:s',time()),
-                "keyword3"  => '扫描个人专属二维码',
+//                "keyword3"  => '扫描个人专属二维码',
                 "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
             template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
@@ -253,7 +253,7 @@ class WechatController extends Controller
                         "first"    => "恭喜您，有新的会员加入您的事业爆文团队！",
                         "keyword1" => $user->wc_nickname,
                         "keyword2" => date('Y-m-d H:i:s', time()),
-                        "keyword3" => '查看您的文章',
+//                        "keyword3" => '查看您的文章',
                         "remark"   => "您的队伍越来越强大了哦，请再接再厉！"
                     ];
                     $options = config('wechat');

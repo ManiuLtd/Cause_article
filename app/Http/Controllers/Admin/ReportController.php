@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Model\Admin;
 use App\Model\Article;
+use App\Model\IntegralUse;
 use App\Model\Order;
 use App\Model\Report;
 use App\Model\User;
@@ -126,6 +127,8 @@ class ReportController extends CommonController
         $end_month_time = Carbon::now()->addMonth(1)->startOfMonth();
         //上月初时间
         $last_month_time = Carbon::now()->addMonth(-1)->startOfMonth();
+        //上月今天的时间
+        $last_month_day_time = Carbon::today()->subMonth();
         //前月初时间
         $before_last_month_time = Carbon::now()->addMonth(-2)->startOfMonth();
 
@@ -155,6 +158,8 @@ class ReportController extends CommonController
         }
         //开通金额
         $today['order_money'] = Order::where($where)->whereBetween('created_at', $today_bw_time)->sum('price');
+        //提现
+        $today['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $today_bw_time)->sum('integral');
         //退款
         $today['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $today_bw_time)->count();
         //退款金额
@@ -187,32 +192,13 @@ class ReportController extends CommonController
         }
         //开通金额
         $yesterday['order_money'] = Order::where($where)->whereBetween('created_at', $yesterday_bw_time)->sum('price');
+        //提现
+        $yesterday['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $yesterday_bw_time)->sum('integral');
         //退款
         $yesterday['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $yesterday_bw_time)->count();
         //退款金额
         $yesterday['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $yesterday_bw_time)->sum('price');
         /*---- 昨日 ----*/
-
-        /*---- 同比 ----*/
-        //访客
-        $today_yesterday['user_fk'] = $today['user_fk'] - $yesterday['user_fk'];
-        //注册
-        $today_yesterday['user_register'] = $today['user_register'] - $yesterday['user_register'];
-        //订单数
-        $today_yesterday['order'] = $today['order'] - $yesterday['order'];
-        //开通
-        $today_yesterday['membership'] = $today['membership'] - $yesterday['membership'];
-        //开通率
-        $today_yesterday[ 'membership_rate' ] = $today[ 'membership_rate' ] - $yesterday[ 'membership_rate' ];
-        //创建开通率
-        $today_yesterday[ 'user_membership_rate' ] = $today[ 'user_membership_rate' ] - $yesterday[ 'user_membership_rate' ];
-        //开通金额
-        $today_yesterday['order_money'] = $today['order_money'] - $yesterday['order_money'];
-        //退款
-        $today_yesterday['refund'] = $today['refund'] - $yesterday['refund'];
-        //退款金额
-        $today_yesterday['refund_money'] = $today['refund_money'] - $yesterday['refund_money'];
-        /*---- 同比 ----*/
 
         /*---- 前日 ----*/
         $before_yesterday_bw_time = [$day_before_yesterday_time, $yesterday_time];
@@ -238,15 +224,10 @@ class ReportController extends CommonController
         } else {
             $before_yesterday[ 'user_membership_rate' ] = 0;
         }
-        //创建开通率
-//        $before_yesterday['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $before_yesterday_bw_time)->count();
-//        if($before_yesterday['membership'] != 0 && $before_yesterday['user'] != 0) {
-//            $before_yesterday[ 'user_membership_rate' ] = ($before_yesterday[ 'membership' ] / $before_yesterday[ 'user' ]) * 100;
-//        } else {
-//            $before_yesterday[ 'user_membership_rate' ] = 0;
-//        }
         //开通金额
         $before_yesterday['order_money'] = Order::where($where)->whereBetween('created_at', $before_yesterday_bw_time)->sum('price');
+        //提现
+        $before_yesterday['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->sum('integral');
         //退款
         $before_yesterday['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_yesterday_bw_time)->count();
         //退款金额
@@ -279,6 +260,8 @@ class ReportController extends CommonController
         }
         //开通金额
         $this_month['order_money'] = Order::where($where)->whereBetween('created_at', $this_month_bw_time)->sum('price');
+        //提现
+        $this_month['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $this_month_bw_time)->sum('integral');
         //退款
         $this_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $this_month_bw_time)->count();
         //退款金额
@@ -311,11 +294,47 @@ class ReportController extends CommonController
         }
         //开通金额
         $last_month['order_money'] = Order::where($where)->whereBetween('created_at', $last_month_bw_time)->sum('price');
+        //提现
+        $last_month['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('integral');
         //退款
         $last_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->count();
         //退款金额
         $last_month['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('price');
         /*---- 上月 ----*/
+
+        /*---- 上月1号到上月的今天的数据 ----*/
+        $last_month_bw_time = [$last_month_time, $last_month_day_time];
+        //访客
+        $this_last_month['user_fk'] = User::where('phone', '')->whereBetween('created_at', $last_month_bw_time)->count();
+        //注册
+        $this_last_month['user_register'] = User::where('phone', '<>', '')->whereBetween('created_at', $last_month_bw_time)->count();
+        //订单数
+        $this_last_month['order'] = Order::whereBetween('created_at', $last_month_bw_time)->count();
+        //开通
+        $this_last_month['membership'] = Order::where($where)->whereBetween('created_at', $last_month_bw_time)->count();
+        //开通率
+        $this_last_month['order_count'] = Order::whereBetween('created_at', $last_month_bw_time)->count();
+        if($this_last_month['membership'] != 0 && $this_last_month['order_count'] != 0) {
+            $this_last_month[ 'membership_rate' ] = ($this_last_month[ 'membership' ] / $this_last_month[ 'order_count' ]) * 100;
+        } else {
+            $this_last_month[ 'membership_rate' ] = 0;
+        }
+        //创建开通率
+        $this_last_month['user'] = User::where('phone', '<>', '')->whereBetween('created_at', $last_month_bw_time)->count();
+        if($this_last_month['membership'] != 0 && $this_last_month['user'] != 0) {
+            $this_last_month[ 'user_membership_rate' ] = ($this_last_month[ 'membership' ] / $this_last_month[ 'user' ]) * 100;
+        } else {
+            $this_last_month[ 'user_membership_rate' ] = 0;
+        }
+        //开通金额
+        $this_last_month['order_money'] = Order::where($where)->whereBetween('created_at', $last_month_bw_time)->sum('price');
+        //提现
+        $this_last_month['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('integral');
+        //退款
+        $this_last_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->count();
+        //退款金额
+        $this_last_month['refund_money'] = Order::where('refund_state', 1)->whereBetween('created_at', $last_month_bw_time)->sum('price');
+        /*---- 上月1号到上月的今天的数据 ----*/
 
         /*---- 前月 ----*/
         $before_last_month_bw_time = [$before_last_month_time, $last_month_time];
@@ -343,6 +362,8 @@ class ReportController extends CommonController
         }
         //开通金额
         $before_last_month['order_money'] = Order::where($where)->whereBetween('created_at', $before_last_month_bw_time)->sum('price');
+        //提现
+        $before_last_month['use_integral'] = IntegralUse::where('state', 1)->whereBetween('created_at', $before_last_month_bw_time)->sum('integral');
         //退款
         $before_last_month['refund'] = Order::where('refund_state', 1)->whereBetween('created_at', $before_last_month_bw_time)->count();
         //退款金额
@@ -374,6 +395,8 @@ class ReportController extends CommonController
         }
         //开通金额
         $total['order_money'] = Order::where($where)->sum('price');
+        //提现
+        $total['use_integral'] = IntegralUse::where('state', 1)->sum('integral');
         //退款
         $total['refund'] = Order::where('refund_state', 1)->count();
         //退款金额
@@ -381,7 +404,7 @@ class ReportController extends CommonController
         /*---- 总计 ----*/
         $menu = $this->menu;
         $active = $this->active;
-        $compact = compact('today','yesterday','today_yesterday','before_yesterday','this_month','last_month','before_last_month','total','menu','active');
+        $compact = compact('today','yesterday','before_yesterday','this_month','last_month','this_last_month','before_last_month','total','menu','active');
 
         return view('admin.report.order_report',$compact);
     }

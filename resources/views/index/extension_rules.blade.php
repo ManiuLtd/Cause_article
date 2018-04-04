@@ -41,7 +41,7 @@
     </div>
 
     <canvas id="myCanvas" style="display: none"></canvas>
-    <img src="/poster.jpg" id="background" style="display: none">
+    <img src="/poster1.png" id="background" style="display: none">
 
     <!--提示-->
     <div class="flex center hint">
@@ -88,7 +88,7 @@
 
     $(function () {
         $(".extension").click(_.throttle(function () {
-            @if($user->extension_image != '' && \Carbon\Carbon::parse($user->image_at)->addDays(10) > \Carbon\Carbon::now())
+            @if($user->extension_image != '' && \Carbon\Carbon::parse($user->image_at)->addDays(10)->gt(\Carbon\Carbon::now()))
                 showProgress('正在发送二维码');
                 $.post("{{route('inviting')}}",{url:"{{ $user->extension_image }}", type:1, _token:"{{csrf_token()}}"},function (ret) {
                     hideProgress();
@@ -117,19 +117,23 @@
                         ctx.save();//保存当前环境的状态。否则之后画圆的时候，可见区域只有圆的区域（切记注意）
                         ctx.beginPath();
                         ctx.strokeStyle = '#fff';
-                        userBorderSize = 50;
-                        userBorderX = image.width/2;
-                        userBorderY = 100;
-                        ctx.font="25px Arial";
-                        ctx.textAlign = 'center';
-                        ctx.fillStyle = '#fff';
-                        ctx.fillText("我是{{ \Session::get('nickname') }}",image.width/2,180);
-                        ctx.arc(userBorderX,userBorderY,userBorderSize,0,2*Math.PI);
+                        ctx.font="30px Microsoft YaHei";
+                        ctx.fillText("我是{{ session('nickname') }}",222,90);
+                        userBorderSize = 70;
+                        userBorderX = 123;
+                        userBorderY = 113;
+                        ctx.arc(userBorderX,userBorderY,140/2,0,2*Math.PI);
                         ctx.stroke();
                         ctx.clip();
-                        ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX - userBorderSize, userBorderY - userBorderSize, userBorderSize*2, userBorderSize*2);
+                        ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX-userBorderSize, userBorderY-userBorderSize, userBorderSize*2, userBorderSize*2);
                         ctx.restore();
-                        ctx.drawImage(qrcode, 0, 0, 426, 426, 200, 610, 200, 200);
+                        ctx.drawImage(qrcode, 0, 0, 500, 500, 260, 800, 265, 265);
+                        userBorderSize1 = 55;
+                        userBorderX1 = 123;
+                        userBorderY1 = 566;
+                        ctx.arc(userBorderX1,userBorderY1,110/2,0,2*Math.PI);
+                        ctx.clip();
+                        ctx.drawImage(userimg, 0, 0, userimg.width, userimg.height, userBorderX1-userBorderSize1, userBorderY1-userBorderSize1, userBorderSize1*2, userBorderSize1*2);
                         try {
                             var data = c.toDataURL('image/jpeg');
                         } catch (e) {

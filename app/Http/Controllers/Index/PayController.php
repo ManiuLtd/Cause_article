@@ -9,6 +9,7 @@
 namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\templateMessage;
 use App\Model\Integral;
 use App\Model\User;
 use Carbon\Carbon;
@@ -16,7 +17,6 @@ use EasyWeChat\Foundation\Application;
 use EasyWeChat\Payment\Order;
 use Illuminate\Http\Request;
 use App\Model\Order as MemberOrder;
-use Illuminate\Support\Facades\DB;
 
 class PayController extends Controller
 {
@@ -94,6 +94,11 @@ class PayController extends Controller
             }
             // 用户是否支付成功
             if ($successful) {
+                //只要用户支付成功，先把支付时间更新，以防后面发消息出错再次回调
+                $order->pay_time = date('Y-m-d H:i:s');
+                // 订单表修改为已经支付状态
+                $order->state = 1;
+                $order->save();
                 //用户会员加时间
                 $pay_user = User::where('id',$order->uid)->first();
                 //判断用户的会员时间是否过期
@@ -133,15 +138,18 @@ class PayController extends Controller
                         Integral::create($data);
                         \Log::info("订单ID:{$order->id},直接推广用户ID：{$pay_user->extension_id},昵称：{$p_user->wc_nickname}，获得佣金:{$price}");
                         //推送【推荐成交通知】模板消息
-                        $msg = [
-                            "first"    => "尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。",
-                            "keyword1" => $pay_user->wc_nickname,
-                            "keyword2" => date('Y-m-d', time()),
-                            "keyword3" => $price . '元',
-                            "keyword4" => $order->title,
-                            "remark"   => "感谢您的推荐。"
-                        ];
-                        template_message($app, $p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+                        if($p_user->subscribe) {
+                            $msg = [
+                                "first"    => "尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。",
+                                "keyword1" => $pay_user->wc_nickname,
+                                "keyword2" => date('H:i:s', time()),
+                                "keyword3" => $price . '元',
+                                "keyword4" => $order->title,
+                                "remark"   => "感谢您的推荐。"
+                            ];
+                            dispatch(new templateMessage($p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension')));
+                        }
+//                        template_message($app, $p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
 
                         if ( $p_user->extension_id ) {
                             $pp_user = User::where('id', $p_user->extension_id)->first();
@@ -154,22 +162,22 @@ class PayController extends Controller
                             Integral::create($dealer_data);
                             \Log::info("订单ID:{$order->id},直接推广用户ID：{$p_user->extension_id},昵称：{$pp_user->wc_nickname}，获得佣金:{$price}");
                             //推送【推荐成交通知】模板消息
-                            $msg = [
-                                "first"    => "尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。",
-                                "keyword1" => $pay_user->wc_nickname,
-                                "keyword2" => date('Y-m-d', time()),
-                                "keyword3" => $price . '元',
-                                "keyword4" => $order->title,
-                                "remark"   => "感谢您的推荐。"
-                            ];
-                            template_message($app, $pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+                            if($pp_user->subscribe) {
+                                $msg = [
+                                    "first"    => "尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。",
+                                    "keyword1" => $pay_user->wc_nickname,
+                                    "keyword2" => date('H:i:s', time()),
+                                    "keyword3" => $price . '元',
+                                    "keyword4" => $order->title,
+                                    "remark"   => "感谢您的推荐。"
+                                ];
+//                            template_message($app, $pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
+                                dispatch(new templateMessage($pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension')));
+                            }
                         }
                     }
                 }
 
-                // 订单表修改为已经支付状态
-                $order->state = 1;
-                $order->pay_time = date('Y-m-d H:i:s');
             } else { // 用户支付失败
                 $order->state = 2;
             }

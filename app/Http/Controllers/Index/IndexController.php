@@ -9,9 +9,11 @@
 namespace App\Http\Controllers\Index;
 
 use App\Jobs\everydaySlug;
+use App\Jobs\templateMessage;
 use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
+use App\Model\Footprint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -20,22 +22,7 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-//        session(['user_id' => 5]);
-
-//        for ($i = 1; $i <= 5; $i++) {
-//            $day = Carbon::now()->addDays($i)->toDateString();
-//            $users = User::whereDate('membership_time', $day)->select('wc_nickname', 'openid', 'membership_time')->get();
-//            foreach ($users as $value) {
-//                if($value) {
-//                    dispatch(new everydaySlug($value, $i));
-//                }
-//            }
-//        }
-
-        $user = User::where('id', session('user_id'))->select('extension_image', 'image_at')->first();
-
-        return view('index.extension_rules_test', compact('user'));
-
+//        session(['user_id' => 330]);
     }
     /**
      * 首页
@@ -46,10 +33,10 @@ class IndexController extends CommonController
     public function index($type = 0)
     {
         //banner图
-        $banner_list = Cache::remember('banner', 30, function (){
-            $ret = Banner::all();
-            return $ret;
-        });
+//        $banner_list = Cache::remember('banner', 30, function (){
+//            $ret = Banner::all();
+//            return $ret;
+//        });
 
         //文章分类
         $article_type = Cache::remember('article_type', 30, function () {

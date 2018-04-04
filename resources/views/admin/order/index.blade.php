@@ -6,7 +6,9 @@
     </div>
     <form class="form-inline" style="margin-bottom: 15px" action="" method="get">
         <select class="form-control" name="state" style="width: 140px">
+            <option value="" @if(request()->state == '') selected @endif>全部</option>
             <option value="1" @if(request()->state == '1') selected @endif>已支付</option>
+            <option value="0" @if(request()->state == '0') selected @endif>未支付</option>
         </select>
         <select class="form-control" name="key" style="width: 140px">
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
@@ -20,6 +22,7 @@
             <thead>
             <tr>
                 <th>ID</th>
+                <th>用户id</th>
                 <th>用户昵称</th>
                 <th>手机号</th>
                 <th>品牌</th>
@@ -35,50 +38,53 @@
             </thead>
 
             <tbody>
-            @foreach($list as $value)
-            <tr>
-                <td>{{ $value->id }}</td>
-                <td>{{ $value->user->wc_nickname }}</td>
-                <td>{{ $value->user->phone }}</td>
-                <td>{{ $value->brand_name }}</td>
-                <td>{{ $value->user->membership_time }}</td>
-                <td>{{ number_format($value->price, 2) }}</td>
-                <td>@if($value->type == 1) 一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
-                <td>
-                    @if($value->state == 1)
-                        <color style="color: green;font-weight: bold;">已支付</color>
-                    @elseif($value->state == 2)
-                        <color style="color: red;font-weight: bold;">支付失败</color>
-                    @else<color style="color: red;font-weight: bold;">未支付@endif</color>
-                </td>
-                <td>
-                    @if($value->refund_state != '' && $value->refund_time != '')
-                        <color style="color: red;font-weight: bold;">退款成功</color>
-                    @endif
-                </td>
-                <td>
-                    <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">
-                        @if($value->remark)
-                            {{ subtext($value->remark, 5) }}
-                        @else
-                            <i class="icon-edit bigger-120"></i>
-                        @endif
-                    </a>
-                </td>
-                <td>{{ $value->created_at }}</td>
-                <td>
-                    @if($value->state == 1 && $value->refund_state != 1)
-                        <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
-                    @endif
-                    @if($value->state != 1)
-                        <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
-                            {{ csrf_field() }}
-                            <a class="btn btn-xs btn-danger delete-order">删除订单</a>
-                        </form>
-{{--                        <a class="btn btn-xs btn-info" data-url="{{ route('admin.refund', $value->id) }}">删除订单</a>--}}
-                    @endif
-                </td>
-            </tr>
+            @foreach($v as $values)
+                @foreach($values as $value)
+                    <tr>
+                        <td>{{ $value->id }}</td>
+                        <td>{{ $value->user->id }}</td>
+                        <td>{{ $value->user->wc_nickname }}</td>
+                        <td>{{ $value->user->phone }}</td>
+                        <td>{{ optional($value->user->brand)->name }}</td>
+                        <td>{{ $value->user->membership_time }}</td>
+                        <td>{{ number_format($value->price, 2) }}</td>
+                        <td>@if($value->type == 1) 一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
+                        <td>
+                            @if($value->state == 1)
+                                <color style="color: green;font-weight: bold;">已支付</color>
+                            @elseif($value->state == 2)
+                                <color style="color: red;font-weight: bold;">支付失败</color>
+                            @else<color style="color: red;font-weight: bold;">未支付@endif</color>
+                        </td>
+                        <td>
+                            @if($value->refund_state != '' && $value->refund_time != '')
+                                <color style="color: red;font-weight: bold;">退款成功</color>
+                            @endif
+                        </td>
+                        <td>
+                            <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">
+                                @if($value->remark)
+                                    {{ subtext($value->remark, 5) }}
+                                @else
+                                    <i class="icon-edit bigger-120"></i>
+                                @endif
+                            </a>
+                        </td>
+                        <td>{{ $value->created_at }}</td>
+                        <td>
+                            @if($value->state == 1 && $value->refund_state != 1)
+                                <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
+                            @endif
+                            @if($value->state != 1)
+                                <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
+                                    {{ csrf_field() }}
+                                    <a class="btn btn-xs btn-danger delete-order">删除订单</a>
+                                </form>
+        {{--                        <a class="btn btn-xs btn-info" data-url="{{ route('admin.refund', $value->id) }}">删除订单</a>--}}
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
             @endforeach
             </tbody>
         </table>

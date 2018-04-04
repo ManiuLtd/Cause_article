@@ -10,7 +10,9 @@
             <tr>
                 <th>ID</th>
                 <th width="13%">推荐用户</th>
-                <th width="70%">推荐链接</th>
+                <th width="7%">用户品牌</th>
+                <th width="50%">推荐链接</th>
+                <th width="15%">提交时间</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -20,7 +22,9 @@
                 <tr>
                     <td>{{ $list->id }}</td>
                     <td>{{ $list->user->wc_nickname }}</td>
+                    <td>{{ $list->user->brand->name }}</td>
                     <td>{{ $list->url }}</td>
+                    <td>{{ $list->created_at }}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             @if(!$list->state)

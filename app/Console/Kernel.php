@@ -39,11 +39,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             for ($i = 1; $i <= 5; $i++) {
                 $day = Carbon::now()->addDays($i)->toDateString();
-                $users = User::whereDate('membership_time', $day)->select('wc_nickname', 'openid', 'membership_time')->get();
+                $users = User::whereDate('membership_time', $day)->get();
                 foreach ($users as $value) {
-                    if($value) {
-                        dispatch(new everydaySlug($value, $i));
-                    }
+                    dispatch(new everydaySlug($value, $i));
                 }
             }
         })->dailyAt('8:00');

@@ -48,6 +48,13 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
 
+//        $list->transform(function ($value) {
+//            $new = collect($value);
+//            $commission = app(Integral::class)->commission($value->id);
+//            $new->put('commission', $commission);
+//            return $new;
+//        });
+
         $admin = Admin::whereIn('gid', [14, 21])->get();
 
         $menu = $this->menu; $active = $this->active;

@@ -24,6 +24,15 @@
 				<div class="flex center option">
 					<div class="discount">
 						<div class="flex list">
+							<div class="flex centerv price">
+								<span class="flex">1个月</span>
+								<em>&yen;49.9</em>
+							</div>
+							<div class="flexitem endh ">
+								<a href="javascript:;" class="flex center discounts" data-price="49.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
+							</div>
+						</div>
+						<div class="flex list">
 							<div class="flexv">
 								<div class="flex centerv price">
 									<span class="flex">12个月</span>
@@ -39,23 +48,22 @@
 							</div>
 							<div class="flex center cornu">优惠</div>
 						</div>
+
 						<div class="flex list">
-							<div class="flex centerv price">
-								<span class="flex">1个月</span>
-								<em>&yen;39.9</em>
-							</div>
-							<div class="flexitem endh ">
-								<a href="javascript:;" class="flex center discounts" data-price="39.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
-							</div>
-						</div>
-						<div class="flex list">
-							<div class="flex centerv price">
-								<span class="flex">2年</span>
-								<em>&yen;158</em>
+							<div class="flexv">
+								<div class="flex centerv price">
+									<span class="flex">2年</span>
+									<em>&yen;158</em>
+								</div>
+								<div class="cost">
+									<i class="original">原价 498元</i>
+									<span>立省340元</span>
+								</div>
 							</div>
 							<div class="flexitem endh ">
 								<a href="javascript:;" class="flex center discounts" data-price="158" data-type="3" data-uid="{{session('user_id')}}" data-title="爆文2年会员">购买</a>
 							</div>
+							<div class="flex center cornu">优惠</div>
 						</div>
 					</div>
 				</div>
@@ -148,9 +156,11 @@
                 pay(ret.data,function () {
                     if(type == 1){
                         var newtime = time.add(1, 'months')
-					}else{
+					} else if(type == 2){
                         var newtime = time.add(12, 'months')
-					}
+					} else if(type == 3){
+                        var newtime = time.add(24, 'months')
+                    }
                     $(".indate span").text(newtime.format("YYYY-MM-D k:mm:ss"));
                     $(".hint").css({"display":"block"});
                     $(".hint").find(".content").addClass('trans');

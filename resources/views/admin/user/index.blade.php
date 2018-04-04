@@ -87,6 +87,7 @@
                     <td>{{ $value->created_at }}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                            <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral', $value['id']) }}');">查看推广金</a>
                             @if(has_menu($menu,'/admin/user'))
                                 <a href="{{ route('admin.be_dealer',['id'=>$value->id]) }}" class="btn btn-xs btn-primary">成为经销商</a>
                             @endif
@@ -120,6 +121,22 @@
     $('.distribution').click(function(){
         $('#form').submit();
     });
+
+    function see_commis(url) {
+        $.get(url, function (ret) {
+            var content = '<form class="form-horizontal" style="margin-top: 20px">' +
+                '<div class="form-group"><label class="col-sm-5 control-label no-padding-right"> 历史推广佣金 </label>' +
+                '<label class="col-sm-5 control-label no-padding-left"> ' + ret.history + '元 </label>' +
+                '</div>' +
+                '</form>';
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['340px', '370px'], //宽高
+                content: content
+            });
+        });
+    }
 
     function setMembertime(th, id, time) {
         var content = '<form class="form-horizontal" style="margin-top: 20px">' +

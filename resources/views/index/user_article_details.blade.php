@@ -135,7 +135,7 @@
 			<span class="col last"></span>
 		</div>
 
-		{{--<a href="{{ route('chatroom', $res->user->id) }}" class="flex center bls bls-kefu service"></a>--}}
+		<a href="{{ route('chatroom', $res->user->id) }}" class="flex center bls bls-kefu service"></a>
 		
 		<div class="flexv center text-box">
 			<p>本文为 <span>{{ $res->user['wc_nickname'] }}</span> 发布，不代表事业头条立场</p>
@@ -315,7 +315,7 @@
 
     $('#phone').click(_.throttle(function () {
         showMsg('该用户未开通此服务');
-        $.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
+        {{--$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});--}}
     }, 3000, { 'trailing': false }));
 
 	//	加微信
@@ -333,6 +333,7 @@
 			@else
 				$(".book").click(function () {
 					showMsg('该用户尚未上传二维码', 0, 1500);
+                	$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
 				});
 			@endif
 		@endif
@@ -342,7 +343,6 @@
 	@else
 		$(".book").click(_.throttle(function () {
 			showMsg('该用户未开通此服务');
-			$.get("{{ route('tip_user_qrcode', $res->user->id) }}", function () {});
 		}, 3000, { 'trailing': false }));
 	@endif
 
@@ -437,8 +437,8 @@ function logTime() {
     wx.ready(function(){
         //分享微信好友
         wx.onMenuShareAppMessage({
-            title: '{{$res->article['title']}}', // 分享标题1
-            desc: '{!! subtext(preg_replace('/&[a-z]+;/i',"", str_replace("\n","",preg_replace('/<\/?[^>]+>/i',"",$res->article['details']))),80) !!}', // 分享描述
+            title: '{{ $res->article['title'] }}', // 分享标题1
+            desc: '我是事业顾问{{ $res->user->wc_nickname }}，分享事业传播健康！这篇文章很不错，请您阅读。', // 分享描述
             link: '{{route('user_article_details',['id'=>$res->id, 'ex_id'=>session('user_id')])}}', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: head, // 分享图标
             success: function () {

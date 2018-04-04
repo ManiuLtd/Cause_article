@@ -21,34 +21,11 @@
 		</div>
 	</form>
 
-	@if(count($list) > 0)
-		<div class="flexitemv mainbox result">
-			<div class="listbox">
-				@foreach($list as $value)
-					<div class="flex lists">
-						<div class="img">
-							<img class="fitimg" src="{{$value->pic}}"/>
-						</div>
-						<div class="flexitemv cont">
-							<a href="{{route('article_details',['id'=>$value->id])}}" class="flexitemv">{{$value->title}}</a>
-							<div class="base">
-								<span><em>{{$value->read}}</em>阅读</span>
-								<span><em>{{$value->share}}</em>分享</span>
-								<span>轩轩</span>
-								<span>首创</span>
-							</div>
-						</div>
-					</div>
-				@endforeach
-			</div>
-			<p class="flex center loading hide">正在加载中~</p>
-			<p class="flex center ending hide">已全部加载~</p>
+	<div class="flexitemv mainbox result mescroll" id="mescroll">
+		<div class="listbox" id="listbox">
+
 		</div>
-	@else
-		<div class="flexitem center void">
-			<p>找不到“<span>{{request()->key}}</span>”，换个关键词试试吧~</p>
-		</div>
-	@endif
+	</div>
 
 	@includeWhen(!$user->brand_id && !$user->phone, 'index.public.footer')
 
@@ -56,8 +33,10 @@
 </div>
 </body>
 <script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 
-@include('index.public.perfect_js')
+@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '找不到"'.request()->key.'"，换个关键词试试吧~', 'html' => 'listbox', 'route' => route('article_search', request()->key), 'lists' => $list, 'lazyload' => 0])
+
 <script type="text/javascript">
      var input = $('.home-sea input').get(0);
      input.oninput=function () {
@@ -95,25 +74,6 @@
 			 }
 		 });
 	@endif
-
-     var page = 1;
-     $(".mainbox.result").scroll(function() {
-         var scrollTop = Math.ceil($(this).scrollTop()),thisHeight = $(this).height(),boxHeight = $(".listbox").height();
-         if((scrollTop + thisHeight) > boxHeight -10) {
-             page++;
-             if(page < {{ $list->lastPage() }}) {
-                 $(".loding").removeClass("hide");
-                 var url = "{{ route('article_search', request()->key) }}" + "?page=" + page;
-                 $.get(url, function (ret) {
-                     console.log(ret);
-                     $(".listbox").append(ret.html);
-                     $(".loding").addClass("hide");
-                 });
-             } else {
-                 $(".ending").removeClass("hide");
-             }
-         }
-     });
 
 </script>
 </html>
