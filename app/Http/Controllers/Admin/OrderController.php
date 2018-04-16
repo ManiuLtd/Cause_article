@@ -111,13 +111,13 @@ class OrderController extends CommonController
         array_push($where, ['state', 1]);
         array_push($where, ['refund_state', 0]);
         if($wherein) {
-            $list = Order::with('user', 'dis')->where($where)->whereIn('uid', $wherein)->orderBy('created_at', 'desc')->paginate(15);
+            $list = Order::with('user.extension', 'dis')->where($where)->whereIn('uid', $wherein)->orderBy('created_at', 'desc')->paginate(15);
         } else {
-            $list = Order::with('user', 'dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
+            $list = Order::with('user.extension', 'dis')->where($where)->orderBy('created_at', 'desc')->paginate(15);
         }
         foreach ($list as $key => $value) {
             $list[$key]['brand_name'] = Brand::where('id', $value->user->brand_id)->value('name');
-            if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
+//            if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
         }
 
         $admin = Admin::where('gid', 13)->get();

@@ -27,8 +27,8 @@
       <dd>
         <div class="content button">
           <p class="text">
-            <button rel="1">我想咨询健康问题</button>
-            <button rel="2">了解加盟直销事业</button>
+            <button rel="1">咨询健康问题</button>
+            <button rel="2">了解加盟事业</button>
             <button rel="3">其他</button>
           </p>
           <div class="arrow"></div>
@@ -154,8 +154,7 @@
     <input type="hidden" name="name" id="p3" value="" />
     <input type="hidden" name="phone" id="p4" value="" />
     <input type="hidden" name="gender" id="p5" value="" />
-    <input type="hidden" name="uid" value="{{$user->id}}" />
-    {{--<input type="hidden" name="uaid" value="{{$res->id}}" />--}}
+    <input type="hidden" name="uid" value="{{ $user->id }}" />
   </form>
   
   <div id="fill" style="clear: both; float: left; visibility: hidden;"></div>

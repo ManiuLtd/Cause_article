@@ -11,7 +11,7 @@
 <div id='details' class="flexitemv">
 	<div class="info">
 		<div class="p1">
-			<span class="hint">姓&ensp;&ensp;&ensp;名：</span>
+			<span class="">姓&ensp;&ensp;&ensp;名：</span>
 			<span>
 				@if($membership_time)
 					{{substr( $message->name, 0, 1 )}}**
@@ -21,7 +21,7 @@
 			</span>
 		</div>
 		<div class="p1">
-			<span class="hint">手 机 号：</span>
+			<span class="">手 机 号：</span>
 			<span>
 				@if($membership_time)
 					{{substr( $message->phone, 0, 3 )}}********
@@ -31,11 +31,11 @@
 			</span>
 		</div>
 		<div class="p1">
-			<span class="hint">年 龄 段：</span>
+			<span class="">年 龄 段：</span>
 			<span>{{$message->age}}</span>
 		</div>
 		<div class="p1">
-			<span class="hint">咨询内容：</span>
+			<span class="">咨询内容：</span>
 			<span>@if($message->type == 1) 健康问题 @elseif($message->type == 2) 加盟事业 @else 其他 @endif</span>
 		</div>
 	</div>
@@ -50,15 +50,7 @@
 	<!--end-->
 	<div class="flexv center qrcode">
 		<div class="img">
-			@if(!$membership_time)
-				@if($message->subUser->qrcode)
-					<img src="{{ $message->subUser->qrcode }}" />
-				@else
-					<img src="/kf_qrcode.jpg" />
-				@endif
-			@else
-				<img src="/kf_qrcode.jpg" />
-			@endif
+			<img src="/kf_qrcode.jpg" />
 		</div>
 		<p>长按识别二维码</p>
 		<p>联系客服咨询</p>

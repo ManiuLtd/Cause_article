@@ -23,7 +23,7 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .fitimg{width: 100%;height:100%;}
 .mainbox{position: relative;overflow-x: hidden;overflow-y: auto;-webkit-overflow-scrolling: touch;}
 /********************** 头部 ********************************/
-.head{height: 5rem;padding:0 1.4rem;background: #393a3e;}
+.head{padding:0 1.4rem;background: #393a3e;}
 .head a{color:#fff;font-size: 2.5rem;}
 .head h1{font-size: 1.5rem;font-weight: lighter;color: #fff;}
 /******** 底部 **********/
@@ -96,6 +96,14 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #mesag .lists .top .info p{height: 2rem;font-size: 1.5rem;color:#404040;}
 #mesag .lists .top .endh{font-size: 1.2rem;color:#818181;}
 #mesag .lists a{width: 20rem;height:4rem;border-radius:70px;margin-top: 1rem;font-size: 1.6rem;color:#fdebea;background: -webkit-linear-gradient(#f95e48, #f7403c)}
+#mesag .title{margin: 1rem 2rem;height:3rem; border-radius: 4rem;overflow: hidden;color:#696969; background: #fff;}
+#mesag .title .read,#mesag .title .share{width: 50%;height:100%;font-size: 1.5rem;}
+#mesag .title .elect{background:#f7463e;color:#fef6f3; }
+#mesag .ordinary{margin-top:50%;}
+#mesag .ordinary h2.tit{font-weight:bold;font-size:1.8rem;}
+#mesag .ordinary .s-tit{padding:1rem 0;font-size:1.4rem;}
+#mesag .ordinary a.btn{width:12rem;height:3rem;margin:1rem 0;border-radius:1rem;background:#f7463e;font-size:1.6rem;color:#fff;}
+#mesag .empty{margin:2rem 0;font-size:1.4rem;color:#bbb;}
 /******************************** 基本信息 **********************************/
 #basic .users{margin-top: 10px;padding: 0 10px;background: #fff;}
 #basic .user .item{margin: 6px 0;display: flex;justify-content:space-between;position: relative;}
@@ -672,3 +680,39 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .consult-box .no .phone .n-btn{background:#0178d6;}
 .consult-box .no .wx .n-btn{background:#4ba601;}
 
+/*********************************** 风险测评 *****************************************/
+#appraisal .head-img{margin:1.6rem 0;}
+#appraisal .btn a{width:24rem;height:3.6rem;border-radius:2rem;background:-webkit-linear-gradient(top, #82c4fe,#47aafe,#82c4fe);box-shadow:0px 2px 12px 2px #47aafe;color:#fff;font-size:1.4rem;}
+#appraisal p.tex{margin-top:3rem;font-size:1.4rem;color:#666;}
+#appraisal p.tex span{color:#ff9600;}
+/*********************************** 测评结果 *****************************************/
+#resule .head{background:-webkit-linear-gradient(left, #3b8adf,#6badf7);}
+#resule .head .top{padding:1.6rem;border-bottom:1px solid #fff;}
+#resule .head .top .left-t{color:#fff;}
+#resule .head .top .left-t h4{font-size:1.4rem;line-height:2.4rem;}
+#resule .head .top .right-t{width:4rem;height:2rem;border:1px solid #fff;border-radius:.5rem;color:#fff;font-size:1.2rem;}
+#resule .chart{padding:1rem 0;}
+#resule .chart p{padding:.4rem 0;font-size:1.2rem;color:#fff;}
+#resule .tbtext{padding:1rem;}
+#resule .tbtext .tex{font-size:1.38rem;text-align:center;}
+#resule .sex{font-size:1.45rem;color:#232323;line-height:2.5rem;font-weight:600;}
+#resule .caption{font-size:1.2rem;color:#8a8a8a;line-height:2rem;}
+#resule .chart_excel{position:relative;height:18rem;}
+#resule .chart_excel .xians{position:absolute;top:26%;left:46%;transform:translate(-50%,-50%);border:1px solid #58a2d2;border-radius:.4rem;padding:0 .4rem;font-size:1.2rem;color:#58a2d2;}
+#resule .subhead{font-size:1.6rem;color:#232323;}
+#resule .nessbox{margin:1rem 0;}
+#resule .nessbox_t img{width:8rem;}
+#resule .nessbox_t span{font-size:1.4rem;color:#232323;}
+#resule .zx-btn a{margin:2rem 1rem;width:70%;height:4rem;border-radius:.6rem;background:#38bb9b;font-size:1.4rem;color:#fff;}
+
+/******************************* 品牌 ************************************/
+#brand-menu.dialog_box {position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:100;overflow-y: auto;transform: translateX(100%);transition: transform 0.3s linear;}
+#brand-menu .brand-head{height: 5rem;padding:0 1.4rem;background: #393a3e;}
+#brand-menu .brand-head a{color:#fff;font-size: 2.5rem;}
+#brand-menu .brand-head h1{font-size: 1.5rem;font-weight: lighter;color: #fff;}
+#brand-menu .company{margin-right:30px;}
+#brand-menu .company li>p{background: #edeeed;color: #b3b3b3;padding-left: 10px;font-size: 1.5rem;}
+#brand-menu .company li>div{line-height: 40px;border-bottom: 1px solid #f5f5f5;padding-left: 10px;font-size: 1.5rem;}
+#brand-menu .lettrt{position: fixed;top:5rem;right:0;bottom:0;width:30px;overflow:hidden;}
+#brand-menu .lettrt li>a{display:block;color:#84c2b2;text-align: center;font-size: 1.4rem;}
+#brand-menu.show{transform: translateX(0);}

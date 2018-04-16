@@ -27,7 +27,7 @@
 </form>
 <!--品牌-->
 <div id="brand" class="flexv dialog_box">
-    <div class="flex center head">
+    <div class="flex center brand-head">
         <a href="javascript:;" class="bls bls-zjt"></a>
         <h1 class="flexitem center" style="margin-left: -2rem;">选择品牌</h1>
     </div>

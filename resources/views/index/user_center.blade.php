@@ -75,7 +75,7 @@
 				<i class="flex center bls bls-generalize" style="background:#35f921; "></i>
 				<span class="flex center text">推广中心</span>
 			</a>
-			<a href="{{ route('message_list') }}" class="flexitem centerv tg">
+			<a href="{{ route('message_list', 1) }}" class="flexitem centerv tg">
 				<i class="flex center bls bls-consult" style="background:#ffc0cb"></i>
 				<span class="flex center text">留言管理</span>
 			</a>

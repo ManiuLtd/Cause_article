@@ -8,13 +8,13 @@
 
 namespace App\Http\Controllers\Index;
 
-use App\Jobs\everydaySlug;
 use App\Jobs\templateMessage;
 use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
-use App\Model\Footprint;
+use App\Model\FamilyMessage;
 use Carbon\Carbon;
+use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -22,7 +22,7 @@ class IndexController extends CommonController
 {
     public function test(Request $request)
     {
-//        session(['user_id' => 330]);
+
     }
     /**
      * 首页
@@ -152,5 +152,66 @@ class IndexController extends CommonController
         } else {
             return response()->json(['state'=>401, 'errormsg'=>'举报文章失败','url'=>$url]);
         }
+    }
+
+    /**
+     * 家庭保障测评入口页面
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function familyAppraisal($uid)
+    {
+        $count = FamilyMessage::get()->count();
+
+        return view('index.family_appraisal', compact('count'));
+    }
+
+    /**
+     * 开始测试家庭保障
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function familyAppraisalBegin(Request $request, User $user)
+    {
+        if($request->post()) {
+            $data = $request->all();
+            $data['sub_uid'] = session('user_id');
+            $add = FamilyMessage::create($data);
+            $user = User::where('id', $request->user_id)->select('openid', 'membership_time', 'subscribe')->first();
+            if($user->subscribe) {
+                if ( Carbon::parse($user->membership_time)->gt(Carbon::parse('now')) ) {
+                    $msg = [
+                        "first"    => $request->name . "有一个【{$request->type}】的需求向您咨询，快打开看看吧~。",
+                        "keyword1" => $request->name,
+                        "keyword2" => $request->phone,
+                        "keyword3" => str_random(10),
+                        "remark"   => "点击查看详情。"
+                    ];
+                } else {
+                    $msg = [
+                        "first"    => mb_substr($request->name, 0, 1, 'utf-8') . "**有一个{$request->type}的需求向您咨询，快打开看看吧~。",
+                        "keyword1" => mb_substr($request->name, 0, 1, 'utf-8') . "**",
+                        "keyword2" => substr($request->phone, 0, 3) . "********",
+                        "keyword3" => str_random(10),
+                        "remark"   => "点击查看详情。"
+                    ];
+                }
+                dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.consult_message'), route('message_list', 2)));
+            }
+
+            return redirect()->route('family_appraisal_result', $add->id);
+        }
+
+        return view('index.family_health', compact('user'));
+    }
+
+    /**
+     * 家庭保障测试结果
+     * @param FamilyMessage $message
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function familyAppraisalResult(FamilyMessage $message)
+    {
+        return view('index.family_result', compact('message'));
     }
 }

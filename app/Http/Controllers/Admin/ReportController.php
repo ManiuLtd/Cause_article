@@ -128,7 +128,7 @@ class ReportController extends CommonController
         //上月初时间
         $last_month_time = Carbon::now()->addMonth(-1)->startOfMonth();
         //上月今天的时间
-        $last_month_day_time = Carbon::today()->subMonth();
+        $last_month_day_time = Carbon::today()->subMonth()->addDay();
         //前月初时间
         $before_last_month_time = Carbon::now()->addMonth(-2)->startOfMonth();
 

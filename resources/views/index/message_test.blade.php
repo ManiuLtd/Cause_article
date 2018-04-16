@@ -9,10 +9,10 @@
 </head>
 <body>
 <div id="mesag" class="flexv wrap">
-	<div class="flex center title">
-		<a href="{{ route('message_list', 1) }}" class="flex center read @if(request()->type == 1)elect @endif">用户咨询留言</a>
-		<a href="{{ route('message_list', 2) }}" class="flex center share @if(request()->type == 2)elect @endif">家庭保障留言</a>
-	</div>
+    <div class="flex center title">
+        <a href="{{ route('test', 1) }}" class="flex center read @if(request()->type == 1)elect @endif">用户咨询留言</a>
+        <a href="{{ route('test', 2) }}" class="flex center share @if(request()->type == 2)elect @endif">家庭保障留言</a>
+    </div>
 	<div class="flexitemv mainbox mescroll" id="mescroll">
 
 		@if(!$time && request()->type == 2)
@@ -27,14 +27,14 @@
 </body>
 <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 
-@if($time && request()->type == 2)
+	@if($time && request()->type == 2)
 
-	@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '还没有收到家庭保障留言哦~', 'html' => 'mescroll', 'route' => route('message_list', request()->type), 'lists' => $lists, 'lazyload' => 0])
+		@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '还没有收到家庭保障留言哦~', 'html' => 'mescroll', 'route' => route('test', request()->type), 'lists' => $lists, 'lazyload' => 0])
 
-@elseif(request()->type == 1)
+    @elseif(request()->type == 1)
 
-	@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '还没有收到留言哦~', 'html' => 'mescroll', 'route' => route('message_list', request()->type), 'lists' => $lists, 'lazyload' => 0])
+		@include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '还没有收到留言哦~', 'html' => 'mescroll', 'route' => route('test', request()->type), 'lists' => $lists, 'lazyload' => 0])
 
-@endif
+	@endif
 
 </html>

@@ -2,7 +2,7 @@
     <div class="flexv centerv lists">
         <div class="flex top">
             <div class="headimg">
-                <img src="{{ $value->user['head'] }}" class="fitimg">
+                <img src="{{ $value->subUser['head'] }}" class="fitimg">
             </div>
             <div class="flexitemv info">
                 <p class="flex centerv">
@@ -22,6 +22,10 @@
             </div>
             <div class="flex endh">{{ $value->created_at }}</div>
         </div>
-        <a href="{{route('message_detail', $value->id)}}" class="flex center">点击查看留言详情</a>
+        @if($type == 1)
+            <a href="{{route('message_detail', $value->id)}}" class="flex center">点击查看留言详情</a>
+        @elseif($type == 2)
+            <a href="{{route('family_message_detail', $value->id)}}" class="flex center">点击查看留言详情</a>
+        @endif
     </div>
 @endforeach

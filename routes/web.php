@@ -80,11 +80,11 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     //获取用户在个人文章页面停留时间
     Route::post('user_article_time', 'UserArticleController@userArticleTime')->name('user_article_time');
     //在线咨询
-    Route::get('chatroom/{user}','UserArticleController@chatroom')->name('chatroom');
+    Route::get('chatroom/{user}/{aid?}','UserArticleController@chatroom')->name('chatroom');
     //提交在线咨询
     Route::post('submit_message','UserArticleController@submitMessage')->name('submit_message');
     //咨询列表
-    Route::get('message_list', 'UserArticleController@messageList')->name('message_list');
+    Route::get('message_list/{type}', 'UserArticleController@messageList')->name('message_list');
     //咨询列表
     Route::get('message_detail/{id}', 'UserArticleController@messageDetail')->name('message_detail');
     //前端提交订单
@@ -107,6 +107,14 @@ Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_user
     Route::get('report_text/{article_id}/{atype}/{type}', 'IndexController@reportText')->name('report_text');
     //举报文章内容页面（显示填写举报信息）
     Route::post('report_post', 'IndexController@reportPost')->name('report_post');
+    //家庭保障测评入口页面
+    Route::get('family_appraisal/{uid}', 'IndexController@familyAppraisal')->name('family_appraisal');
+    //家庭保障测评页面
+    Route::match(['get', 'post'], 'family_appraisal_begin/{user?}', 'IndexController@familyAppraisalBegin')->name('family_appraisal_begin');
+    //家庭保障测评结果
+    Route::get('family_appraisal_result/{message}', 'IndexController@familyAppraisalResult')->name('family_appraisal_result');
+    //查询提问家庭保障测试留言
+    Route::get('family_message_detail/{message}', 'UserArticleController@familyMessageDtail')->name('family_message_detail');
     //未开通会员或会员时间到期中间件
     Route::group(['middleware' => 'membership'],function(){
         //用户文章被阅读和分享列表

@@ -8,13 +8,16 @@
 
 namespace App\Http\Controllers\Index;
 
+use App\Jobs\templateMessage;
 use App\Model\Article;
 use App\Model\Brand;
+use App\Model\FamilyMessage;
 use App\Model\Footprint;
 use App\Model\Message;
 use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
+use ClassesWithParents\F;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -72,7 +75,7 @@ class UserArticleController extends CommonController
             $user->save();
 
             //推送【推荐会员成功提醒】模板消息
-            $app = new Application(config('wechat'));
+//            $app = new Application(config('wechat'));
             $msg = [
                 "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                 "keyword1"  => $user->wc_nickname,
@@ -80,7 +83,8 @@ class UserArticleController extends CommonController
                 "keyword3"  => '扫描个人专属二维码',
                 "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
-            template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+            dispatch(new templateMessage($uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url')));
+//            template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
         }
 
         //获取品牌
@@ -271,9 +275,10 @@ class UserArticleController extends CommonController
      * @param $id '用户文章表id'
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function chatroom( User $user )
+    public function chatroom( User $user, $aid )
     {
 //        $res = UserArticles::with('user')->where('id', $id)->first();
+        session(['chat_aid' => $aid]);
 
         return view('index.chatroom', compact('user'));
     }
@@ -289,8 +294,8 @@ class UserArticleController extends CommonController
         $data[ 'sub_uid' ] = session()->get('user_id');
         $data[ 'order_id' ] = date('YmdHis') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
         $data[ 'created_at' ] = date('Y-m-d H:i:s');
-        $add_id = Message::insertGetId($data);
-        if ( $add_id ) {
+        $add = Message::create($data);
+        if ( $add->id ) {
             //推送【咨询消息】模板消息
             if ( $request->type == 1 ) {
                 $type = '健康问题';
@@ -299,28 +304,33 @@ class UserArticleController extends CommonController
             } else {
                 $type = '其他';
             }
-            $openid = User::where('id', $request->uid)->select('openid', 'membership_time')->first();
-            if ( Carbon::parse($openid->membership_time)->gt(Carbon::parse('now')) ) {
-                $msg = [
-                    "first"    => $request->name . "有一个【" . $type . "】的需求向您咨询，快打开看看吧~。",
-                    "keyword1" => $request->name,
-                    "keyword2" => $request->phone,
-                    "keyword3" => $data[ 'order_id' ],
-                    "remark"   => "点击查看详情。"
-                ];
-            } else {
-                $msg = [
-                    "first"    => mb_substr($request->name, 0, 1, 'utf-8') . "**有一个 $type 的需求向您咨询，快打开看看吧~。",
-                    "keyword1" => mb_substr($request->name, 0, 1, 'utf-8') . "**",
-                    "keyword2" => substr($request->phone, 0, 3) . "********",
-                    "keyword3" => $data[ 'order_id' ],
-                    "remark"   => "点击查看详情。"
-                ];
+            $user = User::where('id', $request->uid)->select('openid', 'membership_time', 'subscribe')->first();
+            if($user->subscribe) {
+                if ( Carbon::parse($user->membership_time)->gt(Carbon::parse('now')) ) {
+                    $msg = [
+                        "first"    => $request->name . "有一个【" . $type . "】的需求向您咨询，快打开看看吧~。",
+                        "keyword1" => $request->name,
+                        "keyword2" => $request->phone,
+                        "keyword3" => $data[ 'order_id' ],
+                        "remark"   => "点击查看详情。"
+                    ];
+                } else {
+                    $msg = [
+                        "first"    => mb_substr($request->name, 0, 1, 'utf-8') . "**有一个 $type 的需求向您咨询，快打开看看吧~。",
+                        "keyword1" => mb_substr($request->name, 0, 1, 'utf-8') . "**",
+                        "keyword2" => substr($request->phone, 0, 3) . "********",
+                        "keyword3" => $data[ 'order_id' ],
+                        "remark"   => "点击查看详情。"
+                    ];
+                }
+                dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add->id ])));
+//                $app = new Application(config('wechat'));
+//                template_message($app, $user->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add_id ]));
             }
-            $app = new Application(config('wechat'));
-            template_message($app, $openid->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add_id ]));
+            $aid = session('chat_aid');
+            session(['chat_aid' => '']);
 
-            return redirect()->back();
+            return redirect()->route('user_article_details', $aid);
         }
     }
 
@@ -330,21 +340,30 @@ class UserArticleController extends CommonController
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      * @throws \Throwable
      */
-    public function messageList(Request $request)
+    public function messageList(Request $request, $type)
     {
-        $lists = Message::with('user')->where('uid', session('user_id'))->paginate(5);
+        switch ($type) {
+            case 1:
+                $lists = Message::with('subUser')->where('uid', session('user_id'))->orderBy('id', 'desc')->paginate(5);
+                break;
+            case 2:
+                $lists = FamilyMessage::with('subUser')->where('user_id', session('user_id'))->orderBy('id', 'desc')->paginate(5);
+                break;
+        }
+        $membership = User::where('id', session('user_id'))->value('membership_time');
+        $time = Carbon::parse($membership)->gt(Carbon::now());
 
         if($request->ajax()) {
-            $view = view('index.template.__message', compact('lists'))->render();
+            $view = view('index.template.__message', compact('lists', 'time', 'type'))->render();
 
             return response()->json(['html' => $view]);
         }
 
-        return view('index.message', compact('lists'));
+        return view('index.message', compact('lists', 'time'));
     }
 
     /**
-     * @title 咨询详细内容
+     * @title 普通咨询详细内容
      * @param $id
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -355,6 +374,11 @@ class UserArticleController extends CommonController
         $membership_time = Carbon::parse('now')->gt(Carbon::parse($message->user['membership_time']));
 
         return view('index.message_detail', compact('message', 'membership_time'));
+    }
+
+    public function familyMessageDtail( FamilyMessage $message )
+    {
+        return view('index.message_family_detail', compact('message'));
     }
 
     /**
@@ -424,8 +448,9 @@ class UserArticleController extends CommonController
                 "keyword2" => date('Y-m-d H:i', time()),
                 "remark"   => '因您未上传微信二维码，访客无法添加您的微信。请尽快上传二维码防止错失顾客线索。'
             ];
-            $app = new Application(config('wechat'));
-            template_message($app, $user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record'));
+            dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record')));
+//            $app = new Application(config('wechat'));
+//            template_message($app, $user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record'));
 
             return true;
         });

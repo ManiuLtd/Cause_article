@@ -34,7 +34,7 @@
                     <th>订单金额(元)</th>
                     <th>会员类型</th>
                     <th>订单状态</th>
-                    <th>所属员工</th>
+                    <th>所属上级</th>
                     <td>备注</td>
                     <th>创建时间</th>
                     <th>操作</th>
@@ -67,9 +67,10 @@
                     <td>@if($value->type == 1)一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
                     <td><color style="color: green;font-weight: bold;">已支付</color></td>
                     <td>
-                        @if($value->distribution)
-                            <color style="color: blue;font-weight: bold;">{{ $value->admin }}</color>
-                        @endif
+                        {{ $value->user->extension->wc_nickname }}
+                        {{--@if($value->distribution)--}}
+                            {{--<color style="color: blue;font-weight: bold;">{{ $value->admin }}</color>--}}
+                        {{--@endif--}}
                     </td>
                     <td>
                         <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">

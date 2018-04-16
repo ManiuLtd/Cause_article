@@ -365,30 +365,30 @@
             setTransform($rotateLayer, curX, curY, curAngle, originX, originY);
 
             // 开始旋转
-            setTransition($rotateLayer, curX, curY, newAngle, 200, function() {
-                atRotation = false;
-                curAngle = newAngle % 360;
-                // 旋转完成后将参考点设回零位
-                // 同时加上偏移，保证图片位置看上去没有变化
-                // 这里要另外要加上父容器（移动层）零位与自身之间的偏移量
-                curX += offsetX + parentOffsetX;
-                curY += offsetY + parentOffsetY;
-                curX = curX.toFixed(2) - 0;
-                curY = curY.toFixed(2) - 0;
-                setTransform($rotateLayer, curX, curY, curAngle);
-                // 相应的父容器（移动层）要减去与旋转层之间的偏移量
-                // 这样看上去就好像图片没有移动
-                myScroll.scrollTo(
-                    myScroll.x - parentOffsetX * myScroll.scale,
-                    myScroll.y - parentOffsetY * myScroll.scale
-                );
-                calculateScale(curImgWidth, curImgHeight);
-                if (myScroll.scale < myScroll.options.zoomMin) {
-                    myScroll.zoom(myScroll.options.zoomMin);
-                }
-
-                refreshScroll(curImgWidth, curImgHeight);
-            });
+            // setTransition($rotateLayer, curX, curY, newAngle, 200, function() {
+            //     atRotation = false;
+            //     curAngle = newAngle % 360;
+            //     // 旋转完成后将参考点设回零位
+            //     // 同时加上偏移，保证图片位置看上去没有变化
+            //     // 这里要另外要加上父容器（移动层）零位与自身之间的偏移量
+            //     curX += offsetX + parentOffsetX;
+            //     curY += offsetY + parentOffsetY;
+            //     curX = curX.toFixed(2) - 0;
+            //     curY = curY.toFixed(2) - 0;
+            //     setTransform($rotateLayer, curX, curY, curAngle);
+            //     // 相应的父容器（移动层）要减去与旋转层之间的偏移量
+            //     // 这样看上去就好像图片没有移动
+            //     myScroll.scrollTo(
+            //         myScroll.x - parentOffsetX * myScroll.scale,
+            //         myScroll.y - parentOffsetY * myScroll.scale
+            //     );
+            //     calculateScale(curImgWidth, curImgHeight);
+            //     if (myScroll.scale < myScroll.options.zoomMin) {
+            //         myScroll.zoom(myScroll.options.zoomMin);
+            //     }
+            //
+            //     refreshScroll(curImgWidth, curImgHeight);
+            // });
         }
 
         function initClip() {

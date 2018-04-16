@@ -9,6 +9,7 @@
             <thead>
             <tr>
                 <th>ID</th>
+                <th width="3%">用户id</th>
                 <th width="13%">推荐用户</th>
                 <th width="7%">用户品牌</th>
                 <th width="50%">推荐链接</th>
@@ -21,8 +22,9 @@
             @foreach($lists as $list)
                 <tr>
                     <td>{{ $list->id }}</td>
+                    <td>{{ $list->user->id }}</td>
                     <td>{{ $list->user->wc_nickname }}</td>
-                    <td>{{ $list->user->brand->name }}</td>
+                    <td>@if($list->user->brand){{ optional($list->user->brand)->name }} @else 全品牌 @endif</td>
                     <td>{{ $list->url }}</td>
                     <td>{{ $list->created_at }}</td>
                     <td>
