@@ -20,6 +20,7 @@ use App\Model\UserArticles;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends CommonController
 {
@@ -139,23 +140,24 @@ class UserController extends CommonController
                 session(['head_pic'=>$data[ 'head' ]]);
                 //删除头像base64位缓存，以便下次重新转换
                 Cache::forget('user_head' . $user->openid);
+                //删除本地头像
+                if(!str_contains($user->head, 'qlogo.cn')) {
+                    unlink(config('app.image_real_path') . $user->head);
+                }
             }
 
             //是否上传个人二维码
             if ( $request->qrcode != $user->qrcode ) {
-//                $upload = thumdImageUpload(200, 200, $request->qrcode, 'user_qrcode');
                 $upload = base64ToImage($request->qrcode, 'user_qrcode');
                 $data[ 'qrcode' ] = $upload[ 'path' ];
+                //删除本地二维码
+                if($user->qrcode) unlink(config('app.image_real_path') . $user->qrcode);
             }
 
             //如果有变更名称或头像则需清空推广图片
             if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
                 $data['extension_image'] = '';
             }
-
-            //更新用户session
-//            $brand = Brand::find($request->brand_id);
-//            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname, 'brand_id' => $request->brand_id, 'brand_name' => $brand->name]);
 
             if ( $user->update($data) ) {
                 return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);

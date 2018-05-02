@@ -6,9 +6,7 @@
     </div>
     <form class="form-inline" style="margin-bottom: 15px" action="" method="get">
         <select class="form-control" name="state" style="width: 140px">
-            <option value="" @if(request()->state == '') selected @endif>全部</option>
             <option value="1" @if(request()->state == '1') selected @endif>已支付</option>
-            <option value="0" @if(request()->state == '0') selected @endif>未支付</option>
         </select>
         <select class="form-control" name="key" style="width: 140px">
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
@@ -22,7 +20,6 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>用户id</th>
                 <th>用户昵称</th>
                 <th>手机号</th>
                 <th>品牌</th>
@@ -42,7 +39,6 @@
                 @foreach($values as $value)
                     <tr>
                         <td>{{ $value->id }}</td>
-                        <td>{{ $value->user->id }}</td>
                         <td>{{ $value->user->wc_nickname }}</td>
                         <td>{{ $value->user->phone }}</td>
                         <td>{{ optional($value->user->brand)->name }}</td>

@@ -29,7 +29,7 @@
                     <img class="flex" src="{{ $res->user->head }}">
                     <span class="flexv">{{ $res->user->wc_nickname }}</span>
                 </div>
-                @if(count($value->extension))
+                @if(count($value['extension']))
                     @foreach($value->extension as $user)
                         <i class="flex centerh bls bls-right"></i>
                         <div class="flexv center img">

@@ -42,7 +42,7 @@ class ExtensionController extends CommonController
 
     public function rules()
     {
-        $user = User::where('id', session('user_id'))->select('extension_image', 'image_at')->first();
+        $user = User::where('id', session('user_id'))->select('wc_nickname', 'extension_image', 'image_at')->first();
 
         return view('index.extension_rules', compact('user'));
     }

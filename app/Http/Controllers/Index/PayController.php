@@ -26,13 +26,18 @@ class PayController extends Controller
      */
     public function addOrder(Request $request)
     {
+        $uid = session('user_id');
+        $user = User::where('id', $uid)->select('extension_id', 'extension_up')->first();
         //下订单
         $order = [
             'order_id'  =>  date('YmdHis') . substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8).rand(100000, 999999),
-            'uid'       =>  $request->uid,
+            'uid'       =>  $uid,
             'price'     =>  $request->price,
+            'price_int' =>  floor($request->price),
             'title'     =>  $request->title,
             'type'      =>  $request->type,
+            'superior'  =>  $user->extension_id,
+            'superior_up' => $user->extension_up,
             'created_at'=>  date('Y-m-d H:i:s')
         ];
         MemberOrder::create($order);
@@ -123,15 +128,15 @@ class PayController extends Controller
                 }
 
                 //推广用户获得佣金
-                if($pay_user->extension_id){
-                    $count = Integral::where(['user_id' => $pay_user->extension_id, 'order_id' => $order->id])->get()->count();
+                if($order->superior){
+                    $count = Integral::where(['user_id' => $order->superior, 'order_id' => $order->id])->get()->count();
                     if($count == 0) {
                         $app = new Application(config('wechat'));
                         $p_user = User::where('id', $pay_user->extension_id)->first();
                         $scale = $p_user->integral_scale != 0 ? $p_user->integral_scale : 30;
                         $price = floor($order->price * ( $scale / 100 ));
                         $data = [
-                            'user_id'  => $pay_user->extension_id,
+                            'user_id'  => $order->superior,
                             'price'    => $price,
                             'order_id' => $order->id
                         ];
@@ -151,11 +156,11 @@ class PayController extends Controller
                         }
 //                        template_message($app, $p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
 
-                        if ( $p_user->extension_id ) {
-                            $pp_user = User::where('id', $p_user->extension_id)->first();
+                        if ( $order->superior_up ) {
+                            $pp_user = User::where('id', $order->superior_up)->first();
                             $price = floor($order->price * 0.1);
                             $dealer_data = [
-                                'user_id'  => $p_user->extension_id,
+                                'user_id'  => $order->superior_up,
                                 'price'    => $price,
                                 'order_id' => $order->id
                             ];

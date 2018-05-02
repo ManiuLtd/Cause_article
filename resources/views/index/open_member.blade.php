@@ -29,7 +29,7 @@
 								<em>&yen;49.9</em>
 							</div>
 							<div class="flexitem endh ">
-								<a href="javascript:;" class="flex center discounts" data-price="49.9" data-type="1" data-uid="{{session('user_id')}}" data-title="爆文1个月会员">购买</a>
+								<a href="javascript:;" class="flex center discounts" data-price="49.9" data-type="1" data-title="爆文1个月会员">购买</a>
 							</div>
 						</div>
 						<div class="flex list">
@@ -44,7 +44,7 @@
 								</div>
 							</div>
 							<div class="flexitem endh">
-								<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-uid="{{session('user_id')}}" data-title="爆文12个月会员">优惠抢购</a>
+								<a href="javascript:;" class="flex center discounts" data-price="99" data-type="2" data-title="爆文12个月会员">优惠抢购</a>
 							</div>
 							<div class="flex center cornu">优惠</div>
 						</div>
@@ -61,7 +61,7 @@
 								</div>
 							</div>
 							<div class="flexitem endh ">
-								<a href="javascript:;" class="flex center discounts" data-price="158" data-type="3" data-uid="{{session('user_id')}}" data-title="爆文2年会员">购买</a>
+								<a href="javascript:;" class="flex center discounts" data-price="158" data-type="3" data-title="爆文2年会员">购买</a>
 							</div>
 							<div class="flex center cornu">优惠</div>
 						</div>
@@ -95,8 +95,8 @@
 <script type="text/javascript" src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"></script>
-<script type="text/javascript" src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script type="text/javascript" src="/index/js/functions.js"></script>
+
 <script type="text/javascript">
     //  点击回到底部
     window.onload = function () {
@@ -149,9 +149,8 @@
 	$('.discounts').click(function () {
 	    var price = $(this).attr('data-price'),
 			type  = $(this).attr('data-type'),
-			uid   = $(this).attr('data-uid'),
 			title = $(this).attr('data-title');
-		$.post("{{route('submit_order')}}",{uid:uid,title:title,price:price,type:type,_token:"{{csrf_token()}}"},function (ret) {
+		$.post("{{route('submit_order')}}",{title:title,price:price,type:type,_token:"{{csrf_token()}}"},function (ret) {
 		    if (ret.state == 0){
                 pay(ret.data,function () {
                     if(type == 1){
@@ -192,5 +191,30 @@
         $(".hint").css({"display":"none"});
         window.location.reload();
     });
+
+    (function () {
+        if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+            handleFontSize();
+        } else {
+            if (document.addEventListener) {
+                document.addEventListener("WeixinJSBridgeReady", handleFontSize, false);
+            } else if (document.attachEvent) {
+                document.attachEvent("WeixinJSBridgeReady", handleFontSize);
+                document.attachEvent("onWeixinJSBridgeReady", handleFontSize);
+            }
+        }
+        function handleFontSize() {
+            /*设置网页字体为默认大小*/
+            WeixinJSBridge.invoke('setFontSizeCallback', {
+                'fontSize': 0
+            });
+            /*重写设置网页字体大小的事件*/
+            WeixinJSBridge.on('menu:setfont', function () {
+                WeixinJSBridge.invoke('setFontSizeCallback', {
+                    'fontSize': 0
+                });
+            });
+        }
+    })();
 </script>
 </html>

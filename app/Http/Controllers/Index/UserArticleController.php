@@ -63,13 +63,14 @@ class UserArticleController extends CommonController
 
         $addfootid = '';
         $fkarticle = '';
-        $uarticle = $articles->with('user', 'article')->where('id', $articles->id)->first();
+        $uarticle = $articles->with('user.extension', 'article')->where('id', $articles->id)->first();
 
         //创建关联关系并关联后台员工id和类型
         if(!$user->extension_id && $user->subscribe == 1 && $articles->uid != $uid && $user->type == 1 && $uarticle->user->extension_id != $uid) {
             $user->admin_id = $uarticle->user->admin_id;
             $user->admin_type = $uarticle->user->admin_type;
             $user->extension_id = $articles->uid;
+            $user->extension_up = optional($uarticle->user->extension)->extension_id;
             $user->extension_at = date('Y-m-d H:i:s', time());
             $user->ex_type = 1;
             $user->save();
@@ -252,7 +253,7 @@ class UserArticleController extends CommonController
         $footprint = Footprint::where('uaid', $id)->orderBy('id', 'desc')->paginate(6);
         foreach ( $footprint as $key => $value ) {
             //用户分享层级关系
-            if($value->ex_id) {
+            if($value->ex_id && $value->ex_id != $value->uid && $value->type == 1) {
                 $footprint[$key]['extension'] = app(Footprint::class)->extension_user($value);
             }
 

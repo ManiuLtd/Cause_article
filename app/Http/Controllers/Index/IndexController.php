@@ -9,10 +9,13 @@
 namespace App\Http\Controllers\Index;
 
 use App\Jobs\templateMessage;
+use App\Http\Controllers\TraitFunction\Notice;
 use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
 use App\Model\FamilyMessage;
+use App\Model\Footprint;
+use App\Model\Order;
 use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
@@ -20,9 +23,25 @@ use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
-    public function test(Request $request)
-    {
+    use Notice;
 
+    public function test()
+    {
+//        $house = date('H');
+//        $begin_time = Carbon::create(null,null,null,$house-2,null,null);
+//        $end_time = Carbon::create(null,null,null,$house-1,null,null);
+//        $users = User::whereBetween('subscribe_at', [$begin_time, $end_time])->get();
+//        foreach ($users as $user) {
+//            $msg = [
+//                "first"    => "您好，请您尽快完善个人信息，以便让更多的用户联系到您！",
+//                "keyword1" => $user->wc_nickname,
+//                "keyword2" => "手机号码、微信号、从业品牌等",
+//                "keyword3" => date('Y-m-d'),
+//                "remark"   => "点击详情立即完善→"
+//            ];
+//            dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.perfect_info'), route('index.user')));
+//        }
+//        session(['user_id' => 21790]);
     }
     /**
      * 首页

@@ -98,8 +98,8 @@ class ArticleController extends CommonController
     public function becomeMyArticle($article_id, $pid = 0)
     {
         $user_id = session('user_id');
-        $subscribe = User::where('id', $user_id)->value('subscribe');
-        if($subscribe == 1) {
+        $user = User::where('id', $user_id)->select('head', 'wc_nickname', 'subscribe')->first();
+        if($user->subscribe == 1) {
             if ($uarticle = UserArticles::where(['uid' => $user_id, 'aid' => $article_id])->first()) {
                 return redirect(route('user_article_details', ['id' => $uarticle->id]));//跳到个人此文章详细页
             } else {
@@ -112,9 +112,13 @@ class ArticleController extends CommonController
             $app = new Application(config('wechat'));
             $qrcode = $app->qrcode;
             $result = $qrcode->temporary("$user_id|$article_id|$pid");
-            $url = $qrcode->url($result->ticket);
+            $imgurl = $qrcode->url($result->ticket);
 
-            return view('index.become_my_article',['imgurl'=>$url]);//显示扫二维码关注公众号才能使文章变成自己的页面
+            //微信分享配置
+            $app = new Application(config('wechat'));
+            $js = $app->js;
+
+            return view('index.become_my_article', compact('imgurl', 'js', 'user'));//显示扫二维码关注公众号才能使文章变成自己的页面
         }
     }
 

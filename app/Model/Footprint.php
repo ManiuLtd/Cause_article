@@ -26,15 +26,14 @@ class Footprint extends Model
 
     public function extension_user($footprint, &$result = [], $deep = 0)
     {
-        $deep += 1;
-        $et_user = Footprint::with('user')->where(['see_uid' => $footprint->ex_id, 'uaid' => $footprint->uaid])->first();
+        $et_user = Footprint::with('user')->where(['see_uid' => $footprint->ex_id, 'uaid' => $footprint->uaid, 'type' => 1])->first();
         if(isset($et_user->ex_id)) {
-            if($et_user->ex_id != $et_user->uid) {
-                $result[$deep] = $et_user->toarray();
-                $this->extension_user($et_user, $result, $deep);
-            }
+            $deep += 1;
+            $result[$deep] = $et_user->toarray();
+            $this->extension_user($et_user, $result, $deep);
         }
 
         return array_reverse($result);
     }
+
 }

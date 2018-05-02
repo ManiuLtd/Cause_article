@@ -139,6 +139,7 @@
                         } catch (e) {
                             alert(e);
                         }
+                        console.log(data);
                         $.post("{{route('inviting')}}",{url:data, type:2, _token:"{{csrf_token()}}"},function (ret) {
                             if(ret.state == 0) {
                                 hideProgress();

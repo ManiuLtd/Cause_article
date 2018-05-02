@@ -167,10 +167,12 @@ class WechatController extends Controller
                     //当用户本来没有推广用户和经销商的时候
                     $data = [
                         'extension_id' => optional($pinfo)->id,
+                        'extension_up' => optional($pinfo)->extension_id,
                         'admin_id' => optional($pinfo)->admin_id,
                         'admin_type' => optional($pinfo)->admin_type,
-                        'extension_at' => date('Y-m-d H:i:s', time()),
-                        'ex_type' => 2
+                        'extension_at' => date('Y-m-d H:i:s'),
+                        'ex_type' => 2,
+                        'subscribe_at' => date('Y-m-d H:i:s')
                     ];
                     User::where('openid', $FromUserName)->update($data);
 
@@ -179,7 +181,7 @@ class WechatController extends Controller
                         "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                         "keyword1"  => $fuser->wc_nickname,
                         "keyword2"  => date('Y-m-d H:i:s',time()),
-//                        "keyword3"  => '扫描个人专属二维码',
+                        "keyword3"  => '扫描个人专属二维码',
                         "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
                     ];
                     template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
@@ -195,12 +197,14 @@ class WechatController extends Controller
                 'wc_nickname' => $userinfores['nickname'],
                 'head' => $userinfores['headimgurl'],
                 'openid' => $userinfores['openid'],
-                'extension_id' => $pinfo->id,
-                'admin_id' => $pinfo->admin_id,
-                'admin_type' => $pinfo->admin_type,
-                'extension_at' => date('Y-m-d H:i:s', time()),
+                'extension_id' => optional($pinfo)->id,
+                'extension_up' => optional($pinfo)->extension_id,
+                'admin_id' => optional($pinfo)->admin_id,
+                'admin_type' => optional($pinfo)->admin_type,
+                'extension_at' => date('Y-m-d H:i:s'),
                 'subscribe' => $userinfores['subscribe'],
-                'ex_type' => 2
+                'ex_type' => 2,
+                'subscribe_at' => date('Y-m-d H:i:s')
             ];
             //保存用户
             User::create($data);
@@ -210,7 +214,7 @@ class WechatController extends Controller
                 "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                 "keyword1"  => $userinfores['nickname'],
                 "keyword2"  => date('Y-m-d H:i:s',time()),
-//                "keyword3"  => '扫描个人专属二维码',
+                "keyword3"  => '扫描个人专属二维码',
                 "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
             template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
@@ -240,11 +244,13 @@ class WechatController extends Controller
 
                     User::where('id', $user_id)->update([
                             'extension_id' => $pid,
+                            'extension_up' => $puser->extension_id,
                             'admin_id'     => $puser->admin_id,
                             'admin_type'   => $puser->admin_type,
-                            'extension_at' => date('Y-m-d H:i:s', time()),
+                            'extension_at' => date('Y-m-d H:i:s'),
                             'ex_type'      => 2,
-                            'subscribe'    => 1
+                            'subscribe'    => 1,
+                            'subscribe_at' => date('Y-m-d H:i:s')
                         ]
                     );
 
@@ -253,7 +259,7 @@ class WechatController extends Controller
                         "first"    => "恭喜您，有新的会员加入您的事业爆文团队！",
                         "keyword1" => $user->wc_nickname,
                         "keyword2" => date('Y-m-d H:i:s', time()),
-//                        "keyword3" => '查看您的文章',
+                        "keyword3" => '查看您的文章',
                         "remark"   => "您的队伍越来越强大了哦，请再接再厉！"
                     ];
                     $options = config('wechat');

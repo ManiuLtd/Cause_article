@@ -4,7 +4,7 @@
     <div class="page-header">
         <h1> {{v('headtitle')}} </h1>
     </div>
-    <form class="form-inline" style="margin-bottom: 15px" action="{{route('admin.user')}}" method="get">
+    <form class="form-inline" style="margin-bottom: 15px" action="{{route('admin.dealerlist')}}" method="get">
         <select class="form-control" name="key" style="width: 140px">
             <option value="wc_nickname" @if(request()->key == 'wc_nickname') selected @endif>昵称</option>
             <option value="phone" @if(request()->key == 'phone') selected @endif>手机号</option>

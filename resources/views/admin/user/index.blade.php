@@ -88,6 +88,7 @@
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral', $value['id']) }}');">查看推广金</a>
+                            {{--<a class="btn btn-xs btn-info" onclick="set_integral(this, {{ $value['integral_scale'] }});" data-url="{{ route('set_integral_scale', $value['id']) }}">佣金比例设置</a>--}}
                             @if(has_menu($menu,'/admin/user'))
                                 <a href="{{ route('admin.be_dealer',['id'=>$value->id]) }}" class="btn btn-xs btn-primary">成为经销商</a>
                             @endif
@@ -154,6 +155,31 @@
                 url = $(th).attr('data-url');
             $.post(url, {user_id:id, membership_time:time, _token:"{{ csrf_token() }}"}, function(ret){
                 console.log(ret);
+                if(ret.state == 0) {
+                    layer.msg(ret.error, {icon: 1});
+                    setTimeout(function(){
+                        window.location.reload();
+                    }, 1000)
+                }
+            });
+        });
+    }
+
+    function set_integral(th, scale) {
+        var content = '<form class="form-horizontal" style="margin-top: 20px">' +
+            '<div class="form-group">' +
+            '<label class="col-sm-4 control-label no-padding-right" style="margin: 4px 10px 0 0"> 佣金百分比：</label>' +
+            '<input type="text" value="'+scale+'" class="scale" >' +
+            '</div>' +
+            '</form>';
+        layer.confirm(content, {
+            btn: ['确定','取消'],
+            skin: 'layui-layer-rim',
+            area: ['370px', '220px']
+        }, function(){
+            var scale = $('.scale').val(),
+                url = $(th).attr('data-url');
+            $.post(url, {integral_scale:scale, _token:"{{ csrf_token() }}"}, function(ret){
                 if(ret.state == 0) {
                     layer.msg(ret.error, {icon: 1});
                     setTimeout(function(){

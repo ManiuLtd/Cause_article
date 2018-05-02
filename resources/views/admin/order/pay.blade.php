@@ -36,6 +36,7 @@
                     <th>订单状态</th>
                     <th>所属上级</th>
                     <td>备注</td>
+                    <td>注册时间</td>
                     <th>创建时间</th>
                     <th>操作</th>
                 </tr>
@@ -67,7 +68,7 @@
                     <td>@if($value->type == 1)一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
                     <td><color style="color: green;font-weight: bold;">已支付</color></td>
                     <td>
-                        {{ $value->user->extension->wc_nickname }}
+                        {{ optional($value->user->extension)->wc_nickname }}
                         {{--@if($value->distribution)--}}
                             {{--<color style="color: blue;font-weight: bold;">{{ $value->admin }}</color>--}}
                         {{--@endif--}}
@@ -81,6 +82,7 @@
                             @endif
                         </a>
                     </td>
+                    <td>{{ $value->user->created_at }}</td>
                     <td>{{ $value->created_at }}</td>
                     <td>
                         @if($value->state == 1 && $value->refund_state != 1)
@@ -156,7 +158,7 @@
         var url = $(this).attr('data-url'),
             max_price = $(this).attr('data-price'),
             nickname = $(this).attr('data-name');
-        var content = '退款金额(不填金额点确认退款即全额退款)<input class="bootbox-input form-control money" type="text">';
+        var content = '退款金额<input class="bootbox-input form-control money" type="text">';
         bootbox.dialog({
             title: '填写退款金额(退款人：'+nickname+')：',
             message: content,

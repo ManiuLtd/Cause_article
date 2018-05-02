@@ -51,12 +51,17 @@ class ReportController extends CommonController
     {
         $time = explode(' - ',$request->date_range_picker);
         if(!empty($time[0])) {
-            $tomorrow = Carbon::parse($time[1])->addDay();
-            $tot_tomorrow = Carbon::parse($time[1])->addDay();
-            $for_length = $tomorrow->day - Carbon::parse($time[0])->day;
+            $date = $time[1];
+            $count = 1;
+            $time1 = Carbon::parse($time[0]);
+            $time2 = Carbon::parse($time[1]);
+            while ($time1 != $time2) {
+                $time2->subDay();
+                $count++;
+            }
+            $for_length = $count;
         } else {
-            $tomorrow = Carbon::parse('tomorrow');
-            $tot_tomorrow = Carbon::parse('tomorrow');
+            $date = date('Y-m-d H:i:s');
             $for_length = 30;
         }
 
@@ -67,7 +72,7 @@ class ReportController extends CommonController
             $extension = Admin::where('id', Auth::user()->id)->get();
             $gid = false;
         }
-        app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 1);
+        app(Report::class)->report($extension, $gid, $date, $for_length, 1);
         $menu = $this->menu;
         $active = $this->active;
 
@@ -82,12 +87,17 @@ class ReportController extends CommonController
     {
         $time = explode(' - ',$request->date_range_picker);
         if(!empty($time[0])) {
-            $tomorrow = Carbon::parse($time[1])->addDay();
-            $tot_tomorrow = Carbon::parse($time[1])->addDay();
-            $for_length = $tomorrow->day - Carbon::parse($time[0])->day;
+            $date = $time[1];
+            $count = 1;
+            $time1 = Carbon::parse($time[0]);
+            $time2 = Carbon::parse($time[1]);
+            while ($time1 != $time2) {
+                $time2->subDay();
+                $count++;
+            }
+            $for_length = $count;
         } else {
-            $tomorrow = Carbon::parse('tomorrow');
-            $tot_tomorrow = Carbon::parse('tomorrow');
+            $date = date('Y-m-d H:i:s');
             $for_length = 30;
         }
 
@@ -99,7 +109,7 @@ class ReportController extends CommonController
             $gid = false;
         }
 
-        app(Report::class)->report($extension, $gid, $tomorrow, $tot_tomorrow, $for_length, 2);
+        app(Report::class)->report($extension, $gid, $date, $for_length, 2);
         $menu = $this->menu;
         $active = $this->active;
 

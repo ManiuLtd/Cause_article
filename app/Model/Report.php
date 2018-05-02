@@ -29,32 +29,34 @@ class Report extends Model
     }
 
     //通用报表数据
-    public function report( $extension, $gid, $tomorrow, $tot_tomorrow, $for_length, $type )
+    public function report( $extension, $gid, $date, $for_length, $type )
     {
+
         foreach ($extension as $key => $value) {
             $tot_ext_count = 0;
             $tot_count = 0;
+            $tomorrow1 = Carbon::parse($date)->addDay()->startOfDay();
+            $tomorrow2 = Carbon::parse($date)->startOfDay();
             for ($i = 1; $i <= $for_length; $i++) {
                 //用户行
-                $last_day = Carbon::parse('tomorrow')->subDays($i);
-                $ext_count = app(Report::class)->orderCount($type, $last_day, $tomorrow, $value->id);
-                $count[$last_day->month."-".$last_day->day] = $ext_count;
+                $ext_count = app(Report::class)->orderCount($type, $tomorrow2, $tomorrow1, $value->id);
+                $count[$tomorrow2->month."-".$tomorrow2->day] = $ext_count;
                 $tot_ext_count += $ext_count;
 
                 if($gid) {
                     //总计行（最后一次循环的时候才操作）
                     if ( count($extension) == $key + 1 ) {
-                        $totcount = app(Report::class)->orderCount($type, $last_day, $tot_tomorrow);
-                        $acount[ $last_day->month . "-" . $last_day->day ] = $totcount;
+                        $totcount = app(Report::class)->orderCount($type, $tomorrow2, $tomorrow1);
+                        $acount[ $tomorrow2->month . "-" . $tomorrow2->day ] = $totcount;
                         $tot_count += $totcount;
-                        $tot_tomorrow = $last_day;
                     }
                 }
 
-                $tomorrow = $last_day;
+                $tomorrow1->subDay();
+                $tomorrow2->subDay();
             }
-            $tomorrow = Carbon::parse('tomorrow');
             $extension[$key]['count'] = array_merge($count, ['总计'=>$tot_ext_count]);
+
             if($gid == 1) {
                 //最后一次循环的时候才操作
                 if ( count($extension) == $key + 1 ) {
@@ -62,7 +64,7 @@ class Report extends Model
                 }
             }
         }
-//        die;
+
         return $extension;
     }
 
