@@ -55,6 +55,7 @@ class UserController extends CommonController
 //            return $new;
 //        });
 
+        //招商员工列表
         $admin = Admin::whereIn('gid', [14, 21])->get();
 
         $menu = $this->menu; $active = $this->active;

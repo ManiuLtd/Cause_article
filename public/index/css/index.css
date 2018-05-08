@@ -716,3 +716,32 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 #brand-menu .lettrt{position: fixed;top:5rem;right:0;bottom:0;width:30px;overflow:hidden;}
 #brand-menu .lettrt li>a{display:block;color:#84c2b2;text-align: center;font-size: 1.4rem;}
 #brand-menu.show{transform: translateX(0);}
+
+/******************** 公司品牌 ********************/
+#brand{width:100%;height:100%;background:#fff;position:fixed;top:0;left:0;z-index:50;overflow-y:auto;display: none;}
+.company_fixed_list{position:fixed;top:0;left:0;width:100%;height:100%;background-color:#f1f1f1;z-index:7}
+.top-bar{position:fixed;top:0;left:0;z-index:6;height:4.4rem;line-height:4.4rem;width:100%;background:#fff;font-size:1.8rem;text-align:center;font-weight:400}
+.top-bar h3{font-size:1.7rem;color:#666}
+.prev-btn{position:absolute;top:0;left:0;width:4.4rem;height:4.4rem}
+.prev-btn:after,.prev-btn:before{content:'';display:block;position:absolute;top:1rem;border-width:1rem;border-style:solid;border-color:transparent}
+.prev-btn:before{left:0;border-right-color:#ccc}
+.prev-btn:after{left:.2rem;border-right-color:#fff}
+.company_new_fixed{position:absolute;top:4.4rem;left:0;width:100%;height:100%;overflow:scroll;-webkit-overflow-scrolling:touch}
+.company_new_area{overflow: scroll;margin-bottom: 3rem;}
+.company_new_area .commend_list li:first-child{color:#fff;background-color:#F04E33}
+.company_fixed_list .company_lists{overflow:hidden}
+.company_fixed_list .company_lists li{font-size:1.2rem;float:left;width:30%;height:3rem;margin-left:2.4%;background-color:#fff;border-radius:1px;text-align:center;line-height:3rem;margin-top:.8rem;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;cursor:pointer}
+.company_fixed_list .line_x{width:95%;margin:auto;height:1px;background-color:#dcdcdc;margin-top:1rem}
+.company_fixed_list .title_line_x{width:95%;margin:auto;color:#666;font-size:1.2rem;border-bottom:1px solid #999;margin-top:1.6rem}
+.company_fixed_list .writer_input{color:red;font-weight:bold;font-size:1.3rem;text-decoration:underline;text-align:center;margin-bottom:9rem;margin-top:3rem}
+/*自定义选项弹框*/
+.dialog-wrap{position:fixed;top:0;right:0;bottom:0;left:0;z-index:991;}
+.dialog-wrap .dialog-mask{height:100%;background:rgba(0,0,0,.4)}
+.dialog-wrap .dialog-form{position:absolute;top:50%;left:50%;background:#fff;width: 80%;height: 17.7rem;margin-top: -8.5rem;margin-left: -40%;}
+.dialog-wrap .dialog-hd{height:4.2rem;line-height:4.2rem;text-align:center;font-size:1.4rem;background:#f8b349;color:#fff}
+.dialog-wrap input[name=company]{display:block;width:80%;height:3.6rem;margin:1.8rem auto 0;box-sizing:border-box;padding:1rem;font-size:1.2rem;color:#333;background:#e6e6e6;text-align:left}
+.dialog-wrap .dialog-ft{padding:.7rem 0}
+.dialog-wrap .phone-submit-btn{font-size:1.3rem;display:block;width:10.9rem;height:3.4rem;line-height:3.4rem;margin:1.6rem auto 0;color:#fff;text-align:center;border-radius:.5rem;background:#f05e5e}
+.dialog-wrap .dialog-close-btn{position:absolute;top:0;right:0;display:block;width:2.3rem;height:2.3rem;margin-top:-1rem;margin-right:-1rem;border-radius:50%;background:#fff;}
+.dialog-wrap .dialog-close-btn:before{content:'';width:1.4rem;height:1.6px;background:#f8b349;position:absolute;top:46%;left:22%;transform:rotate(45deg);}
+.dialog-wrap .dialog-close-btn:after{content:'';width:1.4rem;height:1.6px;background:#f8b349;position:absolute;top:46%;left:22%;transform:rotate(-45deg);}

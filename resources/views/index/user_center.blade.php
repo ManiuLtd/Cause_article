@@ -111,6 +111,7 @@
 			</div>
 		@endif
 	@else
+		<!--品牌-->
 		@includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_information')
 	@endif
 

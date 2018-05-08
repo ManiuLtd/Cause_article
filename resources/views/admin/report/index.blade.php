@@ -30,6 +30,7 @@
                 <th>举报类型</th>
                 <th>举报用户</th>
                 <th>举报内容</th>
+                <th>举报人手机号</th>
                 <th>举报时间</th>
             </tr>
             </thead>
@@ -41,6 +42,7 @@
                 <td>{{$value->type}}</td>
                 <td>{{$value->user['wc_nickname']}}</td>
                 <td>{{$value->message}}</td>
+                <td>{{$value->user->phone}}</td>
                 <td>{{$value->created_at}}</td>
             </tr>
             @endforeach

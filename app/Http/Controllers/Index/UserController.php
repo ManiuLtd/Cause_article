@@ -58,8 +58,11 @@ class UserController extends CommonController
                 if(!$user->subscribe) {
                     $data = [
                         'extension_id' => $dealer,
+                        'extension_up' => $puser->extension_id,
                         'admin_id' => $puser->admin_id,
-                        'admin_type' => $puser->admin_type
+                        'admin_type' => $puser->admin_type,
+                        'extension_at' => date('Y-m-d H:i:s'),
+                        'ex_type'      => 3
                     ];
                     Cache::put($user->openid, $data, 60 * 24 * 10);
                 } else {
@@ -154,6 +157,12 @@ class UserController extends CommonController
                 if($user->qrcode) unlink(config('app.image_real_path') . $user->qrcode);
             }
 
+            //判断品牌是否为用户自定义
+            if(!intval($request->brand_id)) {
+                $add_brand = Brand::create(['name' => $request->brand_id, 'type' => 1]);
+                $data['brand_id'] = $add_brand->id;
+            }
+
             //如果有变更名称或头像则需清空推广图片
             if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
                 $data['extension_image'] = '';
@@ -167,8 +176,9 @@ class UserController extends CommonController
         } else {
             $user_id = session('user_id');
             $res = $user->with('brand')->where('id', $user_id)->first();
+            $brands = Brand::select('id', 'name as title', 'domain as pinyin')->where('type', 0)->get()->toJson();
 
-            return view('index.user_basic', compact('res'));
+            return view('index.user_basic', compact('res', 'brands'));
         }
     }
 
@@ -195,7 +205,8 @@ class UserController extends CommonController
                 $user->admin_id = $puser->admin_id;
                 $user->admin_type = $puser->admin_type;
                 $user->extension_id = $uid;
-                $user->extension_at = date('Y-m-d H:i:s', time());
+                $user->extension_up = $puser->extension_id;
+                $user->extension_at = date('Y-m-d H:i:s');
                 $user->ex_type = 3;
                 $user->save();
             }

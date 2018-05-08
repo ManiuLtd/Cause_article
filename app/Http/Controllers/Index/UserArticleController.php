@@ -85,7 +85,6 @@ class UserArticleController extends CommonController
                 "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
             dispatch(new templateMessage($uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url')));
-//            template_message($app, $uarticle->user->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
         }
 
         //获取品牌
@@ -95,7 +94,7 @@ class UserArticleController extends CommonController
             //用户文章第一次阅读则推送文本消息给该文章拥有者
             $openid = User::where('id', $uid)->value('openid');
             $cache_name = $articles->id . $openid;
-            if ( !Cache::has($cache_name) ) {
+            if ( !Cache::has($cache_name) && $uarticle->user[ 'subscribe' ] ) {
                 //推送消息
                 $context = "有人对你的头条感兴趣！还不赶紧看看是谁~\n\n头条标题：《{$uarticle->article[ 'title' ]}》\n\n<a href='http://bw.eyooh.com/visitor_record'>【点击这里】查看谁对我的头条感兴趣>></a>";
                 message($uarticle->user[ 'openid' ], 'text', $context);
@@ -325,8 +324,6 @@ class UserArticleController extends CommonController
                     ];
                 }
                 dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add->id ])));
-//                $app = new Application(config('wechat'));
-//                template_message($app, $user->openid, $msg, config('wechat.template_id.consult_message'), route('message_detail', [ 'id' => $add_id ]));
             }
             $aid = session('chat_aid');
             session(['chat_aid' => '']);
@@ -442,18 +439,18 @@ class UserArticleController extends CommonController
      */
     public function tipUserQrcode(User $user)
     {
-        Cache::remember('tip_user'.$user->openid, 5 * 60, function () use($user){
-            $msg = [
-                "first"    => '未能成功拨打电话或添加微信',
-                "keyword1" => '爆文访客',
-                "keyword2" => date('Y-m-d H:i', time()),
-                "remark"   => '因您未上传微信二维码，访客无法添加您的微信。请尽快上传二维码防止错失顾客线索。'
-            ];
-            dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record')));
-//            $app = new Application(config('wechat'));
-//            template_message($app, $user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record'));
+        if($user->subscribe) {
+            Cache::remember('tip_user' . $user->openid, 5 * 60, function () use ( $user ) {
+                $msg = [
+                    "first"    => '未能成功拨打电话或添加微信',
+                    "keyword1" => '爆文访客',
+                    "keyword2" => date('Y-m-d H:i'),
+                    "remark"   => '因您未上传微信二维码，访客无法添加您的微信。请尽快上传二维码防止错失顾客线索。'
+                ];
+                dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.tip_upload_qrcode'), route('visitor_record')));
 
-            return true;
-        });
+                return true;
+            });
+        }
     }
 }

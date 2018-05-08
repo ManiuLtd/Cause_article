@@ -85,11 +85,18 @@ class OrderController extends CommonController
             if($value->distribution) $list[$key]['admin'] = Admin::where('id', $value->dis->admin_id)->value('account');
         }
 
-        $admin = Admin::where('gid', 12)->get();
+        $new = $list->groupBy('uid');
+        $arr = [];
+        foreach ($new as $value) {
+            $arr[] = $value->unique('uid');
+        }
+
+        $v = $arr;
+
         $menu = $this->menu;
         $active = $this->active;
 
-        return view('admin.order.unpay', compact('list', 'admin', 'menu', 'active'));
+        return view('admin.order.unpay', compact('list', 'v', 'admin', 'menu', 'active'));
     }
 
     public function pay( Request $request )

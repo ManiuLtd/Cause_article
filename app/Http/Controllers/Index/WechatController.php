@@ -14,11 +14,21 @@ use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
+use EasyWeChat\Message\Article;
 use EasyWeChat\Message\Image;
+use EasyWeChat\Message\Material;
+use EasyWeChat\Message\News;
 
 class WechatController extends Controller
 {
     use FunctionUser;
+
+    protected $app;
+
+    public function __construct( Application $app )
+    {
+        $this->app = $app;
+    }
 
     /**
      * @return \Symfony\Component\HttpFoundation\Response
@@ -27,10 +37,11 @@ class WechatController extends Controller
      */
     public function index()
     {
-        $options = config('wechat');
-        $app = new Application($options);
+        $app = $this->app;
 
-        $app->server->setMessageHandler(function ($message) use ($app) {
+        $server = $app->server;
+
+        $server->setMessageHandler(function ($message) use ($app) {
             switch ($message->MsgType) {
                 //收到事件消息
                 case 'event':
@@ -38,7 +49,16 @@ class WechatController extends Controller
                     break;
                 //收到文字消息
                 case 'text':
-                    return "欢迎关注我！有问题请联系客服喔~";
+                    if($message->Content == '客服') {
+                        return new News([
+                            'title'       => '联系客服了解更多',
+                            'description' => '有问题找客服哦~',
+                            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000081&idx=1&sn=530d971319a07aa83ba18fb7798cb9f2&chksm=7b10a5144c672c02012588a1c29aadbcbd0a0cc71c8d632a0',
+                            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj8icj9sBASDOABPA0ONMvrOVKudc2wYpRKd0tehrXG3I4hiaZSUIHlBtyKCwkqd4DmpNian82L1mNIQ/0?wx_fmt=jpeg',
+                        ]);
+                    } else {
+                        return "欢迎关注我！有问题请联系客服喔~";
+                    }
                     break;
             }
         });
@@ -46,7 +66,7 @@ class WechatController extends Controller
         //菜单
 //        $this->button();
 
-        $response = $app->server->serve();
+        $response = $server->serve();
         // 将响应输出
         return $response;
     }
@@ -54,8 +74,7 @@ class WechatController extends Controller
     //创建普通菜单
     public function button()
     {
-        $options = config('wechat');
-        $app = new Application($options);
+        $app = $this->app;
         $menu = $app->menu;
         $buttons = [
             [

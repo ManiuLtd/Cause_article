@@ -33,7 +33,7 @@ class Authenticate
      * @param  \Closure  $next
      * @param  string[]  ...$guards
      * @return mixed
-     *\Illuminate\Support\Facades\Auth::user()->id
+     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$guards)

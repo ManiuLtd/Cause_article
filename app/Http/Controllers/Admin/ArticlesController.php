@@ -44,7 +44,7 @@ class ArticlesController extends CommonController
      */
     public function create()
     {
-        $brand = Brand::get();
+        $brand = Brand::where('type', 0)->get();
         $types = ArticleType::get();
         $menu = $this->menu;
         $active = $this->active;

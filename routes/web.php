@@ -16,7 +16,7 @@ Route::any('bw_wechat', 'Index\WechatController@index')->name('wechat');
 Route::any('out_trade_no','Index\PayController@outTradeNo');
 //前台路由组
 Route::group(['namespace' => 'Index', 'middleware' => ['wechat.oauth:snsapi_userinfo', 'userinfo']], function () {
-    Route::get('test', 'IndexController@test')->name('test');
+    Route::any('test/{user?}', 'IndexController@test')->name('test');
     //首页
     Route::get('/{type?}', 'IndexController@index')->name('index.index')->where(['type' => '[0-9]+']);
     //推荐文章链接

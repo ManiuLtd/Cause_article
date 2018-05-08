@@ -41,71 +41,66 @@
                 </thead>
 
                 <tbody>
-                @foreach($list as $value)
-                <tr>
-                    @if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($value->user->membership_time)))
-                        @if(empty($value->distribution))
-                            <td class="center">
-                                <label>
-                                    <input type="checkbox" name="order_id[]" class="ace" value="{{ $value->id }}"/>
-                                    <span class="lbl"></span>
-                                </label>
-                            </td>
-                            @else
+                @foreach($v as $values)
+                    @foreach($values as $value)
+                    <tr>
+                        @if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($value->user->membership_time)))
+                            @if(empty($value->distribution))
+                                <td class="center">
+                                    <label>
+                                        <input type="checkbox" name="order_id[]" class="ace" value="{{ $value->id }}"/>
+                                        <span class="lbl"></span>
+                                    </label>
+                                </td>
+                                @else
+                                <td class="center">-</td>
+                            @endif
+                        @else
                             <td class="center">-</td>
                         @endif
-                    @else
-                        <td class="center">-</td>
-                    @endif
-                    <td>{{ $value->id }}</td>
-                    <td>{{ $value->user->wc_nickname }}</td>
-                    <td>{{ $value->user->phone }}</td>
-                    <td>{{ $value->brand_name }}</td>
-                    <td>
-                        {{ $value->user->membership_time }} /
-                        {{ \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($value->user->membership_time)) ? '到期' : '未到期' }}
-                    </td>
-                    <td>{{ number_format($value->price, 2) }}</td>
-                    <td>@if($value->type == 1)一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
-                    <td><color style="color: red;font-weight: bold;">未支付</color></td>
-                    <td>
-                        @if($value->distribution)
-                            <color style="color: blue;font-weight: bold;">{{ $value->admin }}</color>
-                        @endif
-                    </td>
-                    <td>
-                        <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">
-                            @if($value->remark)
-                                {{ subtext($value->remark, 5) }}
-                            @else
-                                <i class="icon-edit bigger-120"></i>
+                        <td>{{ $value->id }}</td>
+                        <td>{{ $value->user->wc_nickname }}</td>
+                        <td>{{ $value->user->phone }}</td>
+                        <td>{{ $value->brand_name }}</td>
+                        <td>
+                            {{ $value->user->membership_time }} /
+                            {{ \Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($value->user->membership_time)) ? '到期' : '未到期' }}
+                        </td>
+                        <td>{{ number_format($value->price, 2) }}</td>
+                        <td>@if($value->type == 1)一个月 @elseif($value->type == 2) 一年 @elseif($value->type == 3) 两年 @endif</td>
+                        <td><color style="color: red;font-weight: bold;">未支付</color></td>
+                        <td>
+                            @if($value->distribution)
+                                <color style="color: blue;font-weight: bold;">{{ $value->admin }}</color>
                             @endif
-                        </a>
-                    </td>
-                    <td>{{ $value->created_at }}</td>
-                    <td>
-                        @if($value->state == 1 && $value->refund_state != 1)
-                            <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
-                        @endif
-                        @if($value->state != 1)
-                            <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
-                                {{ csrf_field() }}
-                                <a class="btn btn-xs btn-danger delete-order">删除订单</a>
-                            </form>
-    {{--                        <a class="btn btn-xs btn-info" data-url="{{ route('admin.refund', $value->id) }}">删除订单</a>--}}
-                        @endif
-                    </td>
-                </tr>
+                        </td>
+                        <td>
+                            <a class="btn btn-xs btn-info remark" data="{{ $value->remark }}" data-url="{{ route('admin.order_remark', $value->id) }}">
+                                @if($value->remark)
+                                    {{ subtext($value->remark, 5) }}
+                                @else
+                                    <i class="icon-edit bigger-120"></i>
+                                @endif
+                            </a>
+                        </td>
+                        <td>{{ $value->created_at }}</td>
+                        <td>
+                            @if($value->state == 1 && $value->refund_state != 1)
+                                <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}">退款</a>
+                            @endif
+                            @if($value->state != 1)
+                                <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">
+                                    {{ csrf_field() }}
+                                    <a class="btn btn-xs btn-danger delete-order">删除订单</a>
+                                </form>
+        {{--                        <a class="btn btn-xs btn-info" data-url="{{ route('admin.refund', $value->id) }}">删除订单</a>--}}
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
                 @endforeach
                 </tbody>
             </table>
-
-            <select name="admin_id">
-                @foreach($admin as $value)
-                <option value="{{ $value->id }}">{{ $value->account }}</option>
-                @endforeach
-            </select>
-            <a class="btn btn-sm btn-info distribution">分配</a>
 
             <div style="text-align: center">
                 {{$list->appends(['state'=>request()->state,'key'=>request()->key,'value'=>request()->value])->links()}}

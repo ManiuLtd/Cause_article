@@ -148,7 +148,8 @@ function message($FromUserName,$type,$context)
     try {
         $staff->message($message)->to($FromUserName)->send();
     } catch (Exception $exception) {
-        Log::info('发送类型：' . $type. '；错误：' . $exception->getMessage() . '；发送超时有可能是长时间未跟公众号互动');
+        Log::info('发送类型：' . $type. '；错误：' . $exception->getMessage());
+//        Log::info($exception);
     }
 }
 
@@ -180,27 +181,6 @@ function wecahtPackage()
     return Wechat::getSignPackage();
 }
 
-/**
- * @title 二维数组去重
- * @param $array
- * @return array
- */
-//function remove_duplicate($array){
-//    $result=array();
-//    foreach ($array as $key => $value) {
-//        $has = false;
-//          foreach($result as $val){
-//              if($val['see_uid'] == $value['see_uid']){
-//                $has = true;
-//                break;
-//              }
-//          }
-//        if(!$has){
-//            $result[]=$value;
-//        }
-//    }
-//    return $result;
-//}
 
 /**
  * 把base64转为图片保存到本地

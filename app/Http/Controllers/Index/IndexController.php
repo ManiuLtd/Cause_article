@@ -14,10 +14,7 @@ use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
 use App\Model\FamilyMessage;
-use App\Model\Footprint;
-use App\Model\Order;
 use Carbon\Carbon;
-use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -25,23 +22,56 @@ class IndexController extends CommonController
 {
     use Notice;
 
-    public function test()
+    public function test(Request $request, User $user)
     {
-//        $house = date('H');
-//        $begin_time = Carbon::create(null,null,null,$house-2,null,null);
-//        $end_time = Carbon::create(null,null,null,$house-1,null,null);
-//        $users = User::whereBetween('subscribe_at', [$begin_time, $end_time])->get();
-//        foreach ($users as $user) {
-//            $msg = [
-//                "first"    => "您好，请您尽快完善个人信息，以便让更多的用户联系到您！",
-//                "keyword1" => $user->wc_nickname,
-//                "keyword2" => "手机号码、微信号、从业品牌等",
-//                "keyword3" => date('Y-m-d'),
-//                "remark"   => "点击详情立即完善→"
-//            ];
-//            dispatch(new templateMessage($user->openid, $msg, config('wechat.template_id.perfect_info'), route('index.user')));
-//        }
-//        session(['user_id' => 21790]);
+        if ( request()->ajax() ) {
+            $data = request()->all();
+            //是否上传头像
+            if ( $request->head != $user->head ) {
+                $upload = base64ToImage($request->head, 'user_head');
+                $data[ 'head' ] = $upload[ 'path' ];
+
+                //更新头像session
+                session(['head_pic'=>$data[ 'head' ]]);
+                //删除头像base64位缓存，以便下次重新转换
+                Cache::forget('user_head' . $user->openid);
+                //删除本地头像
+                if(!str_contains($user->head, 'qlogo.cn')) {
+                    unlink(config('app.image_real_path') . $user->head);
+                }
+            }
+
+            //是否上传个人二维码
+            if ( $request->qrcode != $user->qrcode ) {
+                $upload = base64ToImage($request->qrcode, 'user_qrcode');
+                $data[ 'qrcode' ] = $upload[ 'path' ];
+                //删除本地二维码
+                if($user->qrcode) unlink(config('app.image_real_path') . $user->qrcode);
+            }
+
+            //判断品牌是否为用户自定义
+            if(!intval($request->brand_id)) {
+                $add_brand = Brand::create(['name' => $request->brand_id, 'type' => 1]);
+                $data['brand_id'] = $add_brand->id;
+            }
+
+            //如果有变更名称或头像则需清空推广图片
+            if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
+                $data['extension_image'] = '';
+            }
+
+            if ( $user->update($data) ) {
+                return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);
+            } else {
+                return response()->json([ 'code' => 401, 'errormsg' => '修改资料失败' ]);
+            }
+        } else {
+            $user_id = session('user_id');
+            $res = $user->with('brand')->where('id', $user_id)->first();
+            $brands = Brand::select('id', 'name as title', 'domain as pinyin')->where('type', 0)->get()->toJson();
+
+            return view('index.user_basic_test', compact('res', 'brands'));
+        }
     }
     /**
      * 首页
@@ -103,8 +133,8 @@ class IndexController extends CommonController
      */
     public function brandList()
     {
-        $brand_list = Brand::select('id','name','domain')->where('id', '<>', 0)->orderBy('domain','asc')->get();
-        return response()->json(['state'=>0, 'brand_list'=>$brand_list->toArray()]);
+        $brand_list = Brand::select('id', 'name as title', 'domain as pinyin')->where('type', 0)->get();
+        return response()->json(['state'=>0, 'brand_list'=>$brand_list]);
     }
 
     /**
@@ -115,8 +145,13 @@ class IndexController extends CommonController
      */
     public function perfectInformation(Request $request, User $user)
     {
-        if($user->update($request->all())){
-//            session(['phone' => $request->phone, 'nickname' => $request->wc_nickname]);
+        $data = $request->all();
+        //判断品牌是否为用户自定义
+        if(!intval($request->brand_id)) {
+            $add_brand = Brand::create(['name' => $request->brand_id, 'type' => 1]);
+            $data['brand_id'] = $add_brand->id;
+        }
+        if($user->update($data)){
 
             return response()->json(['state' => 0, 'msg' => '完善资料成功']);
         } else {
@@ -153,10 +188,11 @@ class IndexController extends CommonController
     public function reportPost(Request $request)
     {
         $data = [
-            'uid'   =>  session()->get('user_id'),
+            'uid' => session()->get('user_id'),
             'message'   =>  $request->message,
+//            'phone' => $request->phone,
             'type'  =>  $request->type,
-            'created_at'    =>  date('Y-m-d H:i:s', time())
+            'created_at' => date('Y-m-d H:i:s', time())
         ];
         if($request->atype == 1) {
             $data['aid'] = $request->aid;

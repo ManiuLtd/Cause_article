@@ -145,12 +145,12 @@ class PayController extends Controller
                         //推送【推荐成交通知】模板消息
                         if($p_user->subscribe) {
                             $msg = [
-                                "first"    => "尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。",
-                                "keyword1" => $pay_user->wc_nickname,
-                                "keyword2" => date('H:i:s', time()),
-                                "keyword3" => $price . '元',
-                                "keyword4" => $order->title,
-                                "remark"   => "感谢您的推荐。"
+                                "first"    => array("尊敬的 $p_user->wc_nickname 你好，你推荐的客户已成交。", '#E91305'),
+                                "keyword1" => array($pay_user->wc_nickname, '#E91305'),
+                                "keyword2" => array(date('H:i:s'), '#E91305'),
+                                "keyword3" => array($price . '元', '#E91305'),
+                                "keyword4" => array($order->title, '#E91305'),
+                                "remark"   => array("感谢您的推荐。", '#E91305')
                             ];
                             dispatch(new templateMessage($p_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension')));
                         }
@@ -169,12 +169,12 @@ class PayController extends Controller
                             //推送【推荐成交通知】模板消息
                             if($pp_user->subscribe) {
                                 $msg = [
-                                    "first"    => "尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。",
-                                    "keyword1" => $pay_user->wc_nickname,
-                                    "keyword2" => date('H:i:s', time()),
-                                    "keyword3" => $price . '元',
-                                    "keyword4" => $order->title,
-                                    "remark"   => "感谢您的推荐。"
+                                    "first"    => array("尊敬的 $pp_user->wc_nickname 你好，你推荐的客户已成功推荐下级用户成交。", '#E91305'),
+                                    "keyword1" => array($pay_user->wc_nickname, '#E91305'),
+                                    "keyword2" => array(date('H:i:s', time()), '#E91305'),
+                                    "keyword3" => array($price . '元', '#E91305'),
+                                    "keyword4" => array($order->title, '#E91305'),
+                                    "remark"   => array("感谢您的推荐。", '#E91305')
                                 ];
 //                            template_message($app, $pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension'));
                                 dispatch(new templateMessage($pp_user->openid, $msg, config('wechat.template_id.success_pay'), route('index.extension')));

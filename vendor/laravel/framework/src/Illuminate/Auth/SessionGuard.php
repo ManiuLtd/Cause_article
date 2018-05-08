@@ -2,7 +2,6 @@
 
 namespace Illuminate\Auth;
 
-use Illuminate\Support\Facades\Cookie;
 use RuntimeException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -393,6 +392,7 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
     {
         if (! is_null($user = $this->provider->retrieveById($id))) {
             $this->login($user, $remember);
+
             return $user;
         }
 

@@ -14,7 +14,7 @@ class BrandController extends CommonController
      */
     public function index(Brand $brand)
     {
-        $list = $brand->get();
+        $list = $brand->where('type', 0)->get();
         $menu = $this->menu;
         $active = $this->active;
         return view('admin.brand.index',compact('list','menu','active'));

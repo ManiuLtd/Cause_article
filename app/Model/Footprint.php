@@ -28,9 +28,11 @@ class Footprint extends Model
     {
         $et_user = Footprint::with('user')->where(['see_uid' => $footprint->ex_id, 'uaid' => $footprint->uaid, 'type' => 1])->first();
         if(isset($et_user->ex_id)) {
+//            if($et_user->ex_id != $et_user->uid) {
             $deep += 1;
-            $result[$deep] = $et_user->toarray();
-            $this->extension_user($et_user, $result, $deep);
+                $result[$deep] = $et_user->toarray();
+                $this->extension_user($et_user, $result, $deep);
+//            }
         }
 
         return array_reverse($result);

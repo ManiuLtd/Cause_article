@@ -13,7 +13,7 @@
 </head>
 <body>
 <div id="basic" class="flexv wrap">
-	<form action="{{route('user_basic',$res->id)}}" id="form" enctype="multipart/form-data" method="post">
+	<form action="{{route('test',$res->id)}}" id="form" enctype="multipart/form-data" method="post">
 		{{csrf_field()}}
 		<div class="flexitemv user">
 			<div class="users">
@@ -81,8 +81,8 @@
 							<i class="flex center bls bls-yjt"></i>
 						@endif
 					</div>
-					<input type="file" id="qrcodeimg" class="fileElem" accept="image/jpg,image/png,image/jpeg">
-					<input type="hidden" name="qrcode" value="{{ $res->qrcode }}">
+				<input type="file" id="qrcodeimg" class="fileElem" accept="image/jpg,image/png,image/jpeg">
+				<input type="hidden" name="qrcode" value="{{ $res->qrcode }}">
 				</div>
 			</div>
 			<a href="{{route('qecode_help')}}" class='clook'>查看如何获取二维码？</a>
@@ -94,7 +94,7 @@
 
 	<!--品牌-->
 	<div id="brand" class="flexitemv" data-id="{{ $res->brand ? $res->brand_id : '' }}" data-name="{{ $res->brand ? $res->brand->name : '' }}"></div>
-
+	
 </div>
 </body>
 <script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
@@ -110,11 +110,11 @@
 <script type="text/javascript" src="/index/js/functions.js"></script>
 <script type="text/javascript" src="/index/js/brand_new.js"></script>
 <script type="text/javascript">
-    var brands = {!! $brands !!};
-    var brandContainer = $('#brand');
-    var selectedBrand = '{{ $res->brand }}' ? [brandContainer.data('id'), brandContainer.data('name')] : null;
-    // 插入品牌
-    InfoBrand('#brand','.brand_name','.brand_name', '.brand_id', brands, selectedBrand);
+   var brands = {!! $brands !!};
+   var brandContainer = $('#brand');
+   var selectedBrand = '{{ $res->brand }}' ? [brandContainer.data('id'), brandContainer.data('name')] : null;
+   // 插入品牌
+   InfoBrand('#brand','.brand_name','.brand_name', '.brand_id', brands, selectedBrand);
 
     function showCliper (id,cid,title,callback){
         var template = '<div id="' + id.replace('#','') + '" class="cliper">' +
@@ -212,26 +212,26 @@
             var url = $(ele).attr('action'),post = new FormData(ele);
             showProgress('正在修改');
             $.ajax({
-                url: url,
-                type: 'POST',
-                data: post,
-                contentType: false, // 注意这里应设为false
-                processData: false,
-                success: function(ret) {
-                    hideProgress();
-                    if(ret.code == 0){
-                        showMsg(ret.errormsg,1);
-                        if(ret.url) setTimeout(function () {
-                            window.location.href = ret.url;
+				 url: url,
+				 type: 'POST',
+				 data: post,
+				 contentType: false, // 注意这里应设为false
+				 processData: false,
+				 success: function(ret) {
+				     hideProgress();
+					if(ret.code == 0){
+						showMsg(ret.errormsg,1);
+						if(ret.url) setTimeout(function () {
+							window.location.href = ret.url;
                         },1000);
-                    }else{
-                        showMsg(ret.errormsg);
-                    }
-                },
-                error: function (jqXHR) {
-                    console.log(JSON.stringify(jqXHR));
-                }
-            })
+					}else{
+					    showMsg(ret.errormsg);
+					}
+				 },
+				 error: function (jqXHR) {
+					 console.log(JSON.stringify(jqXHR));
+				 }
+		 	})
         }
     });
 </script>

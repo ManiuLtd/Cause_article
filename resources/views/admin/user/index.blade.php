@@ -107,7 +107,7 @@
                         <option value="{{ $value->id }}">{{ $value->account }}</option>
                     @endforeach
                 </select>
-                <a class="btn btn-sm btn-info distribution">分配</a>
+                <a class="btn btn-sm btn-info distribution">分配合作</a>
             @endif
             <div style="text-align: center">
                 {{$list->appends(['type'=>request()->type,'key'=>request()->key,'value'=>request()->value])->links()}}

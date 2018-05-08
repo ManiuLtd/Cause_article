@@ -68,8 +68,10 @@
                         </td>
                         <td>{{ $value->created_at }}</td>
                         <td>
-                            @if($value->state == 1 && $value->refund_state != 1)
-                                <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
+                            @if(has_menu($menu,'/refund'))
+                                @if($value->state == 1 && $value->refund_state != 1)
+                                    <a class="btn btn-xs btn-info wx-refund" data-url="{{ route('admin.refund', $value->id) }}" data-price="{{ $value->price }}" data-name="{{ $value->user->wc_nickname }}">退款</a>
+                                @endif
                             @endif
                             @if($value->state != 1)
                                 <form action="{{ route('admin.order_del', $value->id) }}" id="delform" method="post">

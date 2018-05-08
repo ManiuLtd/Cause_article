@@ -233,8 +233,10 @@ class Http
 
         $options = array_merge(self::$defaults, $options);
 
-        $options['handler'] = $this->getHandler();
         Log::debug('Client Request:', compact('url', 'method', 'options'));
+
+        $options['handler'] = $this->getHandler();
+
         $response = $this->getClient()->request($method, $url, $options);
 
         Log::debug('API response:', [

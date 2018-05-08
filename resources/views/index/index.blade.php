@@ -55,7 +55,7 @@
 
 </div>
 </body>
-<script src="https://cdn.bootcss.com/zepto/1.2.0/zepto.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/Swiper/3.4.2/js/swiper.min.js"></script>
 <script type="text/javascript" src="/index/js/checkform.js"></script>
 <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
@@ -64,7 +64,6 @@
 @includeWhen(!$user->brand_id && !$user->phone, 'index.public.perfect_js')
 
 @include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '', 'html' => 'listbox', 'route' => route('index.index', request()->type), 'lists' => $list, 'lazyload' => 1])
-
 
 <script>
     $(".cuo").hide();

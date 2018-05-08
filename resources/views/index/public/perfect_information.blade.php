@@ -17,7 +17,7 @@
         </div>
         <div class="flex centerv input brands">
             <span class="flex centerv">品牌</span>
-            <input type="text" readonly="readonly" class="flexitem cenk" placeholder="选择品牌" @if($user->brand_id) value="{{ $user->brand->name }}" @endif data-rule="*" data-errmsg="请选择您的品牌" onfocus="this.blur()">
+            <input type="text" readonly="readonly" class="flexitem cenk brand_name" placeholder="选择品牌" @if($user->brand_id) value="{{ $user->brand->name }}" @endif data-rule="*" data-errmsg="请选择您的品牌" onfocus="this.blur()">
             <input type="hidden" name="brand_id" class="brand_id" @if($user->brand_id) value="{{ $user->brand->id }}" @endif>
             <i class="flex smtxt"></i>
             <i class="flex center bls bls-xia brand"></i>
@@ -26,41 +26,4 @@
     </div>
 </form>
 <!--品牌-->
-<div id="brand" class="flexv dialog_box">
-    <div class="flex center brand-head">
-        <a href="javascript:;" class="bls bls-zjt"></a>
-        <h1 class="flexitem center" style="margin-left: -2rem;">选择品牌</h1>
-    </div>
-    <ul class="flexitemv mainbox company" style="padding-top: 20px">
-
-    </ul>
-    <ul class="flexitemv lettrt">
-        <li class="flexitem center"><a href="#">#</a></li>
-        <li class="flexitem center"><a href="#A">A</a></li>
-        <li class="flexitem center"><a href="#B">B</a></li>
-        <li class="flexitem center"><a href="#C">C</a></li>
-        <li class="flexitem center"><a href="#D">D</a></li>
-        <li class="flexitem center"><a href="#E">E</a></li>
-        <li class="flexitem center"><a href="#F">F</a></li>
-        <li class="flexitem center"><a href="#G">G</a></li>
-        <li class="flexitem center"><a href="#H">H</a></li>
-        <li class="flexitem center"><a href="#I">I</a></li>
-        <li class="flexitem center"><a href="#J">J</a></li>
-        <li class="flexitem center"><a href="#K">K</a></li>
-        <li class="flexitem center"><a href="#L">L</a></li>
-        <li class="flexitem center"><a href="#M">M</a></li>
-        <li class="flexitem center"><a href="#N">N</a></li>
-        <li class="flexitem center"><a href="#O">O</a></li>
-        <li class="flexitem center"><a href="#P">P</a></li>
-        <li class="flexitem center"><a href="#Q">Q</a></li>
-        <li class="flexitem center"><a href="#R">R</a></li>
-        <li class="flexitem center"><a href="#S">S</a></li>
-        <li class="flexitem center"><a href="#T">T</a></li>
-        <li class="flexitem center"><a href="#U">U</a></li>
-        <li class="flexitem center"><a href="#V">V</a></li>
-        <li class="flexitem center"><a href="#W">W</a></li>
-        <li class="flexitem center"><a href="#X">X</a></li>
-        <li class="flexitem center"><a href="#Y">Y</a></li>
-        <li class="flexitem center"><a href="#Z">Z</a></li>
-    </ul>
-</div>
+<div id="brand" class="flexitemv" data-id="{{ $user->brand ? $user->brand_id : '' }}" data-name="{{ $user->brand ? $user->brand->name : '' }}"></div>

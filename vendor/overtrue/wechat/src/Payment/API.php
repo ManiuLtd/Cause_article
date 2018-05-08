@@ -452,6 +452,7 @@ class API extends AbstractAPI
         $options = array_merge([
             'body' => XML::build($params),
         ], $options);
+
         $response = $this->getHttp()->request($api, $method, $options);
 
         return $returnResponse ? $response : $this->parseResponse($response);
