@@ -90,7 +90,7 @@
                             <a class="btn btn-xs btn-info" onclick="see_commis('{{ route('see_integral', $value['id']) }}');">查看推广金</a>
                             {{--<a class="btn btn-xs btn-info" onclick="set_integral(this, {{ $value['integral_scale'] }});" data-url="{{ route('set_integral_scale', $value['id']) }}">佣金比例设置</a>--}}
                             @if(has_menu($menu,'/admin/user'))
-                                <a href="{{ route('admin.be_dealer',['id'=>$value->id]) }}" class="btn btn-xs btn-primary">成为经销商</a>
+{{--                                <a href="{{ route('admin.be_dealer',['id'=>$value->id]) }}" class="btn btn-xs btn-primary">成为经销商</a>--}}
                             @endif
                             @if(has_menu($menu,'admin/setMemberTime'))
                                 <a href="javascript:;" class="btn btn-xs btn-danger" onclick="setMembertime(this, {{ $value->id }}, '{{date('Y-m-d', strtotime($value->membership_time))}}')" data-url="{{ route('admin.set_member_time') }}">设置会员时间</a>

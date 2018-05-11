@@ -12,8 +12,10 @@
                 <th width="3%">用户id</th>
                 <th width="13%">推荐用户</th>
                 <th width="7%">用户品牌</th>
-                <th width="50%">推荐链接</th>
+                <th width="20%">推荐链接</th>
                 <th width="15%">提交时间</th>
+                <th width="20%">审核链接</th>
+                <th width="15%">审核时间</th>
                 <th>操作</th>
             </tr>
             </thead>
@@ -25,8 +27,20 @@
                     <td>{{ $list->user->id }}</td>
                     <td>{{ $list->user->wc_nickname }}</td>
                     <td>@if($list->user->brand){{ optional($list->user->brand)->name }} @else 全品牌 @endif</td>
-                    <td>{{ $list->url }}</td>
+                    <td>
+                        <a class="btn btn-xs btn-info remark" data="{{ $list->url }}">
+                            {{ str_limit($list->url, 30) }}
+                        </a>
+                    </td>
                     <td>{{ $list->created_at }}</td>
+                    <td>
+                        @if($list->examine_url)
+                        <a class="btn btn-xs btn-info remark" data="{{ $list->examine_url }}">
+                            {{ str_limit($list->examine_url, 30) }}
+                        </a>
+                        @endif
+                    </td>
+                    <td>{{ $list->examine_at }}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             @if(!$list->state)
@@ -50,6 +64,7 @@
 
 <script type="text/javascript" src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
 <script type="text/javascript" src="/admin/layer/layer.js"></script>
+<script type="text/javascript" src="/admin/js/bootbox.min.js"></script>
 <script>
     function examine(th) {
         var content = '<form class="form-horizontal" style="margin-top: 20px">' +
@@ -76,5 +91,21 @@
             });
         });
     }
+
+    //添加订单备注
+    $('.remark').click(function () {
+        var remark = $(this).attr('data');
+        var content = '<input class="bootbox-input form-control newremark" type="text" value="' + remark + '"></form>';
+        bootbox.dialog({
+            title: '查看推荐链接：',
+            message: content,
+            buttons: {
+                "close" : {
+                    "label" : "取消",
+                    "className" : "btn"
+                }
+            }
+        });
+    });
 </script>
 @endsection

@@ -48,13 +48,13 @@
 @include('index.public._page', ['mescroll_id' => 'mescroll', 'tip' => '该品牌暂无美图', 'html' => 'listbox', 'route' => route('extension_photo_list', request()->type), 'lists' => $photos, 'lazyload' => 1])
 
 <script type="text/javascript">
-    $(".lazy").lazyload({
-        event: "scrollstop",
-        effect : "fadeIn",
-        container: $(".fwrap.listbox"),
-        load:function ($e) {
-            $e.css({"width":"100%","height":"100%"});
-        }
-    });
+    // $(".lazy").lazyload({
+    //     event: "scrollstop",
+    //     effect : "fadeIn",
+    //     container: $(".fwrap.listbox"),
+    //     load:function ($e) {
+    //         $e.css({"width":"100%","height":"100%"});
+    //     }
+    // });
 </script>
 </html>

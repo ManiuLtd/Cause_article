@@ -20,6 +20,9 @@
             @if (count($errors) > 0)
                 <div style="height: 30px;line-height: 30px;font-size: 16px;color: red;font-weight: bold;text-align: center;">文章链接不能为空或不是正确的链接地址</div>
             @endif
+            @if (Session::has('err'))
+                <div style="height: 30px;line-height: 30px;font-size: 16px;color: red;font-weight: bold;text-align: center;">{{ Session::get('err') }}</div>
+            @endif
             <button id="button-alt">提交</button>
         </div>
     </form>

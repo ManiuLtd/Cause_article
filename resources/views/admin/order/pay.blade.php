@@ -19,12 +19,6 @@
             <table id="sample-table-1" class="table table-striped table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th class="center">
-                        <label>
-                            <input type="checkbox" class="ace"/>
-                            <span class="lbl"></span>
-                        </label>
-                    </th>
                     <th>ID</th>
                     <th>用户id</th>
                     <th>用户昵称</th>
@@ -45,16 +39,6 @@
                 <tbody>
                 @foreach($list as $value)
                 <tr>
-                    @if(empty($value->distribution))
-                        <td class="center">
-                            <label>
-                                <input type="checkbox" name="order_id[]" class="ace" value="{{ $value->id }}"/>
-                                <span class="lbl"></span>
-                            </label>
-                        </td>
-                        @else
-                        <td class="center">-</td>
-                    @endif
                     <td>{{ $value->id }}</td>
                     <td>{{ $value->user->id }}</td>
                     <td>{{ $value->user->wc_nickname }}</td>
@@ -93,13 +77,6 @@
                 @endforeach
                 </tbody>
             </table>
-
-            <select name="admin_id">
-                @foreach($admin as $value)
-                <option value="{{ $value->id }}">{{ $value->account }}</option>
-                @endforeach
-            </select>
-            <a class="btn btn-sm btn-info distribution">分配</a>
 
             <div style="text-align: center">
                 {{$list->appends(['state'=>request()->state,'key'=>request()->key,'value'=>request()->value])->links()}}

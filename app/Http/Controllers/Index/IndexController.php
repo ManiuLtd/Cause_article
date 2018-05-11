@@ -22,56 +22,9 @@ class IndexController extends CommonController
 {
     use Notice;
 
-    public function test(Request $request, User $user)
+    public function test(Request $request, ArticleType $type)
     {
-        if ( request()->ajax() ) {
-            $data = request()->all();
-            //是否上传头像
-            if ( $request->head != $user->head ) {
-                $upload = base64ToImage($request->head, 'user_head');
-                $data[ 'head' ] = $upload[ 'path' ];
-
-                //更新头像session
-                session(['head_pic'=>$data[ 'head' ]]);
-                //删除头像base64位缓存，以便下次重新转换
-                Cache::forget('user_head' . $user->openid);
-                //删除本地头像
-                if(!str_contains($user->head, 'qlogo.cn')) {
-                    unlink(config('app.image_real_path') . $user->head);
-                }
-            }
-
-            //是否上传个人二维码
-            if ( $request->qrcode != $user->qrcode ) {
-                $upload = base64ToImage($request->qrcode, 'user_qrcode');
-                $data[ 'qrcode' ] = $upload[ 'path' ];
-                //删除本地二维码
-                if($user->qrcode) unlink(config('app.image_real_path') . $user->qrcode);
-            }
-
-            //判断品牌是否为用户自定义
-            if(!intval($request->brand_id)) {
-                $add_brand = Brand::create(['name' => $request->brand_id, 'type' => 1]);
-                $data['brand_id'] = $add_brand->id;
-            }
-
-            //如果有变更名称或头像则需清空推广图片
-            if($request->head != $user->head || $request->wc_nickname != $user->wc_nickname) {
-                $data['extension_image'] = '';
-            }
-
-            if ( $user->update($data) ) {
-                return response()->json([ 'code' => 0, 'errormsg' => '修改资料完成', 'url' => route('index.user') ]);
-            } else {
-                return response()->json([ 'code' => 401, 'errormsg' => '修改资料失败' ]);
-            }
-        } else {
-            $user_id = session('user_id');
-            $res = $user->with('brand')->where('id', $user_id)->first();
-            $brands = Brand::select('id', 'name as title', 'domain as pinyin')->where('type', 0)->get()->toJson();
-
-            return view('index.user_basic_test', compact('res', 'brands'));
-        }
+        dd($type->lists());
     }
     /**
      * 首页
@@ -116,11 +69,20 @@ class IndexController extends CommonController
         return view('index.index', compact('banner_list', 'article_type', 'list', 'user', 'package'));
     }
 
+    /**
+     * 推荐好文章
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function extensionArticle(Request $request)
     {
         $this->validate($request, [
             'url' => 'required|url',
         ]);
+
+        if(str_contains($request->url, 'bw.eyooh.com')) {
+            return redirect()->back()->with('err', '请勿提交本站文章');
+        }
 
         ExtensionArticle::create(['user_id' => session('user_id'), 'url' => $request->url]);
 

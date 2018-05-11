@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Jobs\templateMessage;
 use App\Model\Article;
 use App\Model\ArticleType;
 use App\Model\Brand;
 use App\Model\ExtensionArticle;
 use App\Model\User;
+use Carbon\Carbon;
 use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 
@@ -135,19 +137,25 @@ class ArticlesController extends CommonController
      */
     public function examine( Request $request, ExtensionArticle $article )
     {
-        $article->where('id', $article->id)->update(['state' => 1]);
+        $data = [
+            'state' => 1,
+            'examine_url' => $request->url,
+            'examine_at' => Carbon::now()->toDateTimeString()
+        ];
+        $article->where('id', $article->id)->update($data);
 
         $openid = User::where('id', $article->user_id)->value('openid');
 
         //推送【推荐会员成功提醒】模板消息
-        $app = new Application(config('wechat'));
+//        $app = new Application(config('wechat'));
         $msg = [
             "first"     => "您好，您提交的文章已审核通过，已添加到文章库，快去看看吧！",
             "keyword1"  => "审核通过",
             "keyword2"  => date('Y-m-d H:i',time()),
             "remark"    => "点击查看详情"
         ];
-        template_message($app, $openid, $msg, config('wechat.template_id.examine_article'), $request->url);
+        dispatch(new templateMessage($openid, $msg, config('wechat.template_id.examine_article'), $request->url));
+//        template_message($app, $openid, $msg, config('wechat.template_id.examine_article'), $request->url);
 
         return response()->json(['state' => 0, 'error' => '审核通过']);
     }

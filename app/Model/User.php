@@ -77,9 +77,22 @@ class User extends Model
         return $this->hasMany(Footprint::class, 'uid');
     }
 
+    /**
+     * 关联用户提现信息
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function user_account()
     {
         return $this->hasOne(UserAccount::class, 'user_id');
+    }
+
+    /**
+     * 关联销售表
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class);
     }
 
     /**

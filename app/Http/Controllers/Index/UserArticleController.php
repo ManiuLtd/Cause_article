@@ -76,7 +76,6 @@ class UserArticleController extends CommonController
             $user->save();
 
             //推送【推荐会员成功提醒】模板消息
-//            $app = new Application(config('wechat'));
             $msg = [
                 "first"     => "恭喜您，有新的会员加入您的事业爆文团队！",
                 "keyword1"  => $user->wc_nickname,

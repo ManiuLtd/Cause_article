@@ -13,7 +13,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ArticleType extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = ['name', 'sort'];
 
-    use SoftDeletes;
+    protected $lists_cache_time = 30;
+
+    public function lists()
+    {
+        \Cache::remember('article_type', $this->lists_cache_time, function () {
+
+            return $this->orderBy('sort', 'asc')->get();
+        });
+    }
 }

@@ -117,6 +117,43 @@ class ReportController extends CommonController
     }
 
     /**
+     * 售前报表
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function preSale(Request $request)
+    {
+        $time = explode(' - ',$request->date_range_picker);
+        if(!empty($time[0])) {
+            $date = $time[1];
+            $count = 1;
+            $time1 = Carbon::parse($time[0]);
+            $time2 = Carbon::parse($time[1]);
+            while ($time1 != $time2) {
+                $time2->subDay();
+                $count++;
+            }
+            $for_length = $count;
+        } else {
+            $date = date('Y-m-d H:i:s');
+            $for_length = 30;
+        }
+
+        if(has_menu($this->menu, '/sale/pre/see_all')) {
+            $extension = Admin::whereIn('gid', [12, 23])->get();
+            $gid = true;
+        } else {
+            $extension = Admin::where('id', Auth::user()->id)->get();
+            $gid = false;
+        }
+
+        app(Report::class)->report($extension, $gid, $date, $for_length, 1, 'sale');
+        $menu = $this->menu;
+        $active = $this->active;
+
+        return view('admin.report.pre_sale', compact('extension', 'menu', 'active'));
+    }
+
+    /**
      * 订单报表
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
