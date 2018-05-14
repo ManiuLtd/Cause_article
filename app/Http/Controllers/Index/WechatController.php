@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Index;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TraitFunction\FunctionUser;
+use App\Jobs\subscribe;
 use App\Model\User;
 use App\Model\UserArticles;
 use Carbon\Carbon;
@@ -57,7 +58,7 @@ class WechatController extends Controller
                             'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj8icj9sBASDOABPA0ONMvrOVKudc2wYpRKd0tehrXG3I4hiaZSUIHlBtyKCwkqd4DmpNian82L1mNIQ/0?wx_fmt=jpeg',
                         ]);
                     } else {
-                        return "欢迎关注我！有问题请联系客服喔~";
+                        return new Image(['media_id' => 'slQ7pC8xwK25Qm-fdcAWc04bcpd_t5KxNlhBqa2YdCs']);
                     }
                     break;
             }
@@ -139,7 +140,12 @@ class WechatController extends Controller
             //未关注公众号的
             case 'subscribe':
                 //更改用户关注状态
-                User::where('openid',$FromUserName)->update(['subscribe'=>1]);
+                if($user) {
+                    $user->subscribe = 1;
+                    $user->subscribe_at = Carbon::now()->toDateTimeString();
+                    $user->save();
+                }
+
                 if($eventkey) {
                     //扫推送二维码关注公众号（创建账号）
                     if (strpos($eventkey, '_') !== false) {
@@ -160,6 +166,10 @@ class WechatController extends Controller
                     $context = "恭喜老师，先给你个么么哒\n\n您已踏上成功签单之路！\n\n事业头条可以帮您一秒在文章中嵌入专属名片，让每一次分享都成为获客商机，挖掘价值准客户。\n\n点击下方菜单栏【发现爆文】立刻在文章中嵌入我的名片\n\n↓ ↓ ↓ ↓ ↓";
                     message($FromUserName, 'text', $context);
                 }
+
+                //推延迟队列发送图文消息
+                $this->subscribeQueueMessage($FromUserName);
+
                 break;
             //取消关注公众号
             case 'unsubscribe':
@@ -237,6 +247,10 @@ class WechatController extends Controller
                 "remark"    => "您的队伍越来越强大了哦，请再接再厉！"
             ];
             template_message($app, $pinfo->openid, $msg, config('wechat.template_id.extension_user'), config('app.url'));
+
+            //推延迟队列发送图文消息
+            $this->subscribeQueueMessage($FromUserName);
+
             //推广奖励操作
 //            $this->extension($eventkey);
         }
@@ -295,6 +309,49 @@ class WechatController extends Controller
         //推送客服消息
         $context = "恭喜老师，先给你个么么哒\n\n您已踏上成功签单之路！\n\n事业头条可以帮您一秒在文章中嵌入专属名片，让每一次分享都成为获客商机，挖掘价值准客户。\n\n点击下方菜单栏【发现爆文】立刻在文章中嵌入我的名片\n\n↓ ↓ ↓ ↓ ↓";
         message($FromUserName, 'text', $context);
+    }
+
+    public function subscribeQueueMessage($openid)
+    {
+        $message = new News([
+            'title'       => '如何进入并分享事业爆文？',
+            'description' => '跟着教程一起学~',
+            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000085&idx=1&sn=c03fb4f45d089a451ec386810c939e56&chksm=7b10a5104c672c06cfa53cd7c36b03f90edf7832f812d8fe5',
+            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj0TlIiarlef2R5SZN5FtIWb8V3VaWRAbxIwibOU33sj4vmWrWwqMnGj312wDHpJe9w1UQ9sGQ2iap4w/0?wx_fmt=jpeg',
+        ]);
+        dispatch(new subscribe($openid, $message))->delay(Carbon::now()->addHour());
+
+        $message = new News([
+            'title'       => '如何设置个人名片信息？',
+            'description' => '跟着教程一起学~',
+            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000087&idx=1&sn=a307c049ada32d68b54ac8bb24a99548&chksm=7b10a5124c672c04114f0a184f63f87a44c24f74bf32bd0f3',
+            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj0TlIiarlef2R5SZN5FtIWb8V3VaWRAbxIwibOU33sj4vmWrWwqMnGj312wDHpJe9w1UQ9sGQ2iap4w/0?wx_fmt=jpeg',
+        ]);
+        dispatch(new subscribe($openid, $message))->delay(Carbon::now()->addHours(3));
+
+        $message = new News([
+            'title'       => '如何提交好文章链接？',
+            'description' => '喜欢的文章，一步提交，带上您的联系方式！',
+            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000089&idx=1&sn=b024367ffb07de00ebec701524df5f56&chksm=7b10a51c4c672c0a75efa1507e845fa9327cf89e0afe9b872',
+            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj0TlIiarlef2R5SZN5FtIWb8V3VaWRAbxIwibOU33sj4vmWrWwqMnGj312wDHpJe9w1UQ9sGQ2iap4w/0?wx_fmt=jpeg',
+        ]);
+        dispatch(new subscribe($openid, $message))->delay(Carbon::now()->addHours(5));
+
+        $message = new News([
+            'title'       => '如何查看访客信息？',
+            'description' => '一分钟教会您查看访客留言！',
+            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000091&idx=1&sn=1c766ea7e7cc1420c989bca3c3fe087c&chksm=7b10a51e4c672c089ec2c79429ae8662845628927dc46e68e',
+            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj0TlIiarlef2R5SZN5FtIWb8V3VaWRAbxIwibOU33sj4vmWrWwqMnGj312wDHpJe9w1UQ9sGQ2iap4w/0?wx_fmt=jpeg',
+        ]);
+        dispatch(new subscribe($openid, $message))->delay(Carbon::now()->addHours(7));
+
+        $message = new News([
+            'title'       => '如何查看在线留言？',
+            'description' => '不漏掉任何一个人的留言！',
+            'url'         => 'http://mp.weixin.qq.com/s?__biz=MzU0MzAxMjEzOA==&mid=100000093&idx=1&sn=840ece3557cd7f8f96d9d384bf20ce56&chksm=7b10a5184c672c0e52610f00fff4af98e47b86a929de39781',
+            'image'       => 'http://mmbiz.qpic.cn/mmbiz_jpg/dVqibJbicyOmj0TlIiarlef2R5SZN5FtIWb8V3VaWRAbxIwibOU33sj4vmWrWwqMnGj312wDHpJe9w1UQ9sGQ2iap4w/0?wx_fmt=jpeg',
+        ]);
+        dispatch(new subscribe($openid, $message))->delay(Carbon::now()->addHours(9));
     }
 
 }

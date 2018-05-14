@@ -19,9 +19,11 @@ class ArticleType extends Model
 
     protected $lists_cache_time = 30;
 
+    public $cache_key = 'article_type';
+
     public function lists()
     {
-        \Cache::remember('article_type', $this->lists_cache_time, function () {
+        return \Cache::remember($this->cache_key, $this->lists_cache_time, function () {
 
             return $this->orderBy('sort', 'asc')->get();
         });

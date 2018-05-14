@@ -46,7 +46,7 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'dealer'=>function($query){
             $query->select('id','wc_nickname');
-        },'brand'])->where($where)->orderBy('created_at','desc')->paginate(15);
+        },'brand'])->where($where)->orderBy('id','desc')->paginate(15);
 
 //        $list->transform(function ($value) {
 //            $new = collect($value);
@@ -86,7 +86,7 @@ class UserController extends CommonController
             $query->select('id','wc_nickname');
         },'brand','admin' => function($query){
             $query->select('id','account');
-        }])->where($where)->paginate(15);
+        }])->where($where)->orderBy('id','desc')->paginate(15);
 
         $list->transform(function ($value) {
             $new = collect($value);

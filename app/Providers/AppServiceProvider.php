@@ -17,6 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \App\Model\ArticleType::observe(\App\Observers\ArticleTypeObserver::class);
+        \App\Model\Brand::observe(\App\Observers\BrandObserver::class);
+
         Carbon::setLocale('zh');
         Schema::defaultStringLength(191);
         CarbonInterval::setLocale('zh');

@@ -106,7 +106,11 @@ class ServerController extends CommonController
      */
     public function preOrder( $pay_at, $admin_id )
     {
-        $orders = Order::with('user')->where(['state' => 1, 'refund_state' => 0, 'sale_id' => $admin_id])
+        $where = [['state' => 1]];
+        if($admin_id) {
+            array_push($where, ['sale_id' => $admin_id]);
+        }
+        $orders = Order::with('user')->where($where)
             ->whereDate('pay_time', $pay_at)->get();
 
         $admin = Admin::find($admin_id);

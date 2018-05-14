@@ -9,30 +9,30 @@
 namespace App\Http\Controllers\Index;
 
 use App\Jobs\templateMessage;
-use App\Http\Controllers\TraitFunction\Notice;
 use App\Model\{
     Article, Banner, Brand, ExtensionArticle, Report, User, UserArticles, ArticleType
 };
 use App\Model\FamilyMessage;
 use Carbon\Carbon;
+use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class IndexController extends CommonController
 {
-    use Notice;
-
-    public function test(Request $request, ArticleType $type)
+    public function test(Request $request, Application $app)
     {
-        dd($type->lists());
+//        dd($app->material->lists('news'));
+
     }
+
     /**
      * 首页
+     * @param ArticleType $atype
      * @param int $type
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\JsonResponse|\Illuminate\View\View
      * @throws \Throwable
      */
-    public function index($type = 0)
+    public function index(ArticleType $atype, $type = 0)
     {
         //banner图
 //        $banner_list = Cache::remember('banner', 30, function (){
@@ -41,11 +41,7 @@ class IndexController extends CommonController
 //        });
 
         //文章分类
-        $article_type = Cache::remember('article_type', 30, function () {
-            $ret = ArticleType::orderBy('sort', 'asc')->get();
-
-            return $ret;
-        });
+        $article_type = $atype->lists();
 
         $user = User::with('brand')->where('id', session('user_id'))->first();
 
@@ -91,11 +87,13 @@ class IndexController extends CommonController
 
     /**
      * @title  品牌列表接口
+     * @param Brand $brand
      * @return string
      */
-    public function brandList()
+    public function brandList(Brand $brand)
     {
-        $brand_list = Brand::select('id', 'name as title', 'domain as pinyin')->where('type', 0)->get();
+        $brand_list = $brand->cacheList();
+
         return response()->json(['state'=>0, 'brand_list'=>$brand_list]);
     }
 
